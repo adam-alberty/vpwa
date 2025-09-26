@@ -1,1 +1,14 @@
 // app global css in SCSS form
+
+.command-input {
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  outline: none;
+  resize: none;
+  font-size: large;
+}
+
+.q-scrollarea__thumb {
+  z-index: 20 !important;
+}
