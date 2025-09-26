@@ -38,16 +38,20 @@
         </q-list>
 
         <q-list padding>
-          <q-item-label
-            header
-            class="text-bold text-h6 text-primary bg-white"
+          <div
+            class="row justify-between items-center q-pa-3 bg-white"
             style="position: sticky; top: 0px; z-index: 1"
           >
-            <div class="row items-center q-gutter-x-sm">
-              <span>Channels</span>
-              <q-badge color="primary" text-color="white" rounded> 3 </q-badge>
+            <q-item-label header class="text-bold text-h6 text-primary">
+              <div class="row items-center q-gutter-x-sm">
+                <span>Channels</span>
+                <q-badge color="primary" text-color="white" rounded> 3 </q-badge>
+              </div>
+            </q-item-label>
+            <div class="q-pr-md">
+              <new-channel-dialog />
             </div>
-          </q-item-label>
+          </div>
 
           <q-item active clickable v-ripple>
             <q-item-section avatar>
@@ -88,19 +92,12 @@
   </q-layout>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import NewChannelDialog from 'src/components/NewChannelDialog.vue';
 import { ref } from 'vue';
 
-export default {
-  setup() {
-    const leftDrawerOpen = ref(false);
-
-    return {
-      leftDrawerOpen,
-      toggleLeftDrawer() {
-        leftDrawerOpen.value = !leftDrawerOpen.value;
-      },
-    };
-  },
-};
+const leftDrawerOpen = ref(false);
+function toggleLeftDrawer() {
+  leftDrawerOpen.value = !leftDrawerOpen.value;
+}
 </script>
