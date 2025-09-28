@@ -11,4 +11,9 @@
 
 .q-scrollarea__thumb {
   z-index: 20 !important;
+  width: 3px;
+}
+
+.q-item__section--avatar {
+  min-width: unset;
 }

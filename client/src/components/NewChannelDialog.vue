@@ -1,7 +1,7 @@
 <template>
   <q-btn flat round icon="add" color="secondary" @click="show = true" />
 
-  <q-dialog v-model="show" persistent>
+  <q-dialog v-model="show" persistent backdrop-filter="brightness(70%)">
     <q-card style="min-width: 350px">
       <q-card-section>
         <div class="text-h6">Create a new channel</div>
@@ -19,12 +19,8 @@
           />
 
           <q-btn-toggle
-            flat
             v-model="channelType"
             toggle-color="primary"
-            color="black"
-            text-color="black"
-            outline
             :options="[
               { label: 'Private', value: 'private' },
               { label: 'Public', value: 'public' },

@@ -5,7 +5,11 @@
     </div>
 
     <div class="absolute-bottom">
-      <textarea class="command-input bg-grey-3" placeholder="Type a message"></textarea>
+      <textarea
+        style="height: 80px"
+        class="command-input bg-grey-3"
+        placeholder="Type a message"
+      ></textarea>
     </div>
   </q-page>
 </template>
