@@ -1,5 +1,7 @@
 # Chat
 
+Progressive web application for IRC (Slack)-style text communication.
+
 Assignment: https://github.com/kurice/vpwa26/tree/main/semestralny-projekt
 
 `./client` - Quasar SPA
