@@ -20,13 +20,17 @@
           <new-channel-dialog />
         </div>
         <q-list>
-          <channel-invite v-for="n in 3" :key="n" name="channel_name" />
+          <channel-invite
+            v-for="invite in invites"
+            :key="invite.channelId"
+            :id="invite.channelId"
+            :name="invite.channelName"
+          />
           <channel-preview
-            v-for="n in 20"
-            :key="n"
-            :active="false"
-            name="channel_name"
-            :id="`12345`"
+            v-for="channel in channels"
+            :key="channel.channelId"
+            :name="channel.channelName"
+            :id="channel.channelId"
           />
         </q-list>
       </q-scroll-area>
@@ -35,14 +39,7 @@
         class="absolute-bottom row items-center justify-between bg-grey-3 q-gutter-x-sm q-pa-md"
         style="height: 80px"
       >
-        <div class="row items-center q-gutter-x-sm">
-          <q-avatar size="40px" color="grey-5" text-color="black">S </q-avatar>
-          <div>
-            <div class="text-weight-bold">Some user</div>
-            <div>@user</div>
-          </div>
-        </div>
-        <q-btn icon="logout" round flat />
+        <user-settings-dialog />
       </div>
     </q-drawer>
 
@@ -56,10 +53,17 @@
 import ChannelInvite from 'src/components/ChannelInvite.vue';
 import ChannelPreview from 'src/components/ChannelPreview.vue';
 import NewChannelDialog from 'src/components/NewChannelDialog.vue';
+import UserSettingsDialog from 'src/components/UserSettingsDialog.vue';
 import { ref } from 'vue';
 
 const leftDrawerOpen = ref(false);
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
+
+const invites = ref([{ channelId: 'uuid', channelName: 'Some name' }]);
+const channels = ref([
+  { channelId: 'uuid', channelName: 'Some name', lastMessage: 'user: something' },
+  { channelId: 'another-uuid', channelName: 'Another name', lastMessage: 'user: something' },
+]);
 </script>
