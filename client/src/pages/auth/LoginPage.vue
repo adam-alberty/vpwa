@@ -18,7 +18,7 @@
       :rules="[(val) => (val && val.length > 0) || 'Please type something']"
     />
 
-    <q-btn size="lg" label="Log in" type="submit" color="primary" class="full-width" />
+    <q-btn push size="lg" label="Log in" type="submit" color="primary" class="full-width" />
 
     <div class="text-center q-mt-md">
       <router-link to="/auth/register" class="text-primary">
