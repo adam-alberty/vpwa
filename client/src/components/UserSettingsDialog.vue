@@ -1,5 +1,5 @@
 <template>
-  <q-btn align="left" rounded flat class="full-width row justify-start" @click="show = true">
+  <q-btn class="row items-center justify-between q-gutter-x-sm q-pa-md" flat @click="show = true">
     <div class="row items-center q-gutter-x-sm">
       <q-avatar size="40px" color="grey-5" text-color="black">S </q-avatar>
       <div class="col">

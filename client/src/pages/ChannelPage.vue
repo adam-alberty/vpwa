@@ -17,7 +17,7 @@
     </q-scroll-area>
 
     <div class="absolute-bottom">
-      <textarea class="command-input bg-grey-3" placeholder="Type a message"></textarea>
+      <textarea class="command-input bg-dark text-white" placeholder="Type a message"></textarea>
     </div>
   </q-page>
 </template>
