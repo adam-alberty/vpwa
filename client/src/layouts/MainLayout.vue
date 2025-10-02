@@ -28,7 +28,7 @@
             :id="invite.channelId"
             :name="invite.channelName"
           />
-          <channel-preview
+          <channel-link
             v-for="channel in channels"
             :key="channel.channelId"
             :name="channel.channelName"
@@ -47,7 +47,7 @@
 
 <script setup lang="ts">
 import ChannelInvite from 'src/components/ChannelInvite.vue';
-import ChannelPreview from 'src/components/ChannelPreview.vue';
+import ChannelLink from 'src/components/ChannelLink.vue';
 import NewChannelDialog from 'src/components/NewChannelDialog.vue';
 import UserSettingsDialog from 'src/components/UserSettingsDialog.vue';
 import { ref } from 'vue';

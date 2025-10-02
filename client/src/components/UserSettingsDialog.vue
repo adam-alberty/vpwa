@@ -15,9 +15,10 @@
         <div class="text-h6">Account settings</div>
       </q-card-section>
 
-      <q-card-section class="q-pt-none q-pb-md">
+      <q-card-section class="q-pt-none">
         <q-btn-toggle
           v-model="status"
+          class="q-pb-md"
           toggle-color="primary"
           :options="[
             { label: 'Online', value: 'online' },
@@ -26,7 +27,7 @@
           ]"
         />
 
-        <q-btn label="Logout" icon="logout" color="red" class="full-width" />
+        <q-btn push size="lg" label="Logout" icon="logout" color="red" class="full-width" />
       </q-card-section>
     </q-card>
   </q-dialog>

@@ -1,5 +1,5 @@
 <template>
-  <q-item :to="`/channels/${id}`" clickable>
+  <q-item :to="`/channels/${id}`" clickable :class="active && `bg-black`">
     <q-item-section avatar>
       <q-avatar size="32px" color="grey-7" text-color="white"
         >{{ name.charAt(0).toUpperCase() }}
@@ -16,6 +16,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+
 interface Props {
   id: string;
   name: string;
@@ -24,4 +27,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {});
 const { id, name, lastMessage } = props;
+
+const route = useRoute();
+const active = computed(() => route.params.id === id);
 </script>
