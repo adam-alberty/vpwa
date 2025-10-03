@@ -87,6 +87,9 @@ export default defineConfig((/* ctx */) => {
     framework: {
       config: {
         dark: true,
+        brand: {
+          negative: '#FF6B6B',
+        },
       },
 
       // iconSet: 'material-icons', // Quasar icon set
