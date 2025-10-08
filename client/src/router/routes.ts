@@ -1,12 +1,13 @@
 import type { RouteRecordRaw } from 'vue-router';
+import route from '@/utils/route';
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') },
-      { path: '/channels/:id', component: () => import('pages/ChannelPage.vue') },
+      route('Index', '', () => import('pages/IndexPage.vue'), true),
+      route('Channels', 'channels/:id', () => import('pages/ChannelPage.vue'), true),
     ],
   },
   {
@@ -14,15 +15,17 @@ const routes: RouteRecordRaw[] = [
     component: () => import('layouts/AuthLayout.vue'),
     children: [
       { path: '', redirect: '/auth/login' },
-      { path: 'login', component: () => import('pages/auth/LoginPage.vue') },
-      { path: 'register', component: () => import('pages/auth/RegisterPage.vue') },
+      route('Login', 'login', () => import('pages/auth/LoginPage.vue'), false),
+      route('Register', 'register', () => import('pages/auth/RegisterPage.vue'), false),
     ],
   },
 
   {
     path: '/settings',
     component: () => import('layouts/SettingsLayout.vue'),
-    children: [{ path: '', component: () => import('pages/SettingsPage.vue') }],
+    children: [
+      route('Settings', '', () => import('pages/SettingsPage.vue'), true),
+    ],
   },
 
   // Always leave this as last one,
