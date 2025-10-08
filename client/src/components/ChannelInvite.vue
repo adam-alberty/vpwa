@@ -7,7 +7,7 @@
     <q-item-section>
       <div>
         <q-badge color="blue"> Invite </q-badge>
-        <div class="row items-center">
+        <div class="row items-center no-wrap">
           <q-icon :name="isPrivate ? 'lock' : 'tag'" class="q-mr-xs"></q-icon>
           <div class="text-bold">{{ name }}</div>
         </div>
