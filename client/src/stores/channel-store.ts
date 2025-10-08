@@ -5,6 +5,8 @@ export const useChannelStore = defineStore('channel', {
     channels: [] as Channel[],
     invites: [{ channelId: 'uuid', name: 'Some name' }] as ChannelInvite[],
     currentChannel: null as Channel | null,
+
+    currentMessage: "",
   }),
 
   getters: {},

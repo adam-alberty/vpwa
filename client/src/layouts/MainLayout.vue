@@ -52,7 +52,7 @@
       <q-page>
         <router-view />
         <div class="absolute-bottom">
-          <command-input />
+          <Chat-Input v-model="channelStore.currentMessage" @submit="sendMessage" />
         </div>
       </q-page>
     </q-page-container>
@@ -63,7 +63,7 @@
 import ChannelName from '@/components/ChannelName.vue';
 import ChannelInvite from '@/components/ChannelInvite.vue';
 import ChannelLink from 'src/components/Channel.vue';
-import CommandInput from '@/components/CommandInput.vue';
+import ChatInput from 'src/components/ChatInput.vue';
 import NewChannelDialog from '@/components/NewChannelDialog.vue';
 import QuickSettingsDialog from '@/components/QuickSettingsDialog.vue';
 
@@ -80,7 +80,7 @@ function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
 
-import { getRandomChannels, getRandomMessages } from 'src/stores/mock.js'; // TODO: Replace with API Call
+import { getRandomChannels, getRandomMessages } from 'src/stores/mock.js'; // TODO: Replace with API Call,
 channelStore.channels = getRandomChannels(18);
 changeChannel(channelStore.channels[0]);
 
@@ -90,5 +90,10 @@ function changeChannel(toChannel: Channel) {
   }
   channelStore.currentChannel = toChannel
   router.push({ name: 'Channels', params: { id: toChannel.id } }).catch(console.error);
+}
+
+function sendMessage(msg: string) {
+  // TODO: Send to BE and add to channel based on response
+  channelStore.currentChannel?.messages?.push({ id: Date.now().toString(), text: msg, username: 'You', timestamp: Date.now() });
 }
 </script>
