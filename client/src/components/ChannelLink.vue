@@ -22,14 +22,8 @@
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 
-interface Props {
-  id: string;
-  name: string;
-  lastMessage: string;
-  isPrivate?: boolean;
-}
-
-const props = withDefaults(defineProps<Props>(), {
+import type { Channel } from 'src/types/global';
+const props = withDefaults(defineProps<Channel>(), {
   isPrivate: false
 });
 const { id, name, lastMessage, isPrivate } = props;

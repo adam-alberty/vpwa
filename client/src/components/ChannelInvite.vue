@@ -22,12 +22,8 @@
 </template>
 
 <script setup lang="ts">
-interface Props {
-  name: string;
-  isPrivate?: boolean;
-}
-
-const props = withDefaults(defineProps<Props>(), {
+import type { ChannelInvite } from 'src/types/global';
+const props = withDefaults(defineProps<ChannelInvite>(), {
   isPrivate: false
 });
 const { name } = props;

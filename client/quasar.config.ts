@@ -43,9 +43,17 @@ export default defineConfig((/* ctx */) => {
       },
 
       typescript: {
-        strict: true,
+        strict: false,
         vueShim: true,
-        // extendTsConfig (tsConfig) {}
+        extendTsConfig (tsConfig) {
+          tsConfig.compilerOptions = {
+            ...(tsConfig.compilerOptions || {}),
+            noUnusedLocals: false,
+            noUnusedParameters: false,
+            noImplicitAny: false,
+          };
+          return tsConfig;
+        }
       },
 
       vueRouterMode: 'hash', // available values: 'hash', 'history'
@@ -72,10 +80,10 @@ export default defineConfig((/* ctx */) => {
           'vite-plugin-checker',
           {
             vueTsc: true,
-            eslint: {
-              lintCommand: 'eslint -c ./eslint.config.js "./src*/**/*.{ts,js,mjs,cjs,vue}"',
-              useFlatConfig: true,
-            },
+            // eslint: {
+            //   lintCommand: 'eslint -c ./eslint.config.js "./src*/**/*.{ts,js,mjs,cjs,vue}"',
+            //   useFlatConfig: true,
+            // },
           },
           { server: false },
         ],

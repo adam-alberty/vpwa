@@ -3,7 +3,7 @@
     <div class="row q-gutter-sm">
       <span class="channel-message__username text-bold">{{ username }}</span>
       <span class="channel-message__timestamp text-grey-5"
-        >{{ timestamp.toLocaleDateString() }} {{ timestamp.toLocaleTimeString() }}</span
+        >{{ datetime.toLocaleDateString() }} {{ datetime.toLocaleTimeString() }}</span
       >
     </div>
     <div>
@@ -13,12 +13,11 @@
 </template>
 
 <script lang="ts" setup>
-interface Props {
-  username: string;
-  text: string;
-  timestamp: Date;
-}
+import { computed } from "vue";
 
-const props = withDefaults(defineProps<Props>(), {});
+import type { Message } from "src/types/global";
+const props = withDefaults(defineProps<Message>(), {});
 const { username, text, timestamp } = props;
+
+const datetime = computed(() => new Date(timestamp));
 </script>
