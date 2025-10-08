@@ -8,7 +8,10 @@
 
     <q-item-section>
       <div>
-        <div class="text-bold">{{ name }}</div>
+        <div class="row items-center">
+          <q-icon :name="isPrivate ? 'lock' : 'tag'" class="q-mr-xs"></q-icon>
+          <div class="text-bold">{{ name }}</div>
+        </div>
         <div class="text-grey-5">{{ lastMessage }}</div>
       </div>
     </q-item-section>
@@ -23,10 +26,13 @@ interface Props {
   id: string;
   name: string;
   lastMessage: string;
+  isPrivate?: boolean;
 }
 
-const props = withDefaults(defineProps<Props>(), {});
-const { id, name, lastMessage } = props;
+const props = withDefaults(defineProps<Props>(), {
+  isPrivate: false
+});
+const { id, name, lastMessage, isPrivate } = props;
 
 const route = useRoute();
 const active = computed(() => route.params.id === id);
