@@ -1,5 +1,9 @@
 // app global css in SCSS form
 
+body {
+  font-size: 16px;
+}
+
 .command-input {
   width: 100%;
   padding: 1rem;
@@ -17,4 +21,16 @@
 
 .q-item__section--avatar {
   min-width: unset;
+}
+
+.channel-message {
+  &:hover {
+    background: $dark;
+  }
+
+  &__username {
+  }
+
+  &__timestamp {
+  }
 }

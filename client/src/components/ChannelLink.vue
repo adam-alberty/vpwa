@@ -8,8 +8,8 @@
 
     <q-item-section>
       <div>
-        <div>{{ name }}</div>
-        <div class="text-grey-6">{{ lastMessage }}</div>
+        <div class="text-bold">{{ name }}</div>
+        <div class="text-grey-5">{{ lastMessage }}</div>
       </div>
     </q-item-section>
   </q-item>
