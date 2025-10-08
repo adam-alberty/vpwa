@@ -12,13 +12,12 @@
   <q-dialog v-model="show" backdrop-filter="brightness(70%)">
     <q-card style="min-width: 350px">
       <q-card-section>
-        <div class="text-h6">Account settings</div>
+        <div class="text-h6">Quick settings</div>
       </q-card-section>
 
-      <q-card-section class="q-pt-none">
+      <q-card-section class="q-pt-none q-gutter-y-md">
         <q-btn-toggle
           v-model="status"
-          class="q-pb-md"
           toggle-color="primary"
           :options="[
             { label: 'Online', value: 'online' },
@@ -27,7 +26,16 @@
           ]"
         />
 
-        <q-btn push size="lg" label="Logout" icon="logout" color="red" class="full-width" />
+        <q-btn
+          outline
+          to="/settings"
+          label="Account settings"
+          icon="settings"
+          color="secondary"
+          class="full-width"
+        />
+
+        <q-btn label="Logout" icon="logout" color="red" class="full-width" />
       </q-card-section>
     </q-card>
   </q-dialog>
@@ -37,6 +45,5 @@
 import { ref } from 'vue';
 
 const show = ref(false);
-
 const status = ref('online');
 </script>

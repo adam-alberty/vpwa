@@ -2,10 +2,16 @@
   <q-layout view="lHh lpR fFf">
     <q-header class="bg-dark text-white">
       <q-toolbar>
-        <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
+        <q-btn
+          dense
+          flat
+          round
+          :icon="leftDrawerOpen ? 'chevron_left' : 'chevron_right'"
+          @click="toggleLeftDrawer"
+        />
         <q-toolbar-title> Channel name </q-toolbar-title>
 
-        <user-settings-dialog />
+        <quick-settings-dialog />
       </q-toolbar>
     </q-header>
 
@@ -40,7 +46,12 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <q-page>
+        <router-view />
+        <div class="absolute-bottom">
+          <command-input />
+        </div>
+      </q-page>
     </q-page-container>
   </q-layout>
 </template>
@@ -48,8 +59,9 @@
 <script setup lang="ts">
 import ChannelInvite from 'src/components/ChannelInvite.vue';
 import ChannelLink from 'src/components/ChannelLink.vue';
+import CommandInput from 'src/components/CommandInput.vue';
 import NewChannelDialog from 'src/components/NewChannelDialog.vue';
-import UserSettingsDialog from 'src/components/UserSettingsDialog.vue';
+import QuickSettingsDialog from 'src/components/QuickSettingsDialog.vue';
 import { ref } from 'vue';
 
 const leftDrawerOpen = ref(false);
