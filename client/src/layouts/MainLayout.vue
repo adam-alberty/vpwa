@@ -1,9 +1,8 @@
 <template>
   <q-layout view="lHh lpR fFf">
-    <q-header class="bg-dark text-white">
+    <q-header class="bg-dark text-white" bordered>
       <q-toolbar>
         <q-btn
-          dense
           flat
           round
           :icon="leftDrawerOpen ? 'chevron_left' : 'chevron_right'"
