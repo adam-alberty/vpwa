@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import ChannelMessage from 'src/components/ChannelMessage.vue';
+import ChannelMessage from '@/components/ChannelMessage.vue';
 
 const messages = [
   {
