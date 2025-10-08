@@ -87,7 +87,7 @@ const channels = ref([
   },
   {
     channelId: 'fb9f9983-184f-42ad-b430-9c4125bbd70f',
-    channelName: 'design',
+    channelName: 'channel-with-very-very-long-name',
     lastMessage: 'lina: Pushed the latest Figma updates for the onboarding flow.',
   },
   {
