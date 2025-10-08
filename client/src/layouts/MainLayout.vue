@@ -8,7 +8,13 @@
           :icon="leftDrawerOpen ? 'chevron_left' : 'chevron_right'"
           @click="toggleLeftDrawer"
         />
-        <q-toolbar-title> Channel name </q-toolbar-title>
+        <q-toolbar-title>
+          <Channel-Name
+            :name="channelStore.currentChannel?.name"
+            :isPrivate="channelStore.currentChannel?.isPrivate"
+            highlight
+          />
+        </q-toolbar-title>
 
         <quick-settings-dialog />
       </q-toolbar>
@@ -27,16 +33,16 @@
           <new-channel-dialog />
         </div>
         <q-list>
-          <!-- <channel-invite
-            v-for="invite in invites"
+          <channel-invite
+            v-for="invite in channelStore.invites"
             :key="invite.channelId"
-            :id="invite.channelId"
-            :name="invite.channelName"
-          /> -->
+            v-bind="invite"
+          />
           <channel-link
-            v-for="channel in channels"
+            v-for="channel in channelStore.channels"
             :key="channel.id"
             v-bind="channel"
+            @click="changeChannel(channel)"
           />
         </q-list>
       </q-scroll-area>
@@ -54,23 +60,35 @@
 </template>
 
 <script setup lang="ts">
+import ChannelName from '@/components/ChannelName.vue';
 import ChannelInvite from '@/components/ChannelInvite.vue';
-import ChannelLink from '@/components/ChannelLink.vue';
+import ChannelLink from 'src/components/Channel.vue';
 import CommandInput from '@/components/CommandInput.vue';
 import NewChannelDialog from '@/components/NewChannelDialog.vue';
 import QuickSettingsDialog from '@/components/QuickSettingsDialog.vue';
-import { ref } from 'vue';
+
+import { computed, ref } from 'vue';
+import { useChannelStore } from '@/stores/channel-store';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const channelStore = useChannelStore();
 
 const leftDrawerOpen = ref(false);
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
 
-const invites = ref([{ channelId: 'uuid', channelName: 'Some name' }]);
-const channels = ref([] as Channel[]);
+import { getRandomChannels, getRandomMessages } from 'src/stores/mock.js'; // TODO: Replace with API Call
+channelStore.channels = getRandomChannels(18);
+changeChannel(channelStore.channels[0]);
 
-console.log('Main')
-
-import { getRandomChannels } from 'src/stores/mock.js'; // TODO: Replace with API Call
-channels.value = getRandomChannels(18);
+function changeChannel(toChannel: Channel) {
+  if (!toChannel.messages?.length) {
+    toChannel.messages = getRandomMessages(20, toChannel.id.charCodeAt(0)); // TODO: Replace with API Call
+  }
+  channelStore.currentChannel = toChannel
+  router.push({ name: 'Channels', params: { id: toChannel.id } }).catch(console.error);
+}
 </script>

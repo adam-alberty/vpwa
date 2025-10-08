@@ -1,13 +1,20 @@
 <template>
-  <div class="channel-message q-pa-md q-px-lg">
-    <div class="row q-gutter-sm">
-      <span class="channel-message__username text-bold">{{ username }}</span>
-      <span class="channel-message__timestamp text-grey-5"
-        >{{ datetime.toLocaleDateString() }} {{ datetime.toLocaleTimeString() }}</span
-      >
-    </div>
+  <div class="channel-message q-pa-md q-px-lg row">
+    <q-item-section avatar>
+      <q-avatar size="32px" color="grey-7" text-color="white"
+        >{{ username.charAt(0).toUpperCase() }}
+      </q-avatar>
+    </q-item-section>
     <div>
-      {{ text }}
+      <div class="row q-gutter-sm">
+        <span class="channel-message__username text-bold">{{ username }}</span>
+        <span class="channel-message__timestamp text-grey-5"
+          >{{ datetime.toLocaleDateString() }} {{ datetime.toLocaleTimeString() }}</span
+        >
+      </div>
+      <div>
+        {{ text }}
+      </div>
     </div>
   </div>
 </template>

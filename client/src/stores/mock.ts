@@ -1,4 +1,4 @@
-// Temp
+// Temp, remove when needed
 export const messages: Message[] = [
   {
     id: 'c1e1e2f7-4a2a-453e-b5f7-8d964fa9c0a1',
@@ -97,21 +97,25 @@ export const channels: Channel[] = [
     id: 'd8f0c9e1-b5f4-49b6-95d2-91f5b81f3e31',
     name: 'frontend-dev',
     lastMessage: 'alex: Can someone review my PR for the navbar updates?',
+    isPrivate: true,
   },
   {
     id: 'c24b9b97-04f3-4479-b22e-52c1dbd8ad1d',
     name: 'product-roadmap',
     lastMessage: 'maria: I’ve updated the Q4 goals in the doc, feedback welcome.',
+    isPrivate: true,
   },
   {
     id: 'a56c42f9-319c-4e95-9cf6-df6b0a4e35c2',
     name: 'general',
     lastMessage: 'josh: Reminder: All hands at 2pm today!',
+    isPrivate: true,
   },
   {
     id: 'fb9f9983-184f-42ad-b430-9c4125bbd70f',
     name: 'channel-with-very-very-long-name',
     lastMessage: 'lina: Pushed the latest Figma updates for the onboarding flow.',
+    isPrivate: true,
   },
   {
     id: '1a3c3dd3-6a76-4f1d-9b49-4565c69e30ff',

@@ -1,9 +1,9 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 
-export const useCounterStore = defineStore('channel', {
+export const useChannelStore = defineStore('channel', {
   state: () => ({
     channels: [] as Channel[],
-    invites: [] as ChannelInvite[],
+    invites: [{ channelId: 'uuid', name: 'Some name' }] as ChannelInvite[],
     currentChannel: null as Channel | null,
   }),
 
@@ -13,5 +13,5 @@ export const useCounterStore = defineStore('channel', {
 });
 
 if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useCounterStore, import.meta.hot));
+  import.meta.hot.accept(acceptHMRUpdate(useChannelStore, import.meta.hot));
 }
