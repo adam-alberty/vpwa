@@ -80,13 +80,13 @@ function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
 
-import { getRandomChannels, getRandomMessages } from 'src/stores/mock.js'; // TODO: Replace with API Call,
+import { getRandomChannels, getRandomMessages } from 'src/stores/mock.js'; // TODO: Replace with API Call, maybe move to store as action
 channelStore.channels = getRandomChannels(18);
 changeChannel(channelStore.channels[0]);
 
 function changeChannel(toChannel: Channel) {
   if (!toChannel.messages?.length) {
-    toChannel.messages = getRandomMessages(20, toChannel.id.charCodeAt(0)); // TODO: Replace with API Call
+    toChannel.messages = getRandomMessages(20, toChannel.id.charCodeAt(0)); // TODO: Replace with API Call, maybe move to store as action
   }
   channelStore.currentChannel = toChannel
   router.push({ name: 'Channels', params: { id: toChannel.id } }).catch(console.error);

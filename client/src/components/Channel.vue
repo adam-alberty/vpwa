@@ -2,7 +2,7 @@
   <q-item clickable :class="active && `bg-black`">
     <q-item-section>
       <div>
-        <Channel-Name v-bind="props" />
+        <Channel-Name v-bind="props" :highlight="newMessageCount > 0" />
         <div class="text-grey-5">{{ lastMessage }}</div>
       </div>
     </q-item-section>
@@ -19,7 +19,7 @@ import type { Channel } from 'src/types/global';
 const props = withDefaults(defineProps<Channel>(), {
   isPrivate: false
 });
-const { id, name, lastMessage, isPrivate } = props;
+const { id, name, lastMessage, isPrivate, newMessageCount } = props;
 
 const channelStore = useChannelStore();
 const active = computed(() => channelStore.currentChannel?.id == id);
