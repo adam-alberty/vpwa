@@ -6,8 +6,8 @@
         <Channel-Name v-bind="props" highlight />
 
         <div class="row q-gutter-x-sm">
-          <q-btn size="sm" dense flat label="Accept" icon="check" class="bg-green-7 text-white q-pr-sm" />
-          <q-btn size="sm" dense flat label="Reject" icon="close" class="bg-red-5 text-white q-pr-sm" />
+          <q-btn size="sm" dense flat label="Accept" icon="check" class="bg-green-7 text-white q-pr-sm" @click="accept" />
+          <q-btn size="sm" dense flat label="Reject" icon="close" class="bg-red-5 text-white q-pr-sm" @click="reject"/>
         </div>
       </div>
     </q-item-section>
@@ -22,4 +22,17 @@ const props = withDefaults(defineProps<ChannelInvite>(), {
   isPrivate: false
 });
 const { name, isPrivate } = props;
+
+const emit = defineEmits<{
+  (e: 'accept', value: ChannelInvite): void
+  (e: 'reject', value: ChannelInvite): void
+}>()
+
+function accept() {
+  emit('accept', props);
+}
+
+function reject() {
+  emit('reject', props);
+}
 </script>

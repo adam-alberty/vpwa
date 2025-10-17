@@ -28,17 +28,19 @@
         >
           <div class="row items-center q-gutter-x-sm">
             <span class="q-ma-none">Channels</span>
-            <q-badge color="primary" text-color="white" rounded> 3 </q-badge>
+            <!-- <q-badge color="primary" text-color="white" rounded> 3 </q-badge> -->
           </div>
           <new-channel-dialog />
         </div>
         <q-list>
-          <channel-invite
+          <Channel-Invite-Card
             v-for="invite in channelStore.invites"
             :key="invite.channelId"
             v-bind="invite"
+            @reject="rejectInvite(invite)"
+            @accept="acceptInvite(invite)"
           />
-          <channel-link
+          <Channel-Card
             v-for="channel in channelStore.channels"
             :key="channel.id"
             v-bind="channel"
@@ -61,8 +63,8 @@
 
 <script setup lang="ts">
 import ChannelName from '@/components/ChannelName.vue';
-import ChannelInvite from '@/components/ChannelInvite.vue';
-import ChannelLink from 'src/components/Channel.vue';
+import ChannelInviteCard from 'src/components/ChannelInviteCard.vue';
+import ChannelCard from 'src/components/ChannelCard.vue';
 import ChatInput from 'src/components/ChatInput.vue';
 import NewChannelDialog from '@/components/NewChannelDialog.vue';
 import QuickSettingsDialog from '@/components/QuickSettingsDialog.vue';
@@ -95,5 +97,19 @@ function changeChannel(toChannel: Channel) {
 function sendMessage(msg: string) {
   // TODO: Send to BE and add to channel based on response
   channelStore.currentChannel?.messages?.push({ id: Date.now().toString(), text: msg, username: 'You', timestamp: Date.now() });
+}
+
+function acceptInvite(invite: ChannelInvite) {
+  // TODO: Send to BE and update invites based on response...
+  channelStore.invites = channelStore.invites.filter((i) => i.channelId !== invite.channelId);
+
+  const invitedChannel: Channel = { id: invite.channelId, name: invite.name, isPrivate: invite.isPrivate, latestMessage: "Somebody: Hey there, how is it going?" }; // (from BE)
+  channelStore.channels.unshift(invitedChannel);
+  changeChannel(invitedChannel);
+}
+
+function rejectInvite(invite: ChannelInvite) {
+  // TODO: Send to BE and update invites based on response...
+  channelStore.invites = channelStore.invites.filter((i) => i.channelId !== invite.channelId);
 }
 </script>

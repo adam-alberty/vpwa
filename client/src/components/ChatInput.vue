@@ -20,12 +20,12 @@ const emit = defineEmits<{
   (e: 'submit', value?: string): void
 }>()
 
-const onInput = (event: Event) => {
+function onInput(event: Event) {
   const target = event.target as HTMLTextAreaElement
   emit('update:modelValue', target.value.trim())
 }
 
-const onEnter = (event: KeyboardEvent) => {
+function onEnter(event: KeyboardEvent) {
   if (event.shiftKey || !props.modelValue?.length)
     return
   emit('submit', props.modelValue)

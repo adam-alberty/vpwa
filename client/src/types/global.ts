@@ -1,7 +1,7 @@
 export interface Channel {
   id: string;
   name: string;
-  lastMessage: string;
+  latestMessage: string;
   newMessageCount?: number;
   messages?: Message[];
   isPrivate?: boolean;

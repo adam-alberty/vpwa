@@ -20,7 +20,7 @@ const channelStore = useChannelStore();
 const scrollRef = ref<QScrollArea | null>(null)
 watch(() => channelStore.currentChannel?.messages.length, (newValue, oldValue) => {
   if (newValue > oldValue) {
-    setTimeout(() => scrollRef.value!.setScrollPercentage('vertical', 1, 200), 10)
+    setTimeout(() => scrollRef.value.setScrollPercentage('vertical', 1, 200), 10)
   }
 })
 </script>
