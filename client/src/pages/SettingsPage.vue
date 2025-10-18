@@ -1,12 +1,12 @@
 <template>
   <div class="row items-center q-my-lg">
-    <q-btn to="/" size="lg" round class="q-ma-none q-mr-lg">
-      <q-icon size="xl" name="arrow_back" />
+    <q-btn to="/" size="lg" round class="q-ma-none q-mr-sm">
+      <q-icon size="lg" name="arrow_back" />
     </q-btn>
-    <h1 class="q-ma-none">Settings</h1>
+    <h1 class="q-ma-none text-h4">Settings</h1>
   </div>
 
-  <h2>Account Information</h2>
+  <h2 class="text-h5 q-pb-md">Account Information</h2>
 
   <q-form @submit="onSubmit" class="q-gutter-y-md full-width">
     <q-input
@@ -37,10 +37,12 @@
       lazy-rules
       :rules="[(val) => (val && val.length > 0) || 'Please type something']"
     />
-    <q-btn push size="lg" label="Update info" type="submit" color="primary" class="full-width" />
+    <q-btn label="Update info" type="submit" color="primary" class="full-width" />
   </q-form>
 
-  <h2>Password settings</h2>
+  <q-separator class="q-my-xl" />
+
+  <h2 class="text-h5 q-pb-md">Password settings</h2>
 
   <q-form @submit="onSubmit" class="q-gutter-y-md full-width">
     <q-input
@@ -59,14 +61,7 @@
       :rules="[(val) => (val && val.length > 0) || 'Please type something']"
     />
 
-    <q-btn
-      push
-      size="lg"
-      label="Update password"
-      type="submit"
-      color="primary"
-      class="full-width"
-    />
+    <q-btn label="Update password" type="submit" color="primary" class="full-width" />
   </q-form>
 </template>
 

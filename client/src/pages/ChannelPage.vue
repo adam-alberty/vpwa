@@ -11,16 +11,19 @@
 <script setup lang="ts">
 import ChannelMessage from '@/components/ChannelMessage.vue';
 
-import { QScrollArea } from 'quasar'
+import { QScrollArea } from 'quasar';
 import { useChannelStore } from 'src/stores/channel-store';
-import { computed, nextTick, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 
 const channelStore = useChannelStore();
 
-const scrollRef = ref<QScrollArea | null>(null)
-watch(() => channelStore.currentChannel?.messages.length, (newValue, oldValue) => {
-  if (newValue > oldValue) {
-    setTimeout(() => scrollRef.value.setScrollPercentage('vertical', 1, 200), 10)
-  }
-})
+const scrollRef = ref<QScrollArea | null>(null);
+watch(
+  () => channelStore.currentChannel?.messages.length,
+  (newValue, oldValue) => {
+    if (newValue > oldValue) {
+      setTimeout(() => scrollRef.value.setScrollPercentage('vertical', 1, 200), 10);
+    }
+  },
+);
 </script>
