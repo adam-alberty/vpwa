@@ -54,7 +54,11 @@
       <q-page>
         <router-view />
         <div class="absolute-bottom">
-          <Chat-Input v-model="channelStore.currentMessage" @submit="sendMessage" />
+          <Chat-Input v-model="channelStore.currentMessage"
+            :commands="commands"
+            @submit="sendMessage"
+            @command="handleCommand"
+          />
         </div>
       </q-page>
     </q-page-container>
@@ -85,6 +89,49 @@ function toggleLeftDrawer() {
 import { getRandomChannels, getRandomMessages } from 'src/stores/mock.js'; // TODO: Replace with API Call, maybe move to store as action
 channelStore.channels = getRandomChannels(18);
 changeChannel(channelStore.channels[0]);
+
+const commands = [ // Fetch from BE based on channel (most likely)
+  'list',
+
+  'invite',
+  'join',
+  'kick',
+  'revoke',
+
+  'quit',
+  'cancel'
+]
+
+function handleCommand(command: string, args: string[]) {
+  switch (command) {
+    case 'list':
+      console.log('List')
+      break;
+    case 'invite':
+      console.log('Invite')
+      break;
+    case 'join':
+      console.log('Join')
+      break;
+    case 'kick':
+      console.log('Kick')
+      break;
+    case 'revoke':
+      console.log('Revoke')
+      break;
+    case 'quit':
+      console.log('Quit')
+      break;
+    case 'cancel':
+      leaveChannel(channelStore.currentChannel)
+      break;
+  }
+}
+
+function leaveChannel(channel: Channel) {
+  channelStore.channels = channelStore.channels.filter((c) => c.id != channel?.id);
+  changeChannel(channelStore.channels[0]);
+}
 
 function changeChannel(toChannel: Channel) {
   if (!toChannel.messages?.length) {
