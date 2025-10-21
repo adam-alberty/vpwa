@@ -16,6 +16,9 @@
           />
         </q-toolbar-title>
 
+        <div class="q-mx-sm">
+          <q-btn flat round dense icon="account_circle" :color="rightDrawerOpen ? 'white' : 'grey-5'" @click="toggleRightDrawer" />
+        </div>
         <quick-settings-dialog />
       </q-toolbar>
     </q-header>
@@ -50,6 +53,26 @@
       </q-scroll-area>
     </q-drawer>
 
+    <q-drawer show-if-above v-model="rightDrawerOpen" side="right" bordered>
+      <q-scroll-area style="height: 100%">
+        <div
+          class="row items-center justify-between q-gutter-x-sm q-item text-bold text-h6 text-primary bg-dark"
+          style="position: sticky; top: 0px; z-index: 1"
+        >
+          <div class="row items-center q-gutter-x-sm">
+            <span class="q-ma-none">Channel members</span>
+          </div>
+        </div>
+        <q-list class="q-pa-sm">
+          <User-Member-Card
+            v-for="user in members"
+            :key="user.id"
+            v-bind="user"
+          />
+        </q-list>
+      </q-scroll-area>
+    </q-drawer>
+
     <q-page-container>
       <q-page>
         <router-view />
@@ -69,6 +92,7 @@
 import ChannelName from '@/components/ChannelName.vue';
 import ChannelInviteCard from 'src/components/ChannelInviteCard.vue';
 import ChannelCard from 'src/components/ChannelCard.vue';
+import UserMemberCard from 'src/components/UserMemberCard.vue';
 import ChatInput from 'src/components/ChatInput.vue';
 import NewChannelDialog from '@/components/NewChannelDialog.vue';
 import QuickSettingsDialog from '@/components/QuickSettingsDialog.vue';
@@ -88,9 +112,20 @@ function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
 
+const rightDrawerOpen = ref(false);
+function toggleRightDrawer() {
+  rightDrawerOpen.value = !rightDrawerOpen.value;
+}
+
 import { getRandomChannels, getRandomMessages } from 'src/stores/mock.js'; // TODO: Replace with API Call, maybe move to store as action
 channelStore.channels = getRandomChannels(18);
 changeChannel(channelStore.channels[0]);
+
+const members: BasicUser[] = [ // TODO: Integrate to channel
+  { id: '1', username: 'You', status: 'online' },
+  { id: '2', username: 'John Doe', status: 'offline' },
+  { id: '3', username: 'Jane Doe', status: "dnd" }
+]
 
 const commands = [ // Fetch from BE based on channel (most likely)
   'list',
@@ -107,7 +142,7 @@ const commands = [ // Fetch from BE based on channel (most likely)
 function handleCommand(command: string, args: string[]) {
   switch (command) {
     case 'list':
-      console.log('List')
+      toggleRightDrawer()
       break;
     case 'invite':
       console.log('Invite')

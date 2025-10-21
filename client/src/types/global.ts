@@ -19,3 +19,9 @@ export interface Message {
   text: string;
   timestamp: string | number | Date;
 }
+
+export interface BasicUser {
+  id: string;
+  username: string;
+  status: "online" | "offline" | "dnd";
+}
