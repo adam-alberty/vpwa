@@ -12,8 +12,17 @@
           >{{ datetime.toLocaleDateString() }} {{ datetime.toLocaleTimeString() }}</span
         >
       </div>
+
       <div>
-        {{ text }}
+        <template v-for="(part, i) in txtParts" :key="i">
+          <span
+            v-if="part.isMention"
+            class="mention rounded-borders"
+          >
+            {{ part.value }}
+          </span>
+          <span v-else>{{ part.value }}</span>
+        </template>
       </div>
     </div>
   </div>
@@ -27,4 +36,21 @@ const props = withDefaults(defineProps<Message>(), {});
 const { username, text, timestamp } = props;
 
 const datetime = computed(() => new Date(timestamp));
+
+const txtParts = computed(() => {
+  const tokens = text.split(/(\s+)/)
+  return tokens.map(token => {
+    const isMention = token.startsWith('@') && token.length > 1 && !/\s/.test(token) // Strts w @ and ends w space
+    // TODO: Mby check if the user / mention exists...
+    return { value: token, isMention }
+  })
+})
 </script>
+
+<style lang="sass" scoped>
+.mention
+  color: #00bcff
+  font-weight: 600
+  background-color: rgba(0, 188, 235, 0.15)
+  padding: 0 4px
+</style>
