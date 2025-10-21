@@ -1,7 +1,7 @@
 <template>
   <textarea
     class="chat-input bg-dark text-white full-width q-pa-md"
-    :class="{'text-italic text-red-3': command, 'text-green-4': validCommand}"
+    :class="{'text-italic': command, 'text-red-3': command && !validCommand}"
     :value="modelValue"
     placeholder="Type a message"
     @input="onInput"
@@ -41,7 +41,7 @@ const validCommand = computed(() => {
 const commandArgs = computed(() => {
   if (!command.value)
     return undefined
-  return value.value?.substring(command.value.length + 1).trim().split(' +')
+  return value.value?.substring(command.value.length + 1).split(/ +/).filter(Boolean)
 })
 
 function onInput(event: Event) {
@@ -52,7 +52,11 @@ function onInput(event: Event) {
 
 function onTab(event: KeyboardEvent) {
   if (command.value && !validCommand.value) {
-    value.value = `/${props.commands?.find(cmd => cmd.startsWith(command.value))}`
+    const autoComplete = props.commands?.find(cmd => cmd.startsWith(command.value))
+    if (!autoComplete)
+      return
+
+    value.value = `/${autoComplete}`
     emit('update:modelValue', value.value)
   }
 }

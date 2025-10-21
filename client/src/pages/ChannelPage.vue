@@ -1,5 +1,6 @@
 <template>
   <q-scroll-area class="" style="height: calc(100vh - 180px)" ref="scrollRef">
+    <p class="text-center q-mt-lg g-mb-lg">This is the beginning of <b>{{channelStore.currentChannel?.name}}</b>...</p>
     <channel-message
       v-for="message in channelStore.currentChannel?.messages"
       :key="message.id"

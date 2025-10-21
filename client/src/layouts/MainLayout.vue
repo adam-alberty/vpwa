@@ -30,7 +30,7 @@
             <span class="q-ma-none">Channels</span>
             <!-- <q-badge color="primary" text-color="white" rounded> 3 </q-badge> -->
           </div>
-          <new-channel-dialog />
+          <new-channel-dialog ref="newChannelDialog" @create="createChannel" />
         </div>
         <q-list>
           <Channel-Invite-Card
@@ -81,6 +81,8 @@ const router = useRouter();
 
 const channelStore = useChannelStore();
 
+const newChannelDialog = ref(null);
+
 const leftDrawerOpen = ref(false);
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
@@ -111,7 +113,8 @@ function handleCommand(command: string, args: string[]) {
       console.log('Invite')
       break;
     case 'join':
-      console.log('Join')
+      if (!args.length)
+        return newChannelDialog.value?.open()
       break;
     case 'kick':
       console.log('Kick')
@@ -128,13 +131,19 @@ function handleCommand(command: string, args: string[]) {
   }
 }
 
+function createChannel(name: string, type: string) {
+  // TODO: Send to BE and update channels based on response...
+  channelStore.channels.unshift({ id: Date.now().toString(), name: name.replaceAll(' ', '-'), isPrivate: type == 'private', messages: [], latestMessage: '' });
+  changeChannel(channelStore.channels[0], false);
+}
+
 function leaveChannel(channel: Channel) {
   channelStore.channels = channelStore.channels.filter((c) => c.id != channel?.id);
   changeChannel(channelStore.channels[0]);
 }
 
-function changeChannel(toChannel: Channel) {
-  if (!toChannel.messages?.length) {
+function changeChannel(toChannel: Channel, fetchMessages = true) {
+  if (fetchMessages && !toChannel.messages?.length) {
     toChannel.messages = getRandomMessages(20, toChannel.id.charCodeAt(0)); // TODO: Replace with API Call, maybe move to store as action
   }
   channelStore.currentChannel = toChannel

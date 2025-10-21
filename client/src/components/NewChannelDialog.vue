@@ -8,14 +8,17 @@
       </q-card-section>
 
       <q-card-section class="q-pt-none">
-        <q-form @submit="onSubmit" class="q-gutter-y-md full-width">
+        <q-form @submit="onSubmit" class="q-gutter-y-md full-width" ref="formRef">
           <q-input
             filled
             autofocus
             v-model="channelName"
             label="Channel name *"
             lazy-rules
-            :rules="[(val) => (val && val.length > 0) || 'Please type something']"
+            :rules="[
+              (val) => (val && val.length > 0) || 'Please type something',
+              (val) => (val && val.length <= 30) || `Channel name is ${val.length - 30} characters over the limit`,
+            ]"
           />
 
           <q-btn-toggle
@@ -26,13 +29,13 @@
               { label: 'Public', value: 'public' },
             ]"
           />
+
+          <q-card-actions align="right" class="text-primary">
+            <q-btn flat label="Cancel" v-close-popup />
+            <q-btn flat label="Create Channel" type="submit" />
+          </q-card-actions>
         </q-form>
       </q-card-section>
-
-      <q-card-actions align="right" class="text-primary">
-        <q-btn flat label="Cancel" v-close-popup />
-        <q-btn flat label="Create Channel" v-close-popup />
-      </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
@@ -44,6 +47,37 @@ const show = ref(false);
 
 const channelName = ref('');
 const channelType = ref('private');
+const formRef = ref(null)
 
-function onSubmit() {}
+const emit = defineEmits<{
+  (e: 'create', name: string, type: string): void
+}>();
+
+async function onSubmit() {
+  const valid = await formRef.value.validate()
+  if (!valid) {
+    console.log('Form invalid')
+    return
+  }
+
+  emit('create', channelName.value, channelType.value);
+
+  channelName.value = '';
+  channelType.value = 'private';
+
+  show.value = false;
+}
+
+function open() {
+  show.value = true;
+}
+
+function close() {
+  show.value = false;
+}
+
+defineExpose({
+  open,
+  close,
+});
 </script>
