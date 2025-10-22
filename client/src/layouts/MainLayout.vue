@@ -98,7 +98,7 @@ import NewChannelDialog from '@/components/NewChannelDialog.vue';
 import QuickSettingsDialog from '@/components/QuickSettingsDialog.vue';
 
 import { computed, ref } from 'vue';
-import { useChannelStore } from '@/stores/channel-store';
+import { useChannelStore } from '@/stores/channel.store';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -117,14 +117,14 @@ function toggleRightDrawer() {
   rightDrawerOpen.value = !rightDrawerOpen.value;
 }
 
-import { getRandomChannels, getRandomMessages } from 'src/stores/mock.js'; // TODO: Replace with API Call, maybe move to store as action
+import { getRandomChannels, getRandomMessages } from '@/stores/mock.js'; // TODO: Replace with API Call, maybe move to store as action
 channelStore.channels = getRandomChannels(18);
 changeChannel(channelStore.channels[0]);
 
 const members: BasicUser[] = [ // TODO: Integrate to channel
   { id: '1', username: 'You', status: 'online' },
-  { id: '2', username: 'John Doe', status: 'offline' },
-  { id: '3', username: 'Jane Doe', status: "dnd" }
+  { id: '2', username: 'bob', status: 'offline' },
+  { id: '3', username: 'alice', status: "dnd" }
 ]
 
 const commands = [ // Fetch from BE based on channel (most likely)

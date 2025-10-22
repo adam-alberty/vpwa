@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import ChannelName from './ChannelName.vue';
 
-import type { ChannelInvite } from 'src/types/global';
+import type { ChannelInvite } from '@/types/global';
 const props = withDefaults(defineProps<ChannelInvite>(), {
   isPrivate: false
 });

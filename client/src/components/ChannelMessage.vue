@@ -31,7 +31,7 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 
-import type { Message } from "src/types/global";
+import type { Message } from "@/types/global";
 const props = withDefaults(defineProps<Message>(), {});
 const { username, text, timestamp } = props;
 

@@ -13,9 +13,9 @@
 import ChannelName from './ChannelName.vue';
 
 import { computed } from 'vue';
-import { useChannelStore } from 'src/stores/channel-store';
+import { useChannelStore } from '@/stores/channel.store';
 
-import type { Channel } from 'src/types/global';
+import type { Channel } from '@/types/global';
 const props = withDefaults(defineProps<Channel>(), {
   isPrivate: false
 });

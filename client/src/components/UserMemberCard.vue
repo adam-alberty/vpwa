@@ -16,13 +16,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import type { BasicUser } from 'src/types/global';
+import type { BasicUser } from '@/types/global';
 const props = defineProps<BasicUser>()
 const { id , username, status } = props
-
-const initials = computed(() =>
-  username.charAt(0).toUpperCase()
-)
 </script>
 
 <style lang="sass" scoped>

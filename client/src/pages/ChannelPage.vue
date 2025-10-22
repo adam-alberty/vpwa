@@ -13,7 +13,7 @@
 import ChannelMessage from '@/components/ChannelMessage.vue';
 
 import { QScrollArea } from 'quasar';
-import { useChannelStore } from 'src/stores/channel-store';
+import { useChannelStore } from '@/stores/channel.store';
 import { ref, watch } from 'vue';
 
 const channelStore = useChannelStore();
