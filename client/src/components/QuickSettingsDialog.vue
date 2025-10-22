@@ -41,7 +41,7 @@
           class="full-width"
         />
 
-        <q-btn label="Logout" icon="logout" color="red" class="full-width" />
+        <q-btn label="Logout" icon="logout" color="red" class="full-width" @click="logout" />
       </q-card-section>
     </q-card>
   </q-dialog>
@@ -49,7 +49,14 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const show = ref(false);
 const status = ref('online');
+
+function logout() {
+  router.push({ name: 'Login' }).catch(console.error);
+}
 </script>

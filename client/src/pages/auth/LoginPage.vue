@@ -32,6 +32,9 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const formRef = ref();
 const form = reactive({
@@ -53,6 +56,8 @@ async function onSubmit() {
       password: form.password,
     });
     console.log(data);
+
+     router.push('/').catch(console.error);
   } catch (err) {
     console.log(err);
     errorMessage.value = 'Could not log in';
