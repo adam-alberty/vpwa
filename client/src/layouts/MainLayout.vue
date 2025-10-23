@@ -20,7 +20,7 @@
 
         <div class="row q-gutter-sm">
           <div>
-            <q-btn flat round dense icon="group_remove" />
+            <q-btn color="red-4" flat round dense icon="group_remove" />
             <q-tooltip>Leave channel</q-tooltip>
           </div>
 

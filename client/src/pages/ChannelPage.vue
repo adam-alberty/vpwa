@@ -1,6 +1,6 @@
 <template>
   <q-scroll-area class="" style="height: calc(100vh - 110px)" ref="scrollRef">
-    <p class="text-center q-mt-lg g-mb-lg">
+    <p class="text-center q-mt-lg g-mb-lg text-grey-6">
       This is the beginning of <b>{{ channelStore.currentChannel?.name }}</b
       >...
     </p>
