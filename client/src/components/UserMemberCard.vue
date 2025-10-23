@@ -1,7 +1,8 @@
 <template>
-  <q-card class="user-member-card row items-center q-pa-sm q-mb-sm">
+  <q-card class="user-member-card row items-center q-pa-sm no-border no-shadow">
     <q-item-section avatar>
-      <q-avatar size="36px" color="grey-7" text-color="white">{{ username.charAt(0).toUpperCase() }}
+      <q-avatar size="36px" color="grey-7" text-color="white"
+        >{{ username.charAt(0).toUpperCase() }}
         <span class="status-dot absolute" :class="status"></span>
       </q-avatar>
     </q-item-section>
@@ -14,15 +15,20 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed } from 'vue';
 
 import type { BasicUser } from '@/types/global';
-const props = defineProps<BasicUser>()
-const { id , username, status } = props
+const props = defineProps<BasicUser>();
+const { id, username, status } = props;
 </script>
 
 <style lang="sass" scoped>
 .user-member-card
+  border-radius: 0.7rem
+
+  &:hover
+    background-color: $dark-page
+
   .status-dot
     bottom: 0
     right: 0

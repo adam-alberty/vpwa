@@ -7,7 +7,9 @@
           round
           :icon="leftDrawerOpen ? 'chevron_left' : 'chevron_right'"
           @click="toggleLeftDrawer"
-        />
+        >
+          <q-tooltip>{{ leftDrawerOpen ? 'Hide channels' : 'show channels' }}</q-tooltip>
+        </q-btn>
         <q-toolbar-title>
           <Channel-Name
             :name="channelStore.currentChannel?.name"
@@ -31,7 +33,9 @@
               :color="rightDrawerOpen ? 'white' : 'grey-5'"
               @click="toggleRightDrawer"
             />
-            <q-tooltip>Show member list</q-tooltip>
+            <q-tooltip>
+              {{ rightDrawerOpen ? 'Hide member list' : 'Show member list' }}
+            </q-tooltip>
           </div>
         </div>
       </q-toolbar>
@@ -41,11 +45,17 @@
       <q-scroll-area style="height: calc(100% - 60px)">
         <div
           class="row items-center justify-between q-gutter-x-sm q-item text-bold text-h6 text-primary bg-dark"
-          style="position: sticky; top: 0px; z-index: 1"
+          style="
+            position: sticky;
+            top: 0px;
+            z-index: 1;
+            height: 51px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+            line-height: 1;
+          "
         >
           <div class="row items-center q-gutter-x-sm">
             <span class="q-ma-none">Channels</span>
-            <!-- <q-badge color="primary" text-color="white" rounded> 3 </q-badge> -->
           </div>
           <new-channel-dialog ref="newChannelDialog" @create="createChannel" />
         </div>

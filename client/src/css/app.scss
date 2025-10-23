@@ -37,6 +37,10 @@ body {
   background-color: $dark;
   cursor: pointer;
 
+  &:hover {
+    background-color: #313131;
+  }
+
   -webkit-appearance: none;
   border-radius: 0;
   text-align: inherit;
@@ -56,6 +60,12 @@ body {
     margin-left: 0.8rem;
     line-height: 1;
   }
+}
+
+.q-card {
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.28);
 }
 
 .chat-input {

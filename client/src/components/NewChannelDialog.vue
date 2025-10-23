@@ -1,5 +1,7 @@
 <template>
-  <q-btn flat round icon="add" color="secondary" @click="show = true" />
+  <q-btn flat dense round icon="add" color="secondary" @click="show = true">
+    <q-tooltip>Add channel</q-tooltip>
+  </q-btn>
 
   <q-dialog v-model="show" backdrop-filter="brightness(70%)">
     <q-card style="min-width: 350px">
@@ -17,7 +19,9 @@
             lazy-rules
             :rules="[
               (val) => (val && val.length > 0) || 'Please type something',
-              (val) => (val && val.length <= 30) || `Channel name is ${val.length - 30} characters over the limit`,
+              (val) =>
+                (val && val.length <= 30) ||
+                `Channel name is ${val.length - 30} characters over the limit`,
             ]"
           />
 
@@ -47,17 +51,17 @@ const show = ref(false);
 
 const channelName = ref('');
 const channelType = ref('private');
-const formRef = ref(null)
+const formRef = ref(null);
 
 const emit = defineEmits<{
-  (e: 'create', name: string, type: string): void
+  (e: 'create', name: string, type: string): void;
 }>();
 
 async function onSubmit() {
-  const valid = await formRef.value.validate()
+  const valid = await formRef.value.validate();
   if (!valid) {
-    console.log('Form invalid')
-    return
+    console.log('Form invalid');
+    return;
   }
 
   emit('create', channelName.value, channelType.value);
