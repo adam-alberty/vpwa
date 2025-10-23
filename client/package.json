@@ -2,10 +2,12 @@
   "name": "client",
   "version": "0.0.1",
   "description": "Chat client",
-  "productName": "Chat Client",
-  "author": "adam-alberty <alberty.adam@proton.me>",
+  "productName": "Chat App",
   "type": "module",
   "private": true,
+  "contributors": [
+    "adam-alberty <alberty.adam@proton.me>"
+  ],
   "scripts": {
     "lint": "eslint -c ./eslint.config.js \"./src*/**/*.{ts,js,cjs,mjs,vue}\"",
     "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
