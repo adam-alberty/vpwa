@@ -1,5 +1,5 @@
 <template>
-  <q-item clickable :class="active && `bg-black`">
+  <q-item clickable :style="active && `background-color: var(--q-dark-page)`">
     <q-item-section>
       <div>
         <Channel-Name v-bind="props" :highlight="newMessageCount > 0" />
@@ -17,7 +17,7 @@ import { useChannelStore } from '@/stores/channel.store';
 
 import type { Channel } from '@/types/global';
 const props = withDefaults(defineProps<Channel>(), {
-  isPrivate: false
+  isPrivate: false,
 });
 const { id, name, latestMessage, isPrivate, newMessageCount } = props;
 

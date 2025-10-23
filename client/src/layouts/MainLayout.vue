@@ -16,15 +16,29 @@
           />
         </q-toolbar-title>
 
-        <div class="q-mx-sm">
-          <q-btn flat round dense icon="account_circle" :color="rightDrawerOpen ? 'white' : 'grey-5'" @click="toggleRightDrawer" />
+        <div class="row q-gutter-sm">
+          <div>
+            <q-btn flat round dense icon="group_remove" />
+            <q-tooltip>Leave channel</q-tooltip>
+          </div>
+
+          <div>
+            <q-btn
+              flat
+              round
+              dense
+              icon="group"
+              :color="rightDrawerOpen ? 'white' : 'grey-5'"
+              @click="toggleRightDrawer"
+            />
+            <q-tooltip>Show member list</q-tooltip>
+          </div>
         </div>
-        <quick-settings-dialog />
       </q-toolbar>
     </q-header>
 
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered>
-      <q-scroll-area style="height: 100%">
+      <q-scroll-area style="height: calc(100% - 60px)">
         <div
           class="row items-center justify-between q-gutter-x-sm q-item text-bold text-h6 text-primary bg-dark"
           style="position: sticky; top: 0px; z-index: 1"
@@ -51,6 +65,7 @@
           />
         </q-list>
       </q-scroll-area>
+      <quick-settings-dialog />
     </q-drawer>
 
     <q-drawer show-if-above v-model="rightDrawerOpen" side="right" bordered>
@@ -64,11 +79,7 @@
           </div>
         </div>
         <q-list class="q-pa-sm">
-          <User-Member-Card
-            v-for="user in members"
-            :key="user.id"
-            v-bind="user"
-          />
+          <User-Member-Card v-for="user in members" :key="user.id" v-bind="user" />
         </q-list>
       </q-scroll-area>
     </q-drawer>
@@ -76,13 +87,12 @@
     <q-page-container>
       <q-page>
         <router-view />
-        <div class="absolute-bottom">
-          <Chat-Input v-model="channelStore.currentMessage"
-            :commands="commands"
-            @submit="sendMessage"
-            @command="handleCommand"
-          />
-        </div>
+        <Chat-Input
+          v-model="channelStore.currentMessage"
+          :commands="commands"
+          @submit="sendMessage"
+          @command="handleCommand"
+        />
       </q-page>
     </q-page-container>
   </q-layout>
@@ -121,13 +131,15 @@ import { getRandomChannels, getRandomMessages } from '@/stores/mock.js'; // TODO
 channelStore.channels = getRandomChannels(18);
 changeChannel(channelStore.channels[0]);
 
-const members: BasicUser[] = [ // TODO: Integrate to channel
+const members: BasicUser[] = [
+  // TODO: Integrate to channel
   { id: '1', username: 'You', status: 'online' },
   { id: '2', username: 'bob', status: 'offline' },
-  { id: '3', username: 'alice', status: "dnd" }
-]
+  { id: '3', username: 'alice', status: 'dnd' },
+];
 
-const commands = [ // Fetch from BE based on channel (most likely)
+const commands = [
+  // Fetch from BE based on channel (most likely)
   'list',
 
   'invite',
@@ -136,39 +148,44 @@ const commands = [ // Fetch from BE based on channel (most likely)
   'revoke',
 
   'quit',
-  'cancel'
-]
+  'cancel',
+];
 
 function handleCommand(command: string, args: string[]) {
   switch (command) {
     case 'list':
-      toggleRightDrawer()
+      toggleRightDrawer();
       break;
     case 'invite':
-      console.log('Invite')
+      console.log('Invite');
       break;
     case 'join':
-      if (!args.length)
-        return newChannelDialog.value?.open()
+      if (!args.length) return newChannelDialog.value?.open();
       break;
     case 'kick':
-      console.log('Kick')
+      console.log('Kick');
       break;
     case 'revoke':
-      console.log('Revoke')
+      console.log('Revoke');
       break;
     case 'quit':
-      console.log('Quit')
+      console.log('Quit');
       break;
     case 'cancel':
-      leaveChannel(channelStore.currentChannel)
+      leaveChannel(channelStore.currentChannel);
       break;
   }
 }
 
 function createChannel(name: string, type: string) {
   // TODO: Send to BE and update channels based on response...
-  channelStore.channels.unshift({ id: Date.now().toString(), name: name.replaceAll(' ', '-'), isPrivate: type == 'private', messages: [], latestMessage: '' });
+  channelStore.channels.unshift({
+    id: Date.now().toString(),
+    name: name.replaceAll(' ', '-'),
+    isPrivate: type == 'private',
+    messages: [],
+    latestMessage: '',
+  });
   changeChannel(channelStore.channels[0], false);
 }
 
@@ -181,20 +198,30 @@ function changeChannel(toChannel: Channel, fetchMessages = true) {
   if (fetchMessages && !toChannel.messages?.length) {
     toChannel.messages = getRandomMessages(20, toChannel.id.charCodeAt(0)); // TODO: Replace with API Call, maybe move to store as action
   }
-  channelStore.currentChannel = toChannel
+  channelStore.currentChannel = toChannel;
   router.push({ name: 'Channels', params: { id: toChannel.id } }).catch(console.error);
 }
 
 function sendMessage(msg: string) {
   // TODO: Send to BE and add to channel based on response
-  channelStore.currentChannel?.messages?.push({ id: Date.now().toString(), text: msg, username: 'You', timestamp: Date.now() });
+  channelStore.currentChannel?.messages?.push({
+    id: Date.now().toString(),
+    text: msg,
+    username: 'You',
+    timestamp: Date.now(),
+  });
 }
 
 function acceptInvite(invite: ChannelInvite) {
   // TODO: Send to BE and update invites based on response...
   channelStore.invites = channelStore.invites.filter((i) => i.channelId !== invite.channelId);
 
-  const invitedChannel: Channel = { id: invite.channelId, name: invite.name, isPrivate: invite.isPrivate, latestMessage: "Somebody: Hey there, how is it going?" }; // (from BE)
+  const invitedChannel: Channel = {
+    id: invite.channelId,
+    name: invite.name,
+    isPrivate: invite.isPrivate,
+    latestMessage: 'Somebody: Hey there, how is it going?',
+  }; // (from BE)
   channelStore.channels.unshift(invitedChannel);
   changeChannel(invitedChannel);
 }
