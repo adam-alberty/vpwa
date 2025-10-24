@@ -2,8 +2,7 @@
   <q-item clickable :style="active && `background-color: var(--q-dark-page)`">
     <q-item-section>
       <div>
-        <Channel-Name v-bind="props" :highlight="newMessageCount > 0" />
-        <div class="text-grey-5">{{ latestMessage }}</div>
+        <Channel-Name v-bind="props" :highlight="newMessageCount > 0 || active" />
       </div>
     </q-item-section>
   </q-item>
