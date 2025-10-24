@@ -1,3 +1,14 @@
 <template>
-  <q-icon name="chat" class="" />
+  <q-icon name="chat" color="primary" :size="size" />
 </template>
+
+<script setup>
+import { defineProps } from 'vue';
+
+const props = defineProps({
+  size: {
+    type: String,
+    default: '24px',
+  },
+});
+</script>
