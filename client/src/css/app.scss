@@ -19,9 +19,12 @@ body {
   }
 
   &__username {
+    line-height: 1;
   }
 
   &__timestamp {
+    line-height: 1;
+    font-size: 0.85rem;
   }
 }
 
@@ -72,4 +75,9 @@ body {
   height: 60px;
   position: absolute;
   bottom: 0;
+}
+
+.q-tooltip {
+  background-color: #373b42;
+  color: white;
 }

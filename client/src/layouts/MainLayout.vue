@@ -41,7 +41,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered>
+    <q-drawer show-if-above v-model="leftDrawerOpen" side="left">
       <q-scroll-area style="height: calc(100% - 60px)">
         <div
           class="row items-center justify-between q-gutter-x-sm q-item text-bold text-h6 text-primary bg-dark"
@@ -78,10 +78,10 @@
       <quick-settings-dialog />
     </q-drawer>
 
-    <q-drawer show-if-above v-model="rightDrawerOpen" side="right" bordered>
+    <q-drawer show-if-above v-model="rightDrawerOpen" side="right">
       <q-scroll-area style="height: 100%">
         <div
-          class="row items-center justify-between q-gutter-x-sm q-item text-bold text-h6 text-primary bg-dark"
+          class="row items-center justify-between q-gutter-x-sm q-item text-weight-medium bg-dark text-body1"
           style="position: sticky; top: 0px; z-index: 1"
         >
           <div class="row items-center q-gutter-x-sm">
