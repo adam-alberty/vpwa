@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh lpR fFf">
-    <q-header class="bg-dark text-white" bordered>
+    <q-header class="bg-dark text-white">
       <q-toolbar>
         <q-btn
           flat
@@ -45,19 +45,13 @@
       <q-scroll-area style="height: calc(100% - 60px)">
         <div
           class="row items-center justify-between q-gutter-x-sm q-item text-bold text-h6 text-primary bg-dark"
-          style="
-            position: sticky;
-            top: 0px;
-            z-index: 1;
-            height: 51px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.28);
-            line-height: 1;
-          "
+          style="position: sticky; top: 0px; z-index: 1; height: 51px; line-height: 1"
         >
           <div class="row items-center q-gutter-x-sm">
-            <span class="q-ma-none">Channels</span>
+            <Logo />
+            <span class="q-ma-none q-ml-sm">Channels</span>
           </div>
-          <new-channel-dialog ref="newChannelDialog" @create="createChannel" />
+          <NewChannelDialog ref="newChannelDialog" @create="createChannel" />
         </div>
         <q-list>
           <Channel-Invite-Card
@@ -138,6 +132,7 @@ function toggleRightDrawer() {
 }
 
 import { getRandomChannels, getRandomMessages } from '@/stores/mock.js'; // TODO: Replace with API Call, maybe move to store as action
+import Logo from 'src/components/Logo.vue';
 channelStore.channels = getRandomChannels(18);
 changeChannel(channelStore.channels[0]);
 

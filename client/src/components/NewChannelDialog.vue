@@ -1,5 +1,5 @@
 <template>
-  <q-btn flat dense round icon="add" color="secondary" @click="show = true">
+  <q-btn flat dense round icon="add" color="white" @click="show = true">
     <q-tooltip>Add channel</q-tooltip>
   </q-btn>
 

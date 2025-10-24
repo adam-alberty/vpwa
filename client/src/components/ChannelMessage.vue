@@ -1,12 +1,12 @@
 <template>
   <div class="channel-message q-py-md q-px-lg row no-wrap">
     <q-item-section avatar>
-      <q-avatar size="40px" color="grey-7" text-color="white"
+      <q-avatar size="40px" color="secondary" text-color="white"
         >{{ username.charAt(0).toUpperCase() }}
       </q-avatar>
     </q-item-section>
     <div>
-      <div class="row q-gutter-sm q-mb-xs">
+      <div class="row items-center q-gutter-sm q-mb-xs">
         <span class="channel-message__username text-bold">{{ username }}</span>
         <span class="channel-message__timestamp text-grey-6"
           >{{ formatTimestamp(datetime) }}
