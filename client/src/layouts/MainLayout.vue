@@ -20,7 +20,7 @@
 
         <div class="row q-gutter-sm">
           <div>
-            <q-btn color="red-4" flat round dense icon="group_remove" />
+            <q-btn color="red-4" flat round dense icon="group_remove" @click="leaveChannel(channelStore.currentChannel, true)" />
             <q-tooltip>Leave channel</q-tooltip>
           </div>
 
@@ -114,6 +114,7 @@ import QuickSettingsDialog from '@/components/QuickSettingsDialog.vue';
 import { computed, ref } from 'vue';
 import { useChannelStore } from '@/stores/channel.store';
 import { useRouter } from 'vue-router';
+import { Dialog } from 'quasar'
 
 const router = useRouter();
 
@@ -194,7 +195,21 @@ function createChannel(name: string, type: string) {
   changeChannel(channelStore.channels[0], false);
 }
 
-function leaveChannel(channel: Channel) {
+function leaveChannel(channel: Channel, confirm = false) {
+  if (confirm) {
+    return Dialog.create({
+      title: 'Confirm',
+      message: 'Are you sure you want to leave this channel?',
+      cancel: true,
+      persistent: true,
+      ok: {
+        label: 'Yes',
+        color: 'negative',
+      },
+
+    }).onOk(() => leaveChannel(channel))
+  }
+
   channelStore.channels = channelStore.channels.filter((c) => c.id != channel?.id);
   changeChannel(channelStore.channels[0]);
 }

@@ -57,7 +57,7 @@ async function onSubmit() {
     });
     console.log(data);
 
-     router.push('/').catch(console.error);
+    router.push('/').catch(console.error);
   } catch (err) {
     console.log(err);
     errorMessage.value = 'Could not log in';

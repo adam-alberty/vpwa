@@ -8,34 +8,36 @@
 
   <h2 class="text-h5 q-pb-md">Account Information</h2>
 
-  <q-form @submit="onSubmit" class="q-gutter-y-md full-width">
+  <q-form @submit="onSubmitBasic" class="q-gutter-y-md full-width" ref="basicFormRef">
     <q-input
       filled
-      v-model="form.username"
+      v-model="basicForm.username"
       label="Username *"
       lazy-rules
       :rules="[(val) => (val && val.length > 0) || 'Please type something']"
     />
     <q-input
       filled
-      v-model="form.email"
+      v-model="basicForm.email"
       label="Email *"
       lazy-rules
       :rules="[(val) => (val && val.length > 0) || 'Please type something']"
     />
     <q-input
       filled
-      v-model="form.firstName"
-      label="First name *"
+      v-model="basicForm.firstName"
+      label="First name"
       lazy-rules
-      :rules="[(val) => (val && val.length > 0) || 'Please type something']"
     />
     <q-input
       filled
-      v-model="form.lastName"
-      label="Last name *"
+      v-model="basicForm.lastName"
+      label="Last name"
       lazy-rules
-      :rules="[(val) => (val && val.length > 0) || 'Please type something']"
+    />
+    <q-toggle
+      v-model="basicForm.notifyOnMentionsOnly"
+      label="Notify only on mentions"
     />
     <q-btn label="Update info" type="submit" color="primary" class="full-width" />
   </q-form>
@@ -44,21 +46,26 @@
 
   <h2 class="text-h5 q-pb-md">Password settings</h2>
 
-  <q-form @submit="onSubmit" class="q-gutter-y-md full-width">
+  <q-form @submit="onSubmitPasswdChange" class="q-gutter-y-md full-width" ref="passwdFormRef">
     <q-input
+      v-model="passwdForm.password"
       filled
-      v-model="form.username"
+      type="password"
       label="Old password *"
       lazy-rules
-      :rules="[(val) => (val && val.length > 0) || 'Please type something']"
+      :rules="[val => (val && val.length > 0) || 'Please type something']"
     />
 
     <q-input
+      v-model="passwdForm.passwordRepeated"
       filled
-      v-model="form.username"
+      type="password"
       label="New password *"
       lazy-rules
-      :rules="[(val) => (val && val.length > 0) || 'Please type something']"
+      :rules="[
+        val => (val && val.length > 0) || 'Please type something',
+        val => val === passwdForm.password || 'Passwords do not match',
+      ]"
     />
 
     <q-btn label="Update password" type="submit" color="primary" class="full-width" />
@@ -68,28 +75,54 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 
-const formRef = ref();
-const form = reactive({
+const basicFormRef = ref();
+const passwdFormRef = ref();
+
+const basicForm = reactive({
   username: '',
   email: '',
   firstName: '',
   lastName: '',
+
+  notifyOnMentionsOnly: true,
 });
+
+const passwdForm = reactive({
+  password: '',
+  passwordRepeated: '',
+});
+
 const errorMessage = ref('');
 
-async function onSubmit() {
+async function onSubmitBasic() {
   try {
-    const valid = await formRef.value.validate();
-
+    const valid = await basicFormRef.value.validate();
     if (!valid) {
       return;
     }
 
-    const data = JSON.stringify({});
+    // TODO: Send to API
+    const data = JSON.stringify(basicForm);
     console.log(data);
   } catch (err) {
     console.log(err);
-    errorMessage.value = 'Could not log in';
+    errorMessage.value = 'Err';
+  }
+}
+
+async function onSubmitPasswdChange() {
+  try {
+    const valid = await passwdFormRef.value.validate();
+    if (!valid) {
+      return;
+    }
+
+    // TODO: Send to API
+    const data = JSON.stringify(passwdForm);
+    console.log(data);
+  } catch (err) {
+    console.log(err);
+    errorMessage.value = 'Err';
   }
 }
 </script>
