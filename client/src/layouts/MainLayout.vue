@@ -111,11 +111,15 @@ import ChatInput from 'src/components/ChatInput.vue';
 import NewChannelDialog from '@/components/NewChannelDialog.vue';
 import QuickSettingsDialog from '@/components/QuickSettingsDialog.vue';
 
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useChannelStore } from '@/stores/channel.store';
 import { useRouter } from 'vue-router';
+import { useQuasar } from 'quasar'
 import { Dialog } from 'quasar'
 
+import { showMentionNotification } from '@/utils/notifications';
+
+const $q = useQuasar();
 const router = useRouter();
 
 const channelStore = useChannelStore();
@@ -131,6 +135,14 @@ const rightDrawerOpen = ref(false);
 function toggleRightDrawer() {
   rightDrawerOpen.value = !rightDrawerOpen.value;
 }
+
+watch(() => $q.appVisible, (val, oldVal) => {
+  if (oldVal)
+    return
+
+  //TODO load notifications from BE...
+  showMentionNotification({username: "Alice", text: "Good job! Hic quisquam non ad sit assumenda consequuntur esse inventore officia. Corrupti reiciendis impedit vel, fugit odit quisquam quae porro exercitationem eveniet quasi."})
+})
 
 import { getRandomChannels, getRandomMessages } from '@/stores/mock.js'; // TODO: Replace with API Call, maybe move to store as action
 import Logo from 'src/components/Logo.vue';
