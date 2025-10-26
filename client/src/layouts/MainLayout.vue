@@ -91,12 +91,28 @@
     <q-page-container>
       <q-page>
         <router-view />
-        <Chat-Input
-          v-model="channelStore.currentMessage"
-          :commands="commands"
-          @submit="channelStore.sendMessage"
-          @command="handleCommand"
-        />
+        <div>
+          <div
+            class="relative-position"
+            style="top: -32px; left: 8px;"
+          >
+            <q-spinner-dots
+              color="primary"
+              size="2em"
+            />
+            <q-tooltip :offset="[0, -40]">
+              <ChannelMessage id="0" text="Yes that is a great" username="Alice"></ChannelMessage>
+            </q-tooltip>
+          </div>
+
+          <Chat-Input
+            v-model="channelStore.currentMessage"
+            :commands="commands"
+            @submit="channelStore.sendMessage"
+            @command="handleCommand"
+            class="chat-input absolute"
+          />
+        </div>
       </q-page>
     </q-page-container>
   </q-layout>
@@ -108,6 +124,7 @@ import ChannelInviteCard from 'src/components/ChannelInviteCard.vue';
 import ChannelCard from 'src/components/ChannelCard.vue';
 import UserMemberCard from 'src/components/UserMemberCard.vue';
 import ChatInput from 'src/components/ChatInput.vue';
+import ChannelMessage from 'src/components/ChannelMessage.vue';
 import NewChannelDialog from '@/components/NewChannelDialog.vue';
 import QuickSettingsDialog from '@/components/QuickSettingsDialog.vue';
 
@@ -194,3 +211,9 @@ function handleCommand(command: string, args: string[]) {
   }
 }
 </script>
+
+<style lang="sass" scoped>
+.chat-input
+  height: 60px
+  bottom: 0
+</style>

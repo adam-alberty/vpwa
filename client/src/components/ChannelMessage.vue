@@ -48,6 +48,9 @@ const txtParts = computed(() => {
 });
 
 const formatTimestamp = (timestamp: Date) => {
+  if (isNaN(timestamp?.getTime()))
+    return '';
+
   const inputDate = new Date(timestamp).setHours(0, 0, 0, 0);
   const todaysDate = new Date().setHours(0, 0, 0, 0);
 

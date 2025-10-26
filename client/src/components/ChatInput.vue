@@ -1,6 +1,6 @@
 <template>
   <textarea
-    class="chat-input position-absolute bg-dark text-white full-width q-pa-md"
+    class="bg-dark text-white full-width q-pa-md"
     :class="{ 'text-italic': command, 'text-red-3': command && !validCommand }"
     :value="modelValue"
     placeholder="Type a message"
@@ -75,7 +75,7 @@ function onEnter(event: KeyboardEvent) {
 </script>
 
 <style lang="sass" scoped>
-.chat-input
+textarea
   border: none
   outline: none
   resize: none

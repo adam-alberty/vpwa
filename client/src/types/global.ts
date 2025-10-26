@@ -19,7 +19,7 @@ export interface Message {
   id: string;
   username: string;
   text: string;
-  timestamp: string | number | Date;
+  timestamp?: string | number | Date;
 }
 
 export interface BasicUser {

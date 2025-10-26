@@ -54,8 +54,7 @@ watch(
 function loadMoreMessages(index: number, done: () => void) {
   // TODO: Be...
   setTimeout(() => {
-    channelStore.fetchMessages(null);
-
+    channelStore.fetchMessages()
 
     done()
   }, 2000)
