@@ -20,7 +20,7 @@
 
         <div class="row q-gutter-sm">
           <div>
-            <q-btn color="red-4" flat round dense icon="group_remove" @click="leaveChannel(channelStore.currentChannel, true)" />
+            <q-btn color="red-4" flat round dense icon="group_remove" @click="channelStore.leaveChannel(null, true)" />
             <q-tooltip>Leave channel</q-tooltip>
           </div>
 
@@ -51,21 +51,21 @@
             <Logo />
             <span class="q-ma-none q-ml-sm">Channels</span>
           </div>
-          <NewChannelDialog ref="newChannelDialog" @create="createChannel" />
+          <New-Channel-Dialog ref="newChannelDialog" @create="channelStore.createChannel" />
         </div>
         <q-list>
           <Channel-Invite-Card
             v-for="invite in channelStore.invites"
             :key="invite.channelId"
             v-bind="invite"
-            @reject="rejectInvite(invite)"
-            @accept="acceptInvite(invite)"
+            @reject="channelStore.rejectInvite"
+            @accept="channelStore.acceptInvite"
           />
           <Channel-Card
             v-for="channel in channelStore.channels"
             :key="channel.id"
             v-bind="channel"
-            @click="changeChannel(channel)"
+            @click="channelStore.changeChannel(channel)"
           />
         </q-list>
       </q-scroll-area>
@@ -94,7 +94,7 @@
         <Chat-Input
           v-model="channelStore.currentMessage"
           :commands="commands"
-          @submit="sendMessage"
+          @submit="channelStore.sendMessage"
           @command="handleCommand"
         />
       </q-page>
@@ -113,9 +113,8 @@ import QuickSettingsDialog from '@/components/QuickSettingsDialog.vue';
 
 import { computed, ref, watch } from 'vue';
 import { useChannelStore } from '@/stores/channel.store';
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
-import { Dialog } from 'quasar'
 
 import { showMentionNotification } from '@/utils/notifications';
 
@@ -147,7 +146,7 @@ watch(() => $q.appVisible, (val, oldVal) => {
 import { getRandomChannels, getRandomMessages } from '@/stores/mock.js'; // TODO: Replace with API Call, maybe move to store as action
 import Logo from 'src/components/Logo.vue';
 channelStore.channels = getRandomChannels(18);
-changeChannel(channelStore.channels[0]);
+channelStore.changeChannel();
 
 const members: BasicUser[] = [
   // TODO: Integrate to channel
@@ -190,76 +189,8 @@ function handleCommand(command: string, args: string[]) {
       console.log('Quit');
       break;
     case 'cancel':
-      leaveChannel(channelStore.currentChannel);
+      channelStore.leaveChannel();
       break;
   }
-}
-
-function createChannel(name: string, type: string) {
-  // TODO: Send to BE and update channels based on response...
-  channelStore.channels.unshift({
-    id: Date.now().toString(),
-    name: name.replaceAll(' ', '-'),
-    isPrivate: type == 'private',
-    messages: [],
-    latestMessage: '',
-  });
-  changeChannel(channelStore.channels[0], false);
-}
-
-function leaveChannel(channel: Channel, confirm = false) {
-  if (confirm) {
-    return Dialog.create({
-      title: 'Confirm',
-      message: 'Are you sure you want to leave this channel?',
-      cancel: true,
-      persistent: true,
-      ok: {
-        label: 'Yes',
-        color: 'negative',
-      },
-
-    }).onOk(() => leaveChannel(channel))
-  }
-
-  channelStore.channels = channelStore.channels.filter((c) => c.id != channel?.id);
-  changeChannel(channelStore.channels[0]);
-}
-
-function changeChannel(toChannel: Channel, fetchMessages = true) {
-  if (fetchMessages && !toChannel.messages?.length) {
-    toChannel.messages = getRandomMessages(20, toChannel.id.charCodeAt(0)); // TODO: Replace with API Call, maybe move to store as action
-  }
-  channelStore.currentChannel = toChannel;
-  router.push({ name: 'Channels', params: { id: toChannel.id } }).catch(console.error);
-}
-
-function sendMessage(msg: string) {
-  // TODO: Send to BE and add to channel based on response
-  channelStore.currentChannel?.messages?.push({
-    id: Date.now().toString(),
-    text: msg,
-    username: 'You',
-    timestamp: Date.now(),
-  });
-}
-
-function acceptInvite(invite: ChannelInvite) {
-  // TODO: Send to BE and update invites based on response...
-  channelStore.invites = channelStore.invites.filter((i) => i.channelId !== invite.channelId);
-
-  const invitedChannel: Channel = {
-    id: invite.channelId,
-    name: invite.name,
-    isPrivate: invite.isPrivate,
-    latestMessage: 'Somebody: Hey there, how is it going?',
-  }; // (from BE)
-  channelStore.channels.unshift(invitedChannel);
-  changeChannel(invitedChannel);
-}
-
-function rejectInvite(invite: ChannelInvite) {
-  // TODO: Send to BE and update invites based on response...
-  channelStore.invites = channelStore.invites.filter((i) => i.channelId !== invite.channelId);
 }
 </script>

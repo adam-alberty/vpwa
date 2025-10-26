@@ -18,7 +18,7 @@ import type { Channel } from '@/types/global';
 const props = withDefaults(defineProps<Channel>(), {
   isPrivate: false,
 });
-const { id, name, latestMessage, isPrivate, newMessageCount } = props;
+const { id, name, isPrivate, newMessageCount } = props;
 
 const channelStore = useChannelStore();
 const active = computed(() => channelStore.currentChannel?.id == id);
