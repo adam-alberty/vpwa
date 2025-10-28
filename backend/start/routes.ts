@@ -9,6 +9,8 @@
 
 import router from '@adonisjs/core/services/router'
 
+router.where('id', router.matchers.uuid())
+
 router.get('/', async () => {
   return {
     hello: 'world',
