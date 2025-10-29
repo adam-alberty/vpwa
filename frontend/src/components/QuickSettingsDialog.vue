@@ -16,11 +16,11 @@
       <q-card-section class="q-pt-none q-gutter-y-md">
         <q-btn-toggle
           v-model="status"
-          toggle-color="primary"
+          :toggle-color="statusColors[status]"
           :options="[
-            { label: 'Online', value: 'online' },
-            { label: 'Do not Disturb', value: 'dnd' },
-            { label: 'Offline', value: 'offline' },
+            { label: 'Online', value: 'online', class: `text-positive`},
+            { label: 'Do not Disturb', value: 'dnd', class: 'text-negative' },
+            { label: 'Offline', value: 'offline', class: 'text-accent' },
           ]"
         />
 
@@ -42,6 +42,12 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+
+const statusColors = {
+  online: 'positive',
+  dnd: 'negative',
+  offline: 'accent',
+}
 
 const router = useRouter();
 
