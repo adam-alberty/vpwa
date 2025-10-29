@@ -12,10 +12,7 @@ export default class extends BaseSchema {
       table.string('password').notNullable()
       table.string('first_name').notNullable()
       table.string('last_name').notNullable()
-      table
-        .enum('status', Object.values(UserStatus) as [string, ...string[]])
-        .notNullable()
-        .defaultTo(UserStatus.OFFLINE)
+      table.enum('status', Object.values(UserStatus)).notNullable().defaultTo(UserStatus.OFFLINE)
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at')
     })
