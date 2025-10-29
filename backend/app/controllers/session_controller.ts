@@ -3,7 +3,7 @@ import { loginUservalidator } from '#validators/session'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class SessionController {
-  // Log in
+  // Create session
   public async store({ request }: HttpContext) {
     const data = await request.validateUsing(loginUservalidator)
     const user = await User.verifyCredentials(data.email, data.password)
@@ -14,7 +14,7 @@ export default class SessionController {
     }
   }
 
-  // Log out
+  // Destroy session
   public async destroy({ auth, response }: HttpContext) {
     await auth.use('api').invalidateToken()
     return response.ok({ message: 'Logged out' })

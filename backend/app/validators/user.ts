@@ -12,3 +12,16 @@ export const registerUserValidator = vine.compile(
     password: vine.string().minLength(8),
   })
 )
+
+/**
+ * Validates the user's update action
+ */
+export const updateUserValidator = vine.compile(
+  vine.object({
+    username: vine.string().trim().minLength(3),
+    email: vine.string().trim(),
+    firstName: vine.string().trim(),
+    lastName: vine.string().trim(),
+    password: vine.string().minLength(8),
+  })
+)

@@ -1,9 +1,16 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { BaseModel, column, manyToMany } from '@adonisjs/lucid/orm'
+import type { ManyToMany } from '@adonisjs/lucid/types/relations'
+import User from '#models/user'
 
 export enum ChannelType {
   PUBLIC = 'public',
   PRIVATE = 'private',
+}
+
+export enum ChannelMemberRole {
+  MEMBER = 'member',
+  ADMIN = 'admin',
 }
 
 export default class Channel extends BaseModel {
@@ -21,4 +28,18 @@ export default class Channel extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+
+  @manyToMany(() => User, {
+    pivotTable: 'channel_members',
+    localKey: 'id',
+    relatedKey: 'id',
+    pivotForeignKey: 'channel_id',
+    pivotRelatedForeignKey: 'user_id',
+    pivotColumns: ['role', 'joined_at'],
+    pivotTimestamps: {
+      createdAt: 'joined_at',
+      updatedAt: false,
+    },
+  })
+  declare members: ManyToMany<typeof User>
 }
