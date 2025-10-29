@@ -1,0 +1,16 @@
+services:
+  chat-postgres:
+    image: postgres:18-alpine
+    container_name: chat_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    ports:
+      - '${DB_PORT}:5432'
+    volumes:
+      - chat-postgress-data:/var/lib/postgresql/data
+
+volumes:
+  chat-postgress-data:
