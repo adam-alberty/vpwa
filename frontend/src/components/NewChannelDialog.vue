@@ -54,7 +54,7 @@ const show = ref(false);
 
 const formData = reactive({
   name: '',
-  type: '',
+  type: 'private',
 });
 
 const formRef = ref(null);

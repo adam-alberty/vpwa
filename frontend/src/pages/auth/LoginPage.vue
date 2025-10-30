@@ -1,24 +1,22 @@
 <template>
   <h2 class="text-h2">Log in</h2>
 
-  <q-form @submit="onSubmit" ref="formRef" class="q-gutter-y-md full-width">
+  <q-form @submit="onSubmit" class="q-gutter-y-md full-width">
     <q-input
       filled
-      v-model="form.usernameOrEmail"
-      label="Username or e-mail *"
+      v-model="formData.email"
+      label="E-mail *"
       lazy-rules
       :rules="[(val) => (val && val.length > 0) || 'Please type username or e-mail']"
     />
     <q-input
       filled
-      v-model="form.password"
+      v-model="formData.password"
       label="Password *"
       type="password"
       lazy-rules
       :rules="[(val) => (val && val.length > 0) || 'Please type password']"
     />
-
-    <q-banner v-if="errorMessage" class="bg-red text-white">{{ errorMessage }}</q-banner>
 
     <q-btn push size="lg" label="Log in" type="submit" color="primary" class="full-width" />
 
@@ -31,36 +29,30 @@
 </template>
 
 <script setup lang="ts">
+import { useQuasar } from 'quasar';
+import { useAuthStore } from 'src/stores/auth.store';
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
+const auth = useAuthStore();
 
-const formRef = ref();
-const form = reactive({
-  usernameOrEmail: '',
+const formData = reactive({
+  email: '',
   password: '',
 });
-const errorMessage = ref('');
+const $q = useQuasar();
 
 async function onSubmit() {
   try {
-    const valid = await formRef.value.validate();
-
-    if (!valid) {
-      return;
-    }
-
-    const data = JSON.stringify({
-      username_or_email: form.usernameOrEmail,
-      password: form.password,
-    });
-    console.log(data);
-
+    await auth.login(formData);
     router.push('/').catch(console.error);
   } catch (err) {
-    console.log(err);
-    errorMessage.value = 'Could not log in';
+    $q.notify({
+      message: err.message,
+      color: 'red',
+      position: 'top',
+    });
   }
 }
 </script>

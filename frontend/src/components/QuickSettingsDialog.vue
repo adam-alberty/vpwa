@@ -60,7 +60,8 @@ console.log(isRef(auth.user));
 const show = ref(false);
 const status = ref('online');
 
-function logout() {
+async function logout() {
+  await auth.logout();
   router.push({ name: 'Login' }).catch(console.error);
 }
 </script>

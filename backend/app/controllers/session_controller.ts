@@ -10,7 +10,7 @@ export default class SessionController {
     const token = await User.accessTokens.create(user)
     return {
       user: user,
-      token: token.value,
+      token: token.value?.release(),
     }
   }
 
