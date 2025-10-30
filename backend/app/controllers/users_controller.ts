@@ -6,7 +6,7 @@ export default class UsersController {
   /**
    * Registers new user
    */
-  public async store({ request, response }: HttpContext) {
+  public async register({ request, response, auth }: HttpContext) {
     // Validate data
     const data = await request.validateUsing(registerUserValidator)
 
@@ -14,11 +14,12 @@ export default class UsersController {
     const user = await User.create(data)
 
     // Create session token
-    const token = await User.accessTokens.create(user)
+    const token = await auth.use('api').createToken(user)
 
     // Return user & token
     return response.created({
-      token: token.value!.release(),
+      user: user,
+      token: token.value?.release(),
     })
   }
 
@@ -41,7 +42,7 @@ export default class UsersController {
   /**
    * Delete user
    */
-  public async destroy({ auth, response }: HttpContext) {
+  public async delete({ auth, response }: HttpContext) {
     await auth.user?.delete()
     return response.ok({
       message: 'Your account has been deleted successfully',

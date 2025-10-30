@@ -16,12 +16,8 @@ import UsersController from '#controllers/users_controller'
 // Global matcher for "id" to be uuid
 router.where('id', router.matchers.uuid())
 
-// Create session
-router.post('/session', [SessionController, 'store'])
-// Delete session
-router.delete('/session', [SessionController, 'destroy']).use(middleware.auth())
-// Register user
-router.post('/users', [UsersController, 'store'])
+router.post('/users', [UsersController, 'register'])
+router.post('/session', [SessionController, 'login'])
 
 // Protected routes
 router
@@ -31,6 +27,9 @@ router
     router.delete('/channels/:id', [ChannelsController, 'destroy'])
 
     router.put('/users', [UsersController, 'update'])
-    router.delete('/users', [UsersController, 'destroy'])
+    router.delete('/users', [UsersController, 'delete'])
+
+    router.delete('/session', [SessionController, 'delete'])
+    router.get('/session', [SessionController, 'me'])
   })
   .use(middleware.auth())

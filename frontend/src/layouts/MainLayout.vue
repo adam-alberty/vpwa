@@ -20,7 +20,14 @@
 
         <div class="row q-gutter-sm">
           <div>
-            <q-btn color="red-4" flat round dense icon="group_remove" @click="channelStore.leaveChannel(null, true)" />
+            <q-btn
+              color="red-4"
+              flat
+              round
+              dense
+              icon="group_remove"
+              @click="channelStore.leaveChannel(null, true)"
+            />
             <q-tooltip>Leave channel</q-tooltip>
           </div>
 
@@ -92,14 +99,8 @@
       <q-page>
         <router-view />
         <div>
-          <div
-            class="relative-position"
-            style="top: -32px; left: 8px;"
-          >
-            <q-spinner-dots
-              color="primary"
-              size="2em"
-            />
+          <div class="relative-position" style="top: -32px; left: 8px">
+            <q-spinner-dots color="primary" size="2em" />
             <q-tooltip :offset="[0, -40]">
               <ChannelMessage id="0" text="Yes that is a great" username="Alice"></ChannelMessage>
             </q-tooltip>
@@ -127,16 +128,15 @@ import ChatInput from 'src/components/ChatInput.vue';
 import ChannelMessage from 'src/components/ChannelMessage.vue';
 import NewChannelDialog from '@/components/NewChannelDialog.vue';
 import QuickSettingsDialog from '@/components/QuickSettingsDialog.vue';
-
-import { computed, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useChannelStore } from '@/stores/channel.store';
-import { useRouter } from 'vue-router'
-import { useQuasar } from 'quasar'
-
+import { useRouter } from 'vue-router';
+import { useQuasar } from 'quasar';
 import { showMentionNotification } from '@/utils/notifications';
 
-const $q = useQuasar();
 const router = useRouter();
+
+const $q = useQuasar();
 
 const channelStore = useChannelStore();
 
@@ -152,16 +152,23 @@ function toggleRightDrawer() {
   rightDrawerOpen.value = !rightDrawerOpen.value;
 }
 
-watch(() => $q.appVisible, (val, oldVal) => {
-  if (oldVal)
-    return
+watch(
+  () => $q.appVisible,
+  (val, oldVal) => {
+    if (oldVal) return;
 
-  //TODO load notifications from BE...
-  showMentionNotification({username: "Alice", text: "Good job! Hic quisquam non ad sit assumenda consequuntur esse inventore officia. Corrupti reiciendis impedit vel, fugit odit quisquam quae porro exercitationem eveniet quasi."})
-})
+    //TODO load notifications from BE...
+    showMentionNotification({
+      username: 'Alice',
+      text: 'Good job! Hic quisquam non ad sit assumenda consequuntur esse inventore officia. Corrupti reiciendis impedit vel, fugit odit quisquam quae porro exercitationem eveniet quasi.',
+    });
+  },
+);
 
 import { getRandomChannels, getRandomMessages } from '@/stores/mock.js'; // TODO: Replace with API Call, maybe move to store as action
 import Logo from 'src/components/Logo.vue';
+import { api } from 'src/services/api';
+import { useAuthStore } from 'src/stores/auth.store';
 channelStore.channels = getRandomChannels(18);
 channelStore.changeChannel();
 

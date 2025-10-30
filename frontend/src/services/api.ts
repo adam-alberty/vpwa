@@ -5,7 +5,7 @@ async function request(endpoint: string, options: RequestInit = {}) {
 
   const defaultHeaders = {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${localStorage.getItem('token')},`,
+    Authorization: `Bearer ${localStorage.getItem('token')}`,
   };
 
   try {

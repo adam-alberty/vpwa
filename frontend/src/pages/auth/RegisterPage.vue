@@ -60,6 +60,7 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
 import { api } from 'src/services/api';
+import { useAuthStore } from 'src/stores/auth.store';
 import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -75,12 +76,11 @@ const formData = reactive({
   passwordRepeated: '',
 });
 
-console.log(process.env.API_URL);
+const auth = useAuthStore();
 
 async function onSubmit() {
   try {
-    const response = await api.post('/users', formData);
-    localStorage.setItem('token', response.token);
+    await auth.register(formData);
     router.push('/');
   } catch (err) {
     $q.notify({
