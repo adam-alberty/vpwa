@@ -1,9 +1,11 @@
 <template>
   <button class="settings-dialog" @click="show = true">
-    <q-avatar size="36px" color="grey-5" text-color="black">S </q-avatar>
+    <q-avatar size="36px" color="grey-5" text-color="black">{{
+      auth.user.username.charAt(0)
+    }}</q-avatar>
     <div class="settings-dialog__user">
-      <div class="text-weight-bold">Some user</div>
-      <div class="text-left text-grey-5">@user</div>
+      <div class="text-weight-bold">{{ auth.user.firstName }} {{ auth.user.lastName }}</div>
+      <div class="text-left text-grey-5">@{{ auth.user.username }}</div>
     </div>
   </button>
 
@@ -18,7 +20,7 @@
           v-model="status"
           :toggle-color="statusColors[status]"
           :options="[
-            { label: 'Online', value: 'online', class: `text-positive`},
+            { label: 'Online', value: 'online', class: `text-positive` },
             { label: 'Do not Disturb', value: 'dnd', class: 'text-negative' },
             { label: 'Offline', value: 'offline', class: 'text-accent' },
           ]"
@@ -40,16 +42,20 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { useAuthStore } from 'src/stores/auth.store';
+import { isRef, ref, unref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const statusColors = {
   online: 'positive',
   dnd: 'negative',
   offline: 'accent',
-}
+};
 
 const router = useRouter();
+const auth = useAuthStore();
+
+console.log(isRef(auth.user));
 
 const show = ref(false);
 const status = ref('online');

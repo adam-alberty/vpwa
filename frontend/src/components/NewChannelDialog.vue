@@ -14,7 +14,7 @@
           <q-input
             filled
             autofocus
-            v-model="channelName"
+            v-model="formData.name"
             label="Channel name *"
             lazy-rules
             :rules="[
@@ -26,7 +26,7 @@
           />
 
           <q-btn-toggle
-            v-model="channelType"
+            v-model="formData.type"
             toggle-color="primary"
             :options="[
               { label: 'Private', value: 'private' },
@@ -45,30 +45,30 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { useQuasar } from 'quasar';
+import { api } from 'src/services/api';
+import { reactive, ref } from 'vue';
 
+const $q = useQuasar();
 const show = ref(false);
 
-const channelName = ref('');
-const channelType = ref('private');
+const formData = reactive({
+  name: '',
+  type: '',
+});
+
 const formRef = ref(null);
 
-const emit = defineEmits<{
-  (e: 'create', name: string, type: string): void;
-}>();
-
 async function onSubmit() {
-  const valid = await formRef.value.validate();
-  if (!valid) {
-    console.log('Form invalid');
-    return;
+  try {
+    await api.post('/channels', formData);
+  } catch (err) {
+    $q.notify({
+      message: err.message,
+      color: 'red',
+      position: 'top',
+    });
   }
-
-  emit('create', channelName.value, channelType.value);
-
-  channelName.value = '';
-  channelType.value = 'private';
-
   show.value = false;
 }
 

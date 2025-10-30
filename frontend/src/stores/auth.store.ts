@@ -2,8 +2,19 @@ import { defineStore, acceptHMRUpdate } from 'pinia';
 import { api } from 'src/services/api';
 import { ref } from 'vue';
 
+type User = {
+  id: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  createdAt: string;
+  updatedAt: string;
+  status: 'online' | 'dnd' | 'offline';
+};
+
 export const useAuthStore = defineStore('auth', () => {
-  const user = ref(null);
+  const user = ref<User | null>(null);
   const token = ref(localStorage.getItem('token'));
 
   async function register(payload: any) {
@@ -27,11 +38,11 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function me() {
-    const result = await api.get('/session');
-    user.value = result;
+    const { user: usr } = await api.get('/session');
+    user.value = usr;
   }
 
-  return { login, logout, register, me };
+  return { login, logout, register, me, user };
 });
 
 if (import.meta.hot) {

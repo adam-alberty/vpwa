@@ -128,13 +128,10 @@ import ChatInput from 'src/components/ChatInput.vue';
 import ChannelMessage from 'src/components/ChannelMessage.vue';
 import NewChannelDialog from '@/components/NewChannelDialog.vue';
 import QuickSettingsDialog from '@/components/QuickSettingsDialog.vue';
-import { onMounted, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { useChannelStore } from '@/stores/channel.store';
-import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
 import { showMentionNotification } from '@/utils/notifications';
-
-const router = useRouter();
 
 const $q = useQuasar();
 

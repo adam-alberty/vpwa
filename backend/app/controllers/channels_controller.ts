@@ -4,18 +4,20 @@ import type { HttpContext } from '@adonisjs/core/http'
 import db from '@adonisjs/lucid/services/db'
 
 export default class ChannelsController {
-  public async store({ request, response, auth }: HttpContext) {
+  public async create({ request, response, auth }: HttpContext) {
     const user = auth.user!
     const data = await request.validateUsing(createChannelValidator)
 
     const tx = await db.transaction()
     const channel = await Channel.create(data, { client: tx })
-    await channel.related('members').attach({
-      [user.id]: {
-        role: ChannelMemberRole.ADMIN,
+    await channel.related('members').attach(
+      {
+        [user.id]: {
+          role: ChannelMemberRole.ADMIN,
+        },
       },
-      tx,
-    })
+      tx
+    )
     await tx.commit()
 
     return response.created({
@@ -23,7 +25,7 @@ export default class ChannelsController {
     })
   }
 
-  public async destroy({ response, auth, params }: HttpContext) {
+  public async leave({ response, auth, params }: HttpContext) {
     const user = auth.user!
     const channelId = params.id as string
 
