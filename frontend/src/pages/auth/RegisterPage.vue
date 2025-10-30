@@ -1,50 +1,50 @@
 <template>
   <h2 class="text-h2">Register</h2>
 
-  <q-form @submit="onSubmit" class="q-gutter-y-md full-width">
+  <q-form @submit.prevent="onSubmit" class="q-gutter-y-md full-width">
     <q-input
       filled
-      v-model="username"
+      v-model="formData.username"
       label="Username *"
       lazy-rules
-      :rules="[(val) => (val && val.length > 0) || 'Please type something']"
+      :rules="[(val) => (val && val.length > 2) || 'Username must at least 3 characters long']"
     />
     <q-input
       filled
-      v-model="email"
+      v-model="formData.email"
       label="Email *"
       lazy-rules
       :rules="[(val) => (val && val.length > 0) || 'Please type something']"
     />
     <q-input
       filled
-      v-model="firstName"
+      v-model="formData.firstName"
       label="First name *"
       lazy-rules
       :rules="[(val) => (val && val.length > 0) || 'Please type something']"
     />
     <q-input
       filled
-      v-model="lastName"
+      v-model="formData.lastName"
       label="Last name *"
       lazy-rules
       :rules="[(val) => (val && val.length > 0) || 'Please type something']"
     />
     <q-input
       filled
-      v-model="password"
+      v-model="formData.password"
       label="Password *"
       type="password"
       lazy-rules
-      :rules="[(val) => (val && val.length > 0) || 'Please type something']"
+      :rules="[(val) => (val && val.length > 7) || 'Password must be at least 8 characters long']"
     />
     <q-input
       filled
-      v-model="passwordRepeated"
+      v-model="formData.passwordRepeated"
       label="Password Repeated *"
       type="password"
       lazy-rules
-      :rules="[(val) => (val && val.length > 0) || 'Please type something']"
+      :rules="[(val) => val === formData.password || 'Passwords do not match']"
     />
 
     <q-btn push size="lg" label="Register" type="submit" color="primary" class="full-width" />
@@ -58,17 +58,36 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { useQuasar } from 'quasar';
+import { api } from 'src/services/api';
+import { reactive } from 'vue';
+import { useRouter } from 'vue-router';
 
-const username = ref('');
-const firstName = ref('');
-const lastName = ref('');
-const email = ref('');
-const password = ref('');
-const passwordRepeated = ref('');
+const $q = useQuasar();
+const router = useRouter();
 
-function onSubmit() {
-  console.log('Submitted:', { username: username.value, password: password.value });
-  // You could also validate or send to an API here
+const formData = reactive({
+  username: '',
+  firstName: '',
+  lastName: '',
+  email: '',
+  password: '',
+  passwordRepeated: '',
+});
+
+console.log(process.env.API_URL);
+
+async function onSubmit() {
+  try {
+    const response = await api.post('/users', formData);
+    localStorage.setItem('token', response.token);
+    router.push('/');
+  } catch (err) {
+    $q.notify({
+      message: err.message,
+      color: 'red',
+      position: 'top',
+    });
+  }
 }
 </script>

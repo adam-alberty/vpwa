@@ -18,7 +18,6 @@ export default class UsersController {
 
     // Return user & token
     return response.created({
-      user: user,
       token: token.value!.release(),
     })
   }
