@@ -63,9 +63,6 @@
         <div>
           <div class="relative-position" style="top: -32px; left: 8px">
             <q-spinner-dots color="primary" size="2em" />
-            <q-tooltip :offset="[0, -40]">
-              <Channel-Message id="0" text="Yes that is a great" username="Alice"></Channel-Message>
-            </q-tooltip>
           </div>
 
           <Chat-Input

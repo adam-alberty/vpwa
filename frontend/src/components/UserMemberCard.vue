@@ -11,6 +11,13 @@
       <div class="text-body1 text-weight-medium text-white">{{ username }}</div>
       <!-- <div class="text-caption text-grey-5">{{ status }}</div> -->
     </div>
+
+    <!-- Todo -->
+    <q-menu anchor="center start" self="center right" class="bg-blue-grey-8 q-py-sm q-px-md" :offset="[10, 5]">
+      <div class="typing-menu">
+        Yes that is a great
+      </div>
+    </q-menu>
   </q-card>
 </template>
 
@@ -23,6 +30,10 @@ const { id, username, status } = props;
 </script>
 
 <style lang="sass" scoped>
+.typing-menu
+  width: 620px
+  height: 100px
+
 .user-member-card
   border-radius: 0.7rem
 

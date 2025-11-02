@@ -5,8 +5,8 @@
         <q-icon name="mail" color="primary" size="20px" class="q-my-none q-mb-xs" />
         <Channel-Name v-bind="props" highlight />
 
-        <q-menu anchor="center end" self="center left" class="no-shadow">
-          <div class="row q-gutter-x-sm q-pa-xs bg-blue-grey-8">
+        <q-menu anchor="center end" self="center left" class="no-shadow bg-blue-grey-8 q-pa-xs" :offset="[5, 5]">
+          <div class="row q-gutter-x-sm">
             <q-btn size="11px" dense flat icon="check" class="bg-positive text-white" @click="accept" />
             <q-btn size="11px" dense flat icon="close" class="bg-negative text-white" @click="reject"/>
           </div>
