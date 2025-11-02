@@ -59,8 +59,8 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
-import { api } from 'src/services/api';
-import { useAuthStore } from 'src/stores/auth.store';
+import { api } from '@/services/api';
+import { useAuthStore } from '@/stores/auth.store';
 import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
 

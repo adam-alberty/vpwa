@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
-import { useAuthStore } from 'src/stores/auth.store';
+import { useAuthStore } from '@/stores/auth.store';
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 

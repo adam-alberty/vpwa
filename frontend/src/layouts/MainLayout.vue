@@ -49,50 +49,12 @@
     </q-header>
 
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" :breakpoint="850">
-      <q-scroll-area style="height: calc(100% - 60px)">
-        <div
-          class="row items-center justify-between q-gutter-x-sm q-item text-bold text-h6 text-primary bg-dark"
-          style="position: sticky; top: 0px; z-index: 1; height: 51px; line-height: 1"
-        >
-          <div class="row items-center q-gutter-x-sm">
-            <Logo />
-            <span class="q-ma-none q-ml-sm">Channels</span>
-          </div>
-          <New-Channel-Dialog ref="newChannelDialog" @create="channelStore.createChannel" />
-        </div>
-        <q-list>
-          <Channel-Invite-Card
-            v-for="invite in channelStore.invites"
-            :key="invite.channelId"
-            v-bind="invite"
-            @reject="channelStore.rejectInvite"
-            @accept="channelStore.acceptInvite"
-          />
-          <Channel-Card
-            v-for="channel in channelStore.channels"
-            :key="channel.id"
-            v-bind="channel"
-            @click="channelStore.changeChannel(channel)"
-          />
-        </q-list>
-      </q-scroll-area>
-      <quick-settings-dialog />
+      <Channels-Menu style="height: calc(100% - 60px)" />
+      <Quick-settings-dialog />
     </q-drawer>
 
     <q-drawer show-if-above v-model="rightDrawerOpen" side="right" :breakpoint="1100">
-      <q-scroll-area style="height: 100%">
-        <div
-          class="row items-center justify-between q-gutter-x-sm q-item text-weight-medium bg-dark text-body1"
-          style="position: sticky; top: 0px; z-index: 1"
-        >
-          <div class="row items-center q-gutter-x-sm">
-            <span class="q-ma-none">Channel members</span>
-          </div>
-        </div>
-        <q-list class="q-pa-sm">
-          <User-Member-Card v-for="user in members" :key="user.id" v-bind="user" />
-        </q-list>
-      </q-scroll-area>
+      <Members-Menu style="height: 100%" />
     </q-drawer>
 
     <q-page-container>
@@ -102,7 +64,7 @@
           <div class="relative-position" style="top: -32px; left: 8px">
             <q-spinner-dots color="primary" size="2em" />
             <q-tooltip :offset="[0, -40]">
-              <ChannelMessage id="0" text="Yes that is a great" username="Alice"></ChannelMessage>
+              <Channel-Message id="0" text="Yes that is a great" username="Alice"></Channel-Message>
             </q-tooltip>
           </div>
 
@@ -121,13 +83,11 @@
 
 <script setup lang="ts">
 import ChannelName from '@/components/ChannelName.vue';
-import ChannelInviteCard from 'src/components/ChannelInviteCard.vue';
-import ChannelCard from 'src/components/ChannelCard.vue';
-import UserMemberCard from 'src/components/UserMemberCard.vue';
-import ChatInput from 'src/components/ChatInput.vue';
-import ChannelMessage from 'src/components/ChannelMessage.vue';
-import NewChannelDialog from '@/components/NewChannelDialog.vue';
-import QuickSettingsDialog from '@/components/QuickSettingsDialog.vue';
+import ChatInput from '@/components/ChatInput.vue';
+import ChannelMessage from '@/components/ChannelMessage.vue';
+import ChannelsMenu from '@/components/menus/ChannelsMenu.vue';
+import MembersMenu from '@/components/menus/MembersMenu.vue';
+import QuickSettingsDialog from '@/components/dialogs/QuickSettingsDialog.vue';
 import { ref, watch } from 'vue';
 import { useChannelStore } from '@/stores/channel.store';
 import { useQuasar } from 'quasar';
@@ -154,6 +114,7 @@ watch(
   (val, oldVal) => {
     if (oldVal) return;
 
+    // TODO Rework when PWA is implemented to sys notifications
     //TODO load notifications from BE...
     showMentionNotification({
       username: 'Alice',
@@ -163,18 +124,10 @@ watch(
 );
 
 import { getRandomChannels, getRandomMessages } from '@/stores/mock.js'; // TODO: Replace with API Call, maybe move to store as action
-import Logo from 'src/components/Logo.vue';
-import { api } from 'src/services/api';
-import { useAuthStore } from 'src/stores/auth.store';
+import { api } from '@/services/api';
+import { useAuthStore } from '@/stores/auth.store';
 channelStore.channels = getRandomChannels(18);
 channelStore.changeChannel();
-
-const members: BasicUser[] = [
-  // TODO: Integrate to channel
-  { id: '1', username: 'You', status: 'online' },
-  { id: '2', username: 'bob', status: 'offline' },
-  { id: '3', username: 'alice', status: 'dnd' },
-];
 
 const commands = [
   // Fetch from BE based on channel (most likely)

@@ -46,7 +46,7 @@
 
 <script lang="ts" setup>
 import { useQuasar } from 'quasar';
-import { api } from 'src/services/api';
+import { api } from '@/services/api';
 import { reactive, ref } from 'vue';
 
 const $q = useQuasar();
