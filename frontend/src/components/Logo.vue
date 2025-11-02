@@ -2,7 +2,7 @@
   <q-icon name="chat" color="primary" :size="size" />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { defineProps } from 'vue';
 
 const props = defineProps({
