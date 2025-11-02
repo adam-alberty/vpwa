@@ -27,3 +27,11 @@ export interface BasicUser {
   username: string;
   status: "online" | "offline" | "dnd";
 }
+
+export interface User extends BasicUser {
+  firstName: string;
+  lastName: string;
+  email: string;
+  createdAt: string;
+  updatedAt: string;
+}

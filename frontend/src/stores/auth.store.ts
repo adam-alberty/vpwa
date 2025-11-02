@@ -2,29 +2,18 @@ import { defineStore, acceptHMRUpdate } from 'pinia';
 import { api } from 'src/services/api';
 import { ref } from 'vue';
 
-type User = {
-  id: string;
-  username: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  createdAt: string;
-  updatedAt: string;
-  status: 'online' | 'dnd' | 'offline';
-};
-
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null);
   const token = ref(localStorage.getItem('token'));
 
-  async function register(payload: any) {
+  async function register(payload) {
     const result = await api.post('/users', payload);
     localStorage.setItem('token', result.token);
     token.value = result.token;
     user.value = result.user;
   }
 
-  async function login(payload: any) {
+  async function login(payload) {
     const result = await api.post('/session', payload);
     localStorage.setItem('token', result.token);
     token.value = result.token;

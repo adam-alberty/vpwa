@@ -7,4 +7,5 @@ declare global {
   type ChannelInvite = GlobalTypes.ChannelInvite;
   type Message = GlobalTypes.Message;
   type BasicUser = GlobalTypes.BasicUser;
+  type User = GlobalTypes.User;
 }
