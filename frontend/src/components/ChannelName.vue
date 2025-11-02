@@ -5,7 +5,7 @@
       class="q-mr-sm"
       :class="{ 'text-bold': highlight, 'text-grey-5': !highlight }"
     ></q-icon>
-    <div :class="{ 'text-bold': highlight, 'text-grey-5': !highlight }">{{ name }}</div>
+    <div class="line-h-1" :class="{ 'text-bold': highlight, 'text-grey-5': !highlight }">{{ name }}</div>
   </div>
 </template>
 

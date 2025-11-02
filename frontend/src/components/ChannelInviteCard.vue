@@ -2,7 +2,7 @@
   <q-item class="bg-grey-9">
     <q-item-section>
       <div>
-        <q-icon name="mail" color="primary" size="19px" class="q-my-none" />
+        <q-icon name="mail" color="primary" size="20px" class="q-my-none q-mb-xs" />
         <Channel-Name v-bind="props" highlight />
 
         <q-menu anchor="center end" self="center left" class="no-shadow">
@@ -41,5 +41,6 @@ function reject() {
 
 <style lang="sass" scoped>
 .q-item
-  border-left: 3px solid var(--q-primary)
+  border-left: 5px solid var(--q-primary)
+  padding-left: 12px
 </style>

@@ -65,3 +65,39 @@ async function logout() {
   router.push({ name: 'Login' }).catch(console.error);
 }
 </script>
+
+<style lang="sass" scoped>
+.settings-dialog
+  height: 60px
+  border-top: 1px solid rgba(255, 255, 255, 0.28)
+  width: 100%
+  margin: 0px
+  padding: 0px
+  display: flex
+  align-items: center
+  outline: none
+  background-color: $dark
+  cursor: pointer
+
+  &:hover
+    background-color: #313131
+
+  -webkit-appearance: none
+  border-radius: 0
+  text-align: inherit
+  background: none
+  box-shadow: none
+  padding: 0
+  cursor: pointer
+  border: none
+  color: inherit
+  font: inherit
+
+  padding: 1rem
+
+  border-top: 1px solid rgba(255, 255, 255, 0.28)
+
+  &__user
+    margin-left: 0.8rem
+    line-height: 1
+</style>

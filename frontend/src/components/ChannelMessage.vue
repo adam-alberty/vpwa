@@ -7,7 +7,7 @@
     </q-item-section>
     <div>
       <div class="row items-center q-gutter-sm q-mb-xs">
-        <span class="channel-message__username text-bold">{{ username }}</span>
+        <span class="line-h-1 text-bold">{{ username }}</span>
         <span class="channel-message__timestamp text-grey-6"
           >{{ formatTimestamp(datetime) }}
 
@@ -66,6 +66,14 @@ const formatTimestamp = (timestamp: Date) => {
 </script>
 
 <style lang="sass" scoped>
+.channel-message
+  &:hover
+    background: $dark
+
+  &__timestamp
+    line-height: 1
+    font-size: 0.85rem
+
 .mention
   color: #00bcff
   font-weight: 600
