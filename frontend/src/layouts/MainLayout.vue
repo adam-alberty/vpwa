@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh lpR fFf">
+  <q-layout view="lHh lpR fFf"> <!-- Config of layout header, footer and drawers, what overlaps what etc... -->
     <q-header class="bg-dark text-white">
       <q-toolbar>
         <q-btn

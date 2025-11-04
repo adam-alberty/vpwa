@@ -18,7 +18,7 @@
       :rules="[(val) => (val && val.length > 0) || 'Please type password']"
     />
 
-    <q-btn push size="lg" label="Log in" type="submit" color="primary" class="full-width" />
+    <q-btn push size="lg" label="Log in" type="submit" color="primary" class="full-width" :loading="loading" :disabled="loading" />
 
     <div class="text-center q-mt-md">
       <router-link to="/auth/register" class="text-primary">
@@ -43,16 +43,22 @@ const formData = reactive({
 });
 const $q = useQuasar();
 
+const loading = ref(false);
+
 async function onSubmit() {
   try {
+    loading.value = true;
     await auth.login(formData);
-    router.push('/').catch(console.error);
+    await router.push('/').catch(console.error);
   } catch (err) {
     $q.notify({
       message: err.message,
       color: 'red',
       position: 'top',
     });
+  }
+  finally {
+    setTimeout(() =>  loading.value = false, 250);
   }
 }
 </script>

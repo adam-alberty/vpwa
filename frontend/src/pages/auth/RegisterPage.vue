@@ -47,7 +47,7 @@
       :rules="[(val) => val === formData.password || 'Passwords do not match']"
     />
 
-    <q-btn push size="lg" label="Register" type="submit" color="primary" class="full-width" />
+    <q-btn push size="lg" label="Register" type="submit" color="primary" class="full-width" :loading="loading" :disabled="loading" />
 
     <div class="text-center q-mt-md">
       <router-link to="/auth/login" class="text-primary">
@@ -61,7 +61,7 @@
 import { useQuasar } from 'quasar';
 import { api } from '@/services/api';
 import { useAuthStore } from '@/stores/auth.store';
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const $q = useQuasar();
@@ -78,16 +78,22 @@ const formData = reactive({
 
 const auth = useAuthStore();
 
+const loading = ref(false);
+
 async function onSubmit() {
   try {
+    loading.value = true;
     await auth.register(formData);
-    router.push('/');
+    await router.push('/');
   } catch (err) {
     $q.notify({
       message: err.message,
       color: 'red',
       position: 'top',
     });
+  }
+  finally {
+    setTimeout(() =>  loading.value = false, 250);
   }
 }
 </script>
