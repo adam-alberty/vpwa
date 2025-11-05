@@ -11,12 +11,27 @@
 </template>
 
 <script setup lang="ts">
+import { useChannelStore } from 'src/stores/channel.store';
+import { useUiStore } from 'src/stores/ui.store';
 import { computed, defineEmits, defineProps, ref } from 'vue';
+import { useRoute } from 'vue-router';
 
 const props = defineProps<{
   modelValue: string;
-  commands?: string[];
 }>();
+
+const commands = [
+  // Fetch from BE based on channel (most likely)
+  'list',
+
+  'invite',
+  'join',
+  'kick',
+  'revoke',
+
+  'quit',
+  'cancel',
+];
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void;
@@ -32,7 +47,7 @@ const command = computed(() => {
 });
 
 const validCommand = computed(() => {
-  if (!props.commands?.includes(command.value)) return undefined;
+  if (commands?.includes(command.value)) return undefined;
   return command.value;
 });
 
@@ -52,7 +67,7 @@ function onInput(event: Event) {
 
 function onTab(event: KeyboardEvent) {
   if (command.value && !validCommand.value) {
-    const autoComplete = props.commands?.find((cmd) => cmd.startsWith(command.value));
+    const autoComplete = commands?.find((cmd) => cmd.startsWith(command.value));
     if (!autoComplete) return;
 
     value.value = `/${autoComplete}`;
@@ -73,29 +88,20 @@ function onEnter(event: KeyboardEvent) {
   emit('update:modelValue', '');
 }
 
-const commands = [
-  // Fetch from BE based on channel (most likely)
-  'list',
-
-  'invite',
-  'join',
-  'kick',
-  'revoke',
-
-  'quit',
-  'cancel',
-];
+const uiStore = useUiStore();
+const channelStore = useChannelStore();
+const route = useRoute();
 
 function handleCommand(command: string, args: string[]) {
   switch (command) {
     case 'list':
-      toggleRightDrawer();
+      uiStore.toggleRightDrawer();
       break;
     case 'invite':
       console.log('Invite');
       break;
     case 'join':
-      if (!args.length) return newChannelDialog.value?.open();
+      // if (!args.length) return newChannelDialog.value?.open();
       break;
     case 'kick':
       console.log('Kick');
@@ -107,7 +113,7 @@ function handleCommand(command: string, args: string[]) {
       console.log('Quit');
       break;
     case 'cancel':
-      channelStore.leaveChannel();
+      channelStore.leaveChannel(route.params.id as string);
       break;
   }
 }

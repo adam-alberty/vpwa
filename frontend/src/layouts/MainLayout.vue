@@ -6,17 +6,19 @@
         <q-btn
           flat
           round
-          :icon="leftDrawerOpen ? 'chevron_left' : 'chevron_right'"
-          @click="toggleLeftDrawer"
+          :icon="uiStore.leftDrawerOpen ? 'chevron_left' : 'chevron_right'"
+          @click="uiStore.toggleLeftDrawer"
         >
-          <q-tooltip>{{ leftDrawerOpen ? 'Hide channels' : 'show channels' }}</q-tooltip>
+          <q-tooltip>{{ uiStore.leftDrawerOpen ? 'Hide channels' : 'show channels' }}</q-tooltip>
         </q-btn>
         <q-toolbar-title>
-          <Channel-Name
-            :name="currentChannel?.name"
-            :isPrivate="currentChannel?.type === 'private'"
+          <ChannelName
+            v-if="currentChannel"
+            :name="currentChannel.name"
+            :isPrivate="currentChannel.type === 'private'"
             highlight
           />
+          <div v-else>Select a channel</div>
         </q-toolbar-title>
 
         <div class="row q-gutter-sm">
@@ -38,23 +40,23 @@
               round
               dense
               icon="group"
-              :color="rightDrawerOpen ? 'white' : 'grey-5'"
-              @click="toggleRightDrawer"
+              :color="uiStore.rightDrawerOpen ? 'white' : 'grey-5'"
+              @click="uiStore.toggleRightDrawer"
             />
             <q-tooltip>
-              {{ rightDrawerOpen ? 'Hide member list' : 'Show member list' }}
+              {{ uiStore.rightDrawerOpen ? 'Hide member list' : 'Show member list' }}
             </q-tooltip>
           </div>
         </div>
       </q-toolbar>
     </q-header>
 
-    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" :breakpoint="850">
+    <q-drawer show-if-above v-model="uiStore.leftDrawerOpen" side="left" :breakpoint="850">
       <ChannelList style="height: calc(100% - 60px)" />
       <QuickSettingsDialog />
     </q-drawer>
 
-    <q-drawer show-if-above v-model="rightDrawerOpen" side="right" :breakpoint="1100">
+    <q-drawer show-if-above v-model="uiStore.rightDrawerOpen" side="right" :breakpoint="1100">
       <MembersMenu style="height: 100%" />
     </q-drawer>
 
@@ -68,7 +70,6 @@
 
           <!-- <ChatInput
             v-model="channelStore.currentMessage"
-            :commands="commands"
             @submit="channelStore.sendMessage"
             @command="handleCommand"
             class="chat-input absolute"
@@ -88,19 +89,11 @@ import ChatInput from '@/components/ChatInput.vue';
 import { computed, ref, watch } from 'vue';
 import { useChannelStore } from '@/stores/channel.store';
 import { useRoute } from 'vue-router';
+import { useUiStore } from 'src/stores/ui.store';
 
 const channelStore = useChannelStore();
-const leftDrawerOpen = ref(false);
+const uiStore = useUiStore();
 const route = useRoute();
-
-function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value;
-}
-
-const rightDrawerOpen = ref(false);
-function toggleRightDrawer() {
-  rightDrawerOpen.value = !rightDrawerOpen.value;
-}
 
 // Load channels
 channelStore.loadChannels();

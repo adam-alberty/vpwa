@@ -59,7 +59,7 @@ export default class ChannelsController {
 
   public async list({ response, auth }: HttpContext) {
     const user = auth.user!
-    const channels = await user.related('channels').query().orderBy('name', 'desc')
+    const channels = await user.related('channels').query().orderBy('name', 'asc')
     return response.ok({
       channels: channels,
     })

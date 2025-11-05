@@ -1,5 +1,10 @@
 <template>
-  <q-scroll-area style="height: calc(100vh - 110px)" ref="scrollRef" class="chat-scroll">
+  <q-scroll-area
+    v-if="!loading"
+    style="height: calc(100vh - 110px)"
+    ref="scrollRef"
+    class="chat-scroll"
+  >
     <q-infinite-scroll
       reverse
       :offset="100"
@@ -14,49 +19,47 @@
       </template>
 
       <p v-if="allLoaded" class="q-ma-lg g-mb-lg text-grey-6">
-        This is the beginning of <b>{{ channelStore.currentChannel?.name }}</b
+        This is the beginning of <b>{{ channel.name }}</b
         >...
       </p>
 
-      <channel-message
-        v-for="message in channelStore.currentChannel?.messages"
-        :key="message.id"
-        v-bind="message"
-      />
+      <ChannelMessage v-for="message in messages" :key="message.id" v-bind="message" />
     </q-infinite-scroll>
   </q-scroll-area>
+  <div v-else>loading</div>
 </template>
 
 <script setup lang="ts">
 import ChannelMessage from '@/components/ChannelMessage.vue';
-
 import type { QScrollArea } from 'quasar';
-import { useChannelStore } from '@/stores/channel.store';
 import { computed, ref, watch } from 'vue';
 
-const channelStore = useChannelStore();
+const loading = ref(true);
+const channel = ref(null);
+const messages = ref<any[]>(null);
+const hasMoreMessages = ref(false);
 
-const scrollTarget = ref(null);
 const scrollRef = ref<QScrollArea | null>(null);
+const allLoaded = computed(() => hasMoreMessages.value === false);
 
-const allLoaded = computed(() => channelStore.currentChannel.nextMessagePage == null);
+// watch(
+//   () => channelStore.sendMessageIndex,
+//   (newValue, oldValue) => {
+//     if (newValue > oldValue) {
+//       console.log(scrollRef.value);
+//       setTimeout(() => scrollRef.value.setScrollPercentage('vertical', 1, 200), 10);
+//     }
+//   },
+// );
 
-watch(
-  () => channelStore.sendMessageIndex,
-  (newValue, oldValue) => {
-    if (newValue > oldValue) {
-      console.log(scrollRef.value)
-      setTimeout(() => scrollRef.value.setScrollPercentage('vertical', 1, 200), 10);
-    }
-  },
-);
+function fetchMessages() {}
 
 function loadMoreMessages(index: number, done: () => void) {
   // TODO: Be...
   setTimeout(() => {
-    channelStore.fetchMessages()
+    fetchMessages();
 
-    done()
-  }, 2000)
+    done();
+  }, 2000);
 }
 </script>

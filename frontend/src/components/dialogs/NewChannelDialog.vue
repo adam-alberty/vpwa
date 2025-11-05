@@ -45,43 +45,20 @@
 </template>
 
 <script lang="ts" setup>
-import { useQuasar } from 'quasar';
-import { api } from '@/services/api';
 import { reactive, ref } from 'vue';
+import { useChannelStore } from 'src/stores/channel.store';
 
-const $q = useQuasar();
 const show = ref(false);
-
 const formData = reactive({
   name: '',
   type: 'private',
 });
 
 const formRef = ref(null);
+const channelStore = useChannelStore();
 
 async function onSubmit() {
-  try {
-    await api.post('/channels', formData);
-  } catch (err) {
-    $q.notify({
-      message: err.message,
-      color: 'red',
-      position: 'top',
-    });
-  }
+  await channelStore.createChannel(formData.name, formData.type);
   show.value = false;
 }
-
-function open() {
-  show.value = true;
-}
-
-function close() {
-  show.value = false;
-}
-
-defineExpose({
-  open,
-  close,
-});
 </script>

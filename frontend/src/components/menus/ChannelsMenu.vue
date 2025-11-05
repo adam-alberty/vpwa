@@ -8,7 +8,7 @@
         <Logo />
         <span class="q-ma-none q-ml-sm">Channels</span>
       </div>
-      <New-Channel-Dialog ref="newChannelDialog" @create="channelStore.createChannel" />
+      <NewChannelDialog />
     </div>
     <q-list>
       <ChannelInviteCard

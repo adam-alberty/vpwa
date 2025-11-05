@@ -6,7 +6,11 @@
   >
     <q-item-section>
       <div>
-        <ChannelName v-bind="props" :highlight="newMessageCount > 0 || active" />
+        <ChannelName
+          v-bind="props"
+          :is-private="type === 'private'"
+          :highlight="newMessageCount > 0 || active"
+        />
       </div>
     </q-item-section>
   </q-item>
@@ -18,17 +22,15 @@ import type { Channel } from '@/types/global';
 import { useRoute, useRouter } from 'vue-router';
 import ChannelName from './ChannelName.vue';
 
-const props = withDefaults(defineProps<Channel>(), {
-  isPrivate: false,
-});
-const { id, name, isPrivate, newMessageCount } = props;
+const props = defineProps<Channel>();
+const { id, name, type, newMessageCount } = props;
 
 const router = useRouter();
+const route = useRoute();
 
 function goToChannel() {
   router.push({ name: 'Channels', params: { id } });
 }
 
-const route = useRoute();
 const active = computed(() => route.params.id == id);
 </script>

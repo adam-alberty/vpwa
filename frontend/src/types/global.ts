@@ -1,6 +1,7 @@
 export interface Channel {
   id: string;
   name: string;
+  type: 'public' | 'private';
   // latestMessage: string;
   newMessageCount?: number;
   messages?: Message[];
@@ -25,7 +26,7 @@ export interface Message {
 export interface BasicUser {
   id: string;
   username: string;
-  status: "online" | "offline" | "dnd";
+  status: 'online' | 'offline' | 'dnd';
 }
 
 export interface User extends BasicUser {
