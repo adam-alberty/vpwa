@@ -69,10 +69,15 @@ watch(
   },
 );
 
+onMounted(() => {
+  fetchMessages();
+});
+
 async function fetchMessages() {
   const data = await api.get(`/channels/${route.params.id}/messages`);
   console.log(data);
   messageStore.messages = data.messages;
+  loading.value = false;
 }
 
 function loadMoreMessages(index: number, done: () => void) {
