@@ -2,12 +2,12 @@
   <div class="channel-message q-py-md q-px-lg row no-wrap">
     <q-item-section avatar>
       <q-avatar size="40px" color="secondary" text-color="white"
-        >{{ username.charAt(0).toUpperCase() }}
+        >{{ sender.username.charAt(0).toUpperCase() }}
       </q-avatar>
     </q-item-section>
     <div>
       <div class="row items-center q-gutter-sm q-mb-xs">
-        <span class="line-h-1 text-bold">{{ username }}</span>
+        <span class="line-h-1 text-bold">{{ sender.username }}</span>
         <span class="channel-message__timestamp text-grey-6"
           >{{ formatTimestamp(datetime) }}
 
@@ -34,12 +34,12 @@ import { computed } from 'vue';
 
 import type { Message } from '@/types/global';
 const props = withDefaults(defineProps<Message>(), {});
-const { username, text, timestamp } = props;
+const { sender, content, timestamp } = props;
 
 const datetime = computed(() => new Date(timestamp));
 
 const txtParts = computed(() => {
-  const tokens = text.split(/(\s+)/);
+  const tokens = content.split(/(\s+)/);
   return tokens.map((token) => {
     const isMention = token.startsWith('@') && token.length > 1 && !/\s/.test(token); // Strts w @ and ends w space
     // TODO: Mby check if the user / mention exists...
@@ -48,8 +48,7 @@ const txtParts = computed(() => {
 });
 
 const formatTimestamp = (timestamp: Date) => {
-  if (isNaN(timestamp?.getTime()))
-    return '';
+  if (isNaN(timestamp?.getTime())) return '';
 
   const inputDate = new Date(timestamp).setHours(0, 0, 0, 0);
   const todaysDate = new Date().setHours(0, 0, 0, 0);

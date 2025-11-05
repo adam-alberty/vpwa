@@ -18,8 +18,8 @@ export interface ChannelInvite {
 
 export interface Message {
   id: string;
-  username: string;
-  text: string;
+  sender: User;
+  content: string;
   timestamp?: string | number | Date;
 }
 

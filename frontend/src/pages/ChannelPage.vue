@@ -19,11 +19,11 @@
       </template>
 
       <p v-if="allLoaded" class="q-ma-lg g-mb-lg text-grey-6">
-        This is the beginning of <b>{{ channel.name }}</b
+        This is the beginning of <b>{{ channel?.name }}</b
         >...
       </p>
 
-      <ChannelMessage v-for="message in messages" :key="message.id" v-bind="message" />
+      <ChannelMessage v-for="message in messageStore.messages" :key="message.id" v-bind="message" />
     </q-infinite-scroll>
   </q-scroll-area>
   <div v-else>loading</div>
@@ -32,11 +32,13 @@
 <script setup lang="ts">
 import ChannelMessage from '@/components/ChannelMessage.vue';
 import type { QScrollArea } from 'quasar';
-import { computed, ref, watch } from 'vue';
+import { api } from 'src/services/api';
+import { useMessageStore } from 'src/stores/message.store';
+import { computed, onMounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
 const loading = ref(true);
 const channel = ref(null);
-const messages = ref<any[]>(null);
 const hasMoreMessages = ref(false);
 
 const scrollRef = ref<QScrollArea | null>(null);
@@ -52,7 +54,19 @@ const allLoaded = computed(() => hasMoreMessages.value === false);
 //   },
 // );
 
-function fetchMessages() {}
+const route = useRoute();
+const messageStore = useMessageStore();
+
+onMounted(async () => {
+  await fetchMessages();
+  loading.value = false;
+});
+
+async function fetchMessages() {
+  const data = await api.get(`/channels/${route.params.id}/messages`);
+  console.log(data);
+  messageStore.messages = data.messages;
+}
 
 function loadMoreMessages(index: number, done: () => void) {
   // TODO: Be...

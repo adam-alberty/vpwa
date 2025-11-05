@@ -1,8 +1,8 @@
 <template>
   <textarea
-    class="bg-dark text-white full-width q-pa-md"
+    class="bg-dark text-white full-width q-pa-md chat-input absolute"
     :class="{ 'text-italic': command, 'text-red-3': command && !validCommand }"
-    :value="modelValue"
+    v-model="messageInput"
     placeholder="Type a message"
     @input="onInput"
     @keydown.enter.prevent="onEnter"
@@ -11,39 +11,34 @@
 </template>
 
 <script setup lang="ts">
+import { api } from 'src/services/api';
 import { useChannelStore } from 'src/stores/channel.store';
+import { useMessageStore } from 'src/stores/message.store';
 import { useUiStore } from 'src/stores/ui.store';
-import { computed, defineEmits, defineProps, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
-const props = defineProps<{
-  modelValue: string;
-}>();
+const messageStore = useMessageStore();
+const uiStore = useUiStore();
+const channelStore = useChannelStore();
+const route = useRoute();
+
+const messageInput = ref('');
 
 const commands = [
   // Fetch from BE based on channel (most likely)
   'list',
-
   'invite',
   'join',
   'kick',
   'revoke',
-
   'quit',
   'cancel',
 ];
 
-const emit = defineEmits<{
-  (e: 'update:modelValue', value: string): void;
-  (e: 'submit', value?: string): void;
-  (e: 'command', value?: string, args?: Array<string>): void;
-}>();
-
-const value = ref(props.modelValue);
-
 const command = computed(() => {
-  if (!value.value?.startsWith('/')) return undefined;
-  return value.value.substring(1).split(' ')[0];
+  if (!messageInput.value.startsWith('/')) return undefined;
+  return messageInput.value.substring(1).split(' ')[0];
 });
 
 const validCommand = computed(() => {
@@ -53,16 +48,16 @@ const validCommand = computed(() => {
 
 const commandArgs = computed(() => {
   if (!command.value) return undefined;
-  return value.value
-    ?.substring(command.value.length + 1)
+  return messageInput.value
+    .substring(command.value.length + 1)
     .split(/ +/)
     .filter(Boolean);
 });
 
 function onInput(event: Event) {
   const target = event.target as HTMLTextAreaElement;
-  value.value = target.value.trim();
-  emit('update:modelValue', value.value);
+  // value.value = target.value.trim();
+  // emit('update:modelValue', value.value);
 }
 
 function onTab(event: KeyboardEvent) {
@@ -70,27 +65,16 @@ function onTab(event: KeyboardEvent) {
     const autoComplete = commands?.find((cmd) => cmd.startsWith(command.value));
     if (!autoComplete) return;
 
-    value.value = `/${autoComplete}`;
-    emit('update:modelValue', value.value);
+    // value.value = `/${autoComplete}`;
+    // emit('update:modelValue', value.value);
   }
 }
 
-function onEnter(event: KeyboardEvent) {
-  if (event.shiftKey || !value.value?.length) return;
-
-  if (command.value) {
-    emit('command', command.value, commandArgs.value);
-    emit('update:modelValue', '');
-    return;
-  }
-
-  emit('submit', value.value);
-  emit('update:modelValue', '');
+async function onEnter(event: KeyboardEvent) {
+  if (event.shiftKey || !messageInput.value.length) return;
+  await api.post(`/channels/${route.params.id}/messages`, { content: messageInput.value });
+  messageInput.value = '';
 }
-
-const uiStore = useUiStore();
-const channelStore = useChannelStore();
-const route = useRoute();
 
 function handleCommand(command: string, args: string[]) {
   switch (command) {

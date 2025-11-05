@@ -67,13 +67,7 @@
           <div class="relative-position" style="top: -32px; left: 8px">
             <q-spinner-dots color="primary" size="2em" />
           </div>
-
-          <!-- <ChatInput
-            v-model="channelStore.currentMessage"
-            @submit="channelStore.sendMessage"
-            @command="handleCommand"
-            class="chat-input absolute"
-          /> -->
+          <ChatInput />
         </div>
       </q-page>
     </q-page-container>

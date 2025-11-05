@@ -1,5 +1,8 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
+import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+import User from './user.js'
+import Channel from './channel.js'
 
 export default class Message extends BaseModel {
   @column({ isPrimary: true })
@@ -22,4 +25,13 @@ export default class Message extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+
+  @belongsTo(() => Channel)
+  declare channel: BelongsTo<typeof Channel>
+
+  @belongsTo(() => User, { foreignKey: 'senderId' })
+  declare sender: BelongsTo<typeof User>
+
+  @belongsTo(() => User, { foreignKey: 'mentionUserId' })
+  declare mentionedUser: BelongsTo<typeof User>
 }
