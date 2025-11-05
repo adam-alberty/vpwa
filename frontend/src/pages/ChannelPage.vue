@@ -57,10 +57,17 @@ const allLoaded = computed(() => hasMoreMessages.value === false);
 const route = useRoute();
 const messageStore = useMessageStore();
 
-onMounted(async () => {
-  await fetchMessages();
-  loading.value = false;
-});
+watch(
+  () => route.params.id,
+  async (newId, oldId) => {
+    if (newId !== oldId) {
+      loading.value = true;
+      await fetchMessages();
+      loading.value = false;
+      scrollRef.value?.setScrollPercentage('vertical', 1, 0);
+    }
+  },
+);
 
 async function fetchMessages() {
   const data = await api.get(`/channels/${route.params.id}/messages`);
