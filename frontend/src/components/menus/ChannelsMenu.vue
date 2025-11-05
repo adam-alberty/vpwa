@@ -11,18 +11,18 @@
       <New-Channel-Dialog ref="newChannelDialog" @create="channelStore.createChannel" />
     </div>
     <q-list>
-      <Channel-Invite-Card
-        v-for="invite in channelStore.invites"
+      <ChannelInviteCard
+        v-for="invite in inviteStore.invites"
         :key="invite.channelId"
         v-bind="invite"
-        @reject="channelStore.rejectInvite"
-        @accept="channelStore.acceptInvite"
+        @reject="inviteStore.rejectInvite"
+        @accept="inviteStore.acceptInvite"
       />
-      <Channel-Card
+      <ChannelCard
         v-for="channel in channelStore.channels"
         :key="channel.id"
         v-bind="channel"
-        @click="channelStore.changeChannel(channel)"
+        @click="changeChannel(channel.id)"
       />
     </q-list>
   </q-scroll-area>
@@ -30,12 +30,14 @@
 
 <script setup lang="ts">
 import Logo from '@/components/Logo.vue';
-import ChannelCard from '@/components/ChannelCard.vue';
-import ChannelInviteCard from '@/components/ChannelInviteCard.vue';
-
 import NewChannelDialog from '@/components/dialogs/NewChannelDialog.vue';
-
+import ChannelInviteCard from '@/components/ChannelInviteCard.vue';
+import ChannelCard from '@/components/ChannelCard.vue';
 import { useChannelStore } from '@/stores/channel.store';
+import { useInviteStore } from 'src/stores/invite.store';
 
 const channelStore = useChannelStore();
+const inviteStore = useInviteStore();
+
+function changeChannel(id: string) {}
 </script>

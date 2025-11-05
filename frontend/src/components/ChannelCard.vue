@@ -1,25 +1,34 @@
 <template>
-  <q-item clickable :style="active && `background-color: var(--q-dark-page)`">
+  <q-item
+    clickable
+    @click="goToChannel()"
+    :style="active && `background-color: var(--q-dark-page)`"
+  >
     <q-item-section>
       <div>
-        <Channel-Name v-bind="props" :highlight="newMessageCount > 0 || active" />
+        <ChannelName v-bind="props" :highlight="newMessageCount > 0 || active" />
       </div>
     </q-item-section>
   </q-item>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+import type { Channel } from '@/types/global';
+import { useRoute, useRouter } from 'vue-router';
 import ChannelName from './ChannelName.vue';
 
-import { computed } from 'vue';
-import { useChannelStore } from '@/stores/channel.store';
-
-import type { Channel } from '@/types/global';
 const props = withDefaults(defineProps<Channel>(), {
   isPrivate: false,
 });
 const { id, name, isPrivate, newMessageCount } = props;
 
-const channelStore = useChannelStore();
-const active = computed(() => channelStore.currentChannel?.id == id);
+const router = useRouter();
+
+function goToChannel() {
+  router.push({ name: 'Channels', params: { id } });
+}
+
+const route = useRoute();
+const active = computed(() => route.params.id == id);
 </script>

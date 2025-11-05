@@ -56,4 +56,12 @@ export default class ChannelsController {
       message: 'Channel left successfully',
     })
   }
+
+  public async list({ response, auth }: HttpContext) {
+    const user = auth.user!
+    const channels = await user.related('channels').query().orderBy('name', 'desc')
+    return response.ok({
+      channels: channels,
+    })
+  }
 }

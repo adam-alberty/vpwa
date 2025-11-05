@@ -72,6 +72,45 @@ function onEnter(event: KeyboardEvent) {
   emit('submit', value.value);
   emit('update:modelValue', '');
 }
+
+const commands = [
+  // Fetch from BE based on channel (most likely)
+  'list',
+
+  'invite',
+  'join',
+  'kick',
+  'revoke',
+
+  'quit',
+  'cancel',
+];
+
+function handleCommand(command: string, args: string[]) {
+  switch (command) {
+    case 'list':
+      toggleRightDrawer();
+      break;
+    case 'invite':
+      console.log('Invite');
+      break;
+    case 'join':
+      if (!args.length) return newChannelDialog.value?.open();
+      break;
+    case 'kick':
+      console.log('Kick');
+      break;
+    case 'revoke':
+      console.log('Revoke');
+      break;
+    case 'quit':
+      console.log('Quit');
+      break;
+    case 'cancel':
+      channelStore.leaveChannel();
+      break;
+  }
+}
 </script>
 
 <style lang="sass" scoped>

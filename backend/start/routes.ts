@@ -25,6 +25,7 @@ router
     // Channels
     router.post('/channels', [ChannelsController, 'create'])
     router.delete('/channels/:id', [ChannelsController, 'leave'])
+    router.get('/channels', [ChannelsController, 'list'])
 
     router.put('/users', [UsersController, 'update'])
     router.delete('/users', [UsersController, 'delete'])
