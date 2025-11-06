@@ -26,12 +26,18 @@
       <ChannelMessage v-for="message in messageStore.messages" :key="message.id" v-bind="message" />
     </q-infinite-scroll>
   </q-scroll-area>
-  <div v-else>loading</div>
+
+  <q-scroll-area v-else style="height: calc(100vh - 110px)" class="chat-scroll">
+    <div v-for="_ in 20">
+      <MessageSkeleton />
+    </div>
+  </q-scroll-area>
 </template>
 
 <script setup lang="ts">
 import ChannelMessage from '@/components/ChannelMessage.vue';
 import type { QScrollArea } from 'quasar';
+import MessageSkeleton from 'src/components/MessageSkeleton.vue';
 import { api } from 'src/services/api';
 import { useMessageStore } from 'src/stores/message.store';
 import { computed, onMounted, ref, watch } from 'vue';
@@ -61,9 +67,7 @@ watch(
   () => route.params.id,
   async (newId, oldId) => {
     if (newId !== oldId) {
-      loading.value = true;
       await fetchMessages();
-      loading.value = false;
       scrollRef.value?.setScrollPercentage('vertical', 1, 0);
     }
   },
@@ -74,6 +78,7 @@ onMounted(() => {
 });
 
 async function fetchMessages() {
+  loading.value = true;
   const data = await api.get(`/channels/${route.params.id}/messages`);
   console.log(data);
   messageStore.messages = data.messages;
