@@ -14,6 +14,9 @@ export interface ChannelInvite {
 export interface User {
   id: string;
   username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
 }
 
 export interface Message {

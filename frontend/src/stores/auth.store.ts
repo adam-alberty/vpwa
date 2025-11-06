@@ -1,5 +1,6 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import { api } from 'src/services/api';
+import { User } from 'src/types';
 import { ref } from 'vue';
 
 export const useAuthStore = defineStore('auth', () => {

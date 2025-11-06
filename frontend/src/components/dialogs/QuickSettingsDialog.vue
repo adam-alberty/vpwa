@@ -1,49 +1,49 @@
 <template>
-  <button class="settings-dialog" @click="show = true">
-    <q-avatar size="40px" color="primary" text-color="black">{{
-      auth.user.username.charAt(0).toUpperCase()
-    }}</q-avatar>
-    <div class="settings-dialog__user">
-      <div>{{ auth.user.firstName }} {{ auth.user.lastName }}</div>
-      <div class="text-left text-grey-5">@{{ auth.user.username }}</div>
+  <div style="position: relative">
+    <button class="settings-dialog" @click="show = !show">
+      <q-avatar size="40px" color="primary" text-color="black">{{
+        auth.user.username.charAt(0).toUpperCase()
+      }}</q-avatar>
+      <div class="settings-dialog__user">
+        <div>{{ auth.user.firstName }} {{ auth.user.lastName }}</div>
+        <div class="text-left text-grey-5">@{{ auth.user.username }}</div>
+      </div>
+    </button>
+
+    <div v-if="show" class="dropdown">
+      <q-btn-toggle
+        v-model="status"
+        :toggle-color="statusColors[status]"
+        :options="[
+          { label: 'Online', value: 'online', class: `text-positive` },
+          { label: 'DND', value: 'dnd', class: 'text-negative' },
+          { label: 'Offline', value: 'offline', class: 'text-accent' },
+        ]"
+      />
+      <q-btn
+        outline
+        to="/settings"
+        label="Account settings"
+        icon="settings"
+        color="primary"
+        class="full-width"
+        align="left"
+      />
+      <q-btn
+        align="left"
+        label="Logout"
+        icon="logout"
+        color="red"
+        class="full-width"
+        @click="logout"
+      />
     </div>
-  </button>
-
-  <q-dialog v-model="show" backdrop-filter="brightness(70%)">
-    <q-card style="min-width: 350px">
-      <q-card-section>
-        <div class="text-h6">Quick settings</div>
-      </q-card-section>
-
-      <q-card-section class="q-pt-none q-gutter-y-md">
-        <q-btn-toggle
-          v-model="status"
-          :toggle-color="statusColors[status]"
-          :options="[
-            { label: 'Online', value: 'online', class: `text-positive` },
-            { label: 'Do not Disturb', value: 'dnd', class: 'text-negative' },
-            { label: 'Offline', value: 'offline', class: 'text-accent' },
-          ]"
-        />
-
-        <q-btn
-          outline
-          to="/settings"
-          label="Account settings"
-          icon="settings"
-          color="secondary"
-          class="full-width"
-        />
-
-        <q-btn label="Logout" icon="logout" color="red" class="full-width" @click="logout" />
-      </q-card-section>
-    </q-card>
-  </q-dialog>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { useAuthStore } from '@/stores/auth.store';
-import { isRef, ref, unref } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const statusColors = {
@@ -99,5 +99,17 @@ async function logout() {
     margin-left: 0.8rem;
     line-height: 1.3;
   }
+}
+
+.dropdown {
+  position: absolute;
+  bottom: 100%;
+  background-color: $dark-page;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+
+  display: grid;
+  gap: 1rem;
 }
 </style>
