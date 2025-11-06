@@ -67,7 +67,7 @@ const formatTimestamp = (timestamp: Date) => {
 <style lang="sass" scoped>
 .channel-message
   &:hover
-    background: $dark
+    background: $highlight
 
   &__timestamp
     line-height: 1

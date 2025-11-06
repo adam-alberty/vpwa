@@ -10,7 +10,7 @@
       </div>
       <NewChannelDialog />
     </div>
-    <q-list>
+    <q-list class="list">
       <ChannelInviteCard
         v-for="invite in inviteStore.invites"
         :key="invite.channelId"
@@ -41,3 +41,9 @@ const inviteStore = useInviteStore();
 
 function changeChannel(id: string) {}
 </script>
+
+<style scoped lang="scss">
+.list {
+  padding: 1rem;
+}
+</style>

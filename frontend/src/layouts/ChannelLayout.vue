@@ -52,12 +52,18 @@
     </q-header>
 
     <q-drawer show-if-above v-model="uiStore.leftDrawerOpen" side="left" :breakpoint="850">
-      <ChannelList style="height: calc(100% - 60px)" />
-      <QuickSettingsDialog />
+      <div class="left-menu">
+        <ChannelList />
+        <div class="settings-dialog">
+          <QuickSettingsDialog />
+        </div>
+      </div>
     </q-drawer>
 
     <q-drawer show-if-above v-model="uiStore.rightDrawerOpen" side="right" :breakpoint="1100">
-      <MembersMenu style="height: 100%" />
+      <div style="height: 100%" class="members-drawer">
+        <MembersMenu style="height: 100%" />
+      </div>
     </q-drawer>
 
     <q-page-container>
@@ -67,7 +73,9 @@
           <div class="relative-position" style="top: -32px; left: 8px">
             <q-spinner-dots color="primary" size="2em" />
           </div>
-          <ChatInput />
+          <div class="chat-input">
+            <ChatInput />
+          </div>
         </div>
       </q-page>
     </q-page-container>
@@ -91,3 +99,32 @@ const route = useRoute();
 // Load channels
 channelStore.loadChannels();
 </script>
+
+<style scoped lang="scss">
+.left-menu {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.chat-input {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1rem;
+}
+
+.settings-dialog {
+  margin-top: auto;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1rem;
+}
+
+.members-drawer {
+  background-color: $dark-page !important;
+  border-left: 1px solid;
+  border-color: $border;
+}
+</style>

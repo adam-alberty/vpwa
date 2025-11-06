@@ -1,17 +1,11 @@
 <template>
-  <q-item
-    clickable
-    @click="goToChannel()"
-    :style="active && `background-color: var(--q-dark-page)`"
-  >
+  <q-item clickable @click="goToChannel()" class="item" :class="active && `bg-highlight`">
     <q-item-section>
-      <div>
-        <ChannelName
-          v-bind="props"
-          :is-private="type === 'private'"
-          :highlight="newMessageCount > 0 || active"
-        />
-      </div>
+      <ChannelName
+        v-bind="props"
+        :is-private="type === 'private'"
+        :highlight="newMessageCount > 0 || active"
+      />
     </q-item-section>
   </q-item>
 </template>
@@ -34,3 +28,10 @@ function goToChannel() {
 
 const active = computed(() => route.params.id == id);
 </script>
+
+<style scoped lang="scss">
+.item {
+  border-radius: 0.7rem;
+  padding: 0rem 1rem;
+}
+</style>

@@ -4,6 +4,10 @@
   --border-color: $border;
 }
 
+.bg-highlight {
+  background-color: $highlight;
+}
+
 body {
   font-size: 16px;
 }
@@ -35,6 +39,7 @@ body {
 
 .q-card {
   box-shadow: none !important;
+  background-color: #242429;
 }
 
 .q-tooltip {

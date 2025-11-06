@@ -1,10 +1,10 @@
 <template>
   <button class="settings-dialog" @click="show = true">
-    <q-avatar size="36px" color="grey-5" text-color="black">{{
-      auth.user.username.charAt(0)
+    <q-avatar size="40px" color="primary" text-color="black">{{
+      auth.user.username.charAt(0).toUpperCase()
     }}</q-avatar>
     <div class="settings-dialog__user">
-      <div class="text-weight-bold">{{ auth.user.firstName }} {{ auth.user.lastName }}</div>
+      <div>{{ auth.user.firstName }} {{ auth.user.lastName }}</div>
       <div class="text-left text-grey-5">@{{ auth.user.username }}</div>
     </div>
   </button>
