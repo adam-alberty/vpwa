@@ -47,6 +47,7 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
 import { useChannelStore } from 'src/stores/channel.store';
+import { Notify } from 'quasar';
 
 const show = ref(false);
 const formData = reactive({
@@ -58,7 +59,11 @@ const formRef = ref(null);
 const channelStore = useChannelStore();
 
 async function onSubmit() {
-  await channelStore.createChannel(formData.name, formData.type);
-  show.value = false;
+  try {
+    await channelStore.createChannel(formData.name, formData.type);
+    show.value = false;
+  } catch (err) {
+    Notify.create(err.message);
+  }
 }
 </script>

@@ -8,17 +8,22 @@ export default class ChannelsController {
     const user = auth.user!
     const data = await request.validateUsing(createChannelValidator)
 
-    const tx = await db.transaction()
-    const channel = await Channel.create(data, { client: tx })
-    await channel.related('members').attach(
-      {
-        [user.id]: {
-          role: ChannelMemberRole.ADMIN,
+    let channel
+    try {
+      const tx = await db.transaction()
+      channel = await Channel.create(data, { client: tx })
+      await channel.related('members').attach(
+        {
+          [user.id]: {
+            role: ChannelMemberRole.ADMIN,
+          },
         },
-      },
-      tx
-    )
-    await tx.commit()
+        tx
+      )
+      await tx.commit()
+    } catch (err) {
+      throw new Error('Channel with this name already exists')
+    }
 
     return response.created({
       channel,

@@ -8,7 +8,7 @@
         <Logo />
         <span class="q-ma-none q-ml-sm">Channels</span>
       </div>
-      <NewChannelDialog />
+      <CreateChannelDialog />
     </div>
     <q-list class="list">
       <ChannelInviteCard
@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import Logo from '@/components/Logo.vue';
-import NewChannelDialog from '@/components/dialogs/NewChannelDialog.vue';
+import CreateChannelDialog from '@/components/dialogs/CreateChannelDialog.vue';
 import ChannelInviteCard from '@/components/ChannelInviteCard.vue';
 import ChannelCard from '@/components/ChannelCard.vue';
 import { useChannelStore } from '@/stores/channel.store';

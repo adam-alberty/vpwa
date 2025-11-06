@@ -55,8 +55,6 @@ const statusColors = {
 const router = useRouter();
 const auth = useAuthStore();
 
-console.log(isRef(auth.user));
-
 const show = ref(false);
 const status = ref('online');
 

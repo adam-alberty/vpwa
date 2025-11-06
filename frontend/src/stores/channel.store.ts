@@ -24,7 +24,7 @@ export const useChannelStore = defineStore('channel', () => {
 
   // Create new channel and reload the channel list
   async function createChannel(name: string, type: string) {
-    await api.post('/channels', { name, type });
+    const res = await api.post('/channels', { name, type });
     await loadChannels();
   }
 
