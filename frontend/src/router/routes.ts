@@ -4,12 +4,16 @@ import route from '@/utils/route';
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      route('Index', '', () => import('pages/IndexPage.vue'), true),
-      route('Channels', 'channels/:id', () => import('pages/ChannelPage.vue'), true),
-    ],
+    component: () => import('layouts/IndexLayout.vue'),
+    children: [route('Index', '', () => import('pages/IndexPage.vue'), true)],
   },
+
+  {
+    path: '/channels',
+    component: () => import('layouts/ChannelLayout.vue'),
+    children: [route('Channels', 'channels/:id', () => import('pages/ChannelPage.vue'), true)],
+  },
+
   {
     path: '/auth',
     component: () => import('layouts/AuthLayout.vue'),
@@ -23,9 +27,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/settings',
     component: () => import('layouts/SettingsLayout.vue'),
-    children: [
-      route('Settings', '', () => import('pages/SettingsPage.vue'), true),
-    ],
+    children: [route('Settings', '', () => import('pages/SettingsPage.vue'), true)],
   },
 
   // Always leave this as last one,

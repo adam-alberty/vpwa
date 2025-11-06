@@ -7,7 +7,7 @@
           flat
           round
           :icon="uiStore.leftDrawerOpen ? 'chevron_left' : 'chevron_right'"
-          @click="uiStore.toggleLeftDrawer"
+          @click="uiStore.toggleLeftDrawer()"
         >
           <q-tooltip>{{ uiStore.leftDrawerOpen ? 'Hide channels' : 'show channels' }}</q-tooltip>
         </q-btn>
@@ -41,7 +41,7 @@
               dense
               icon="group"
               :color="uiStore.rightDrawerOpen ? 'white' : 'grey-5'"
-              @click="uiStore.toggleRightDrawer"
+              @click="uiStore.toggleRightDrawer()"
             />
             <q-tooltip>
               {{ uiStore.rightDrawerOpen ? 'Hide member list' : 'Show member list' }}

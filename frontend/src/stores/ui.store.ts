@@ -5,11 +5,17 @@ export const useUiStore = defineStore('ui', () => {
   const leftDrawerOpen = ref(false);
   const rightDrawerOpen = ref(false);
 
-  function toggleLeftDrawer() {
+  function toggleLeftDrawer(open?: boolean) {
+    if (typeof open === 'boolean') {
+      leftDrawerOpen.value = open;
+    }
     leftDrawerOpen.value = !leftDrawerOpen.value;
   }
 
-  function toggleRightDrawer() {
+  function toggleRightDrawer(open?: boolean) {
+    if (typeof open === 'boolean') {
+      leftDrawerOpen.value = open;
+    }
     rightDrawerOpen.value = !rightDrawerOpen.value;
   }
 
