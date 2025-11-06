@@ -1,19 +1,23 @@
 // app global css in SCSS form
 
+:root {
+  --border-color: $border;
+}
+
 body {
   font-size: 16px;
 }
 
 .online {
-  background-color: $positive
+  background-color: $positive;
 }
 
 .offline {
-  background-color: $accent
+  background-color: $accent;
 }
 
 .dnd {
-  background-color: $negative
+  background-color: $negative;
 }
 
 .q-scrollarea__thumb {
@@ -26,7 +30,7 @@ body {
 }
 
 .line-h-1 {
-  line-height: 1
+  line-height: 1;
 }
 
 .q-card {
@@ -36,4 +40,9 @@ body {
 .q-tooltip {
   background-color: #373b42;
   color: white;
+}
+
+input,
+textarea {
+  background-color: $input;
 }

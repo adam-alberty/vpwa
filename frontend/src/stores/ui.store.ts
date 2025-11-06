@@ -8,6 +8,7 @@ export const useUiStore = defineStore('ui', () => {
   function toggleLeftDrawer(open?: boolean) {
     if (typeof open === 'boolean') {
       leftDrawerOpen.value = open;
+      return;
     }
     leftDrawerOpen.value = !leftDrawerOpen.value;
   }
@@ -15,6 +16,7 @@ export const useUiStore = defineStore('ui', () => {
   function toggleRightDrawer(open?: boolean) {
     if (typeof open === 'boolean') {
       leftDrawerOpen.value = open;
+      return;
     }
     rightDrawerOpen.value = !rightDrawerOpen.value;
   }

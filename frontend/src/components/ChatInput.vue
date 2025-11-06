@@ -1,6 +1,6 @@
 <template>
   <textarea
-    class="bg-dark text-white full-width q-pa-md chat-input absolute"
+    class="text-white"
     :class="{ 'text-italic': command, 'text-red-3': command && !validCommand }"
     v-model="messageInput"
     placeholder="Type a message"
@@ -103,11 +103,17 @@ function handleCommand(command: string, args: string[]) {
 }
 </script>
 
-<style lang="sass" scoped>
-textarea
-  border: none
-  outline: none
-  resize: none
-  font-size: large
-  border-top: 1px solid rgba(255, 255, 255, 0.28)
+<style lang="scss" scoped>
+textarea {
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  resize: none;
+  font-size: large;
+  border-radius: 0.7rem;
+  width: 100%;
+  padding: 1rem;
+  height: 70px;
+  border: 1px solid #26272b;
+}
 </style>

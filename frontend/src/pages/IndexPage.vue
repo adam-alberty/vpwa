@@ -12,7 +12,7 @@ const channelStore = useChannelStore();
 const uiStore = useUiStore();
 
 channelStore.setCurrentChannel(null);
-uiStore.toggleLeftDrawer(false);
+uiStore.toggleLeftDrawer(true);
 </script>
 
 <style scoped lang="scss">

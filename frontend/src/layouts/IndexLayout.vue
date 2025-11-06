@@ -3,14 +3,18 @@
     <!-- Config of layout header, footer and drawers, what overlaps what etc... -->
 
     <q-drawer show-if-above v-model="uiStore.leftDrawerOpen" side="left" :breakpoint="850">
-      <ChannelList style="height: calc(100% - 60px)" />
-      <QuickSettingsDialog />
+      <div class="left-menu">
+        <ChannelList />
+        <div class="settings-dialog">
+          <QuickSettingsDialog />
+        </div>
+      </div>
     </q-drawer>
 
     <q-page-container>
       <q-page>
         <router-view />
-        <div>
+        <div class="chat-input">
           <ChatInput />
         </div>
       </q-page>
@@ -23,19 +27,34 @@ import ChannelList from '@/components/menus/ChannelsMenu.vue';
 import QuickSettingsDialog from '@/components/dialogs/QuickSettingsDialog.vue';
 import ChatInput from '@/components/ChatInput.vue';
 import { useChannelStore } from '@/stores/channel.store';
-import { useRoute } from 'vue-router';
 import { useUiStore } from 'src/stores/ui.store';
 
 const channelStore = useChannelStore();
 const uiStore = useUiStore();
-const route = useRoute();
 
 // Load channels
 channelStore.loadChannels();
 </script>
 
-<style lang="sass" scoped>
-.chat-input
-  height: 60px
-  bottom: 0
+<style scoped lang="scss">
+.left-menu {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.chat-input {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1rem;
+}
+
+.settings-dialog {
+  margin-top: auto;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1rem;
+}
 </style>

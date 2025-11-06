@@ -66,38 +66,40 @@ async function logout() {
 }
 </script>
 
-<style lang="sass" scoped>
-.settings-dialog
-  height: 60px
-  border-top: 1px solid rgba(255, 255, 255, 0.28)
-  width: 100%
-  margin: 0px
-  padding: 0px
-  display: flex
-  align-items: center
-  outline: none
-  background-color: $dark
-  cursor: pointer
+<style lang="scss" scoped>
+.settings-dialog {
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  resize: none;
+  font-size: large;
+  border-radius: 0.7rem;
+  width: 100%;
+  padding: 1rem;
+  height: 70px;
+  border: 1px solid #26272b;
 
-  &:hover
-    background-color: #313131
+  display: flex;
+  align-items: center;
+  outline: none;
+  background-color: $input;
+  cursor: pointer;
 
-  -webkit-appearance: none
-  border-radius: 0
-  text-align: inherit
-  background: none
-  box-shadow: none
-  padding: 0
-  cursor: pointer
-  border: none
-  color: inherit
-  font: inherit
+  &:hover {
+    filter: brightness(130%);
+  }
 
-  padding: 1rem
+  -webkit-appearance: none;
+  text-align: inherit;
+  box-shadow: none;
+  cursor: pointer;
+  border: none;
+  color: inherit;
+  font: inherit;
 
-  border-top: 1px solid rgba(255, 255, 255, 0.28)
-
-  &__user
-    margin-left: 0.8rem
-    line-height: 1
+  &__user {
+    margin-left: 0.8rem;
+    line-height: 1.3;
+  }
+}
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <q-scroll-area>
+  <q-scroll-area style="flex-grow: 1">
     <div
       class="row items-center justify-between q-gutter-x-sm q-item text-bold text-h6 text-primary bg-dark"
       style="position: sticky; top: 0px; z-index: 1; height: 51px; line-height: 1"

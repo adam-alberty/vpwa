@@ -91,9 +91,3 @@ const route = useRoute();
 // Load channels
 channelStore.loadChannels();
 </script>
-
-<style lang="sass" scoped>
-.chat-input
-  height: 60px
-  bottom: 0
-</style>
