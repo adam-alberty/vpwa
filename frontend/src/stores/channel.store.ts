@@ -5,6 +5,16 @@ import type { Channel } from '@/types/channel';
 
 export const useChannelStore = defineStore('channel', () => {
   const channels = ref<Channel[]>([]);
+  const currentChannel = ref<Channel | null>(null);
+
+  async function setCurrentChannel(id: string | null) {
+    if (!id) {
+      currentChannel.value = null;
+    }
+    const data = await api.get(`/channels/${id}`);
+    console.log(data);
+    currentChannel.value = data.channel;
+  }
 
   // Load the channels from API
   async function loadChannels() {
@@ -24,7 +34,7 @@ export const useChannelStore = defineStore('channel', () => {
     await loadChannels();
   }
 
-  return { channels, loadChannels, createChannel, leaveChannel };
+  return { channels, currentChannel, loadChannels, createChannel, leaveChannel, setCurrentChannel };
 });
 
 if (import.meta.hot) {

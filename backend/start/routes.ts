@@ -13,6 +13,7 @@ import ChannelsController from '#controllers/channels_controller'
 import SessionController from '#controllers/session_controller'
 import UsersController from '#controllers/users_controller'
 import MessagesController from '#controllers/messages_controller'
+import ChannelMembersController from '#controllers/channel_members_controller'
 
 // Global matcher for "id" to be uuid
 router.where('id', router.matchers.uuid())
@@ -27,11 +28,16 @@ router
     router.post('/channels', [ChannelsController, 'create'])
     router.delete('/channels/:id', [ChannelsController, 'leave'])
     router.get('/channels', [ChannelsController, 'list'])
+    router.get('/channels/:id', [ChannelsController, 'get'])
 
-    // id - channel id
+    // Messages
     router.post('/channels/:id/messages', [MessagesController, 'create'])
     router.get('/channels/:id/messages', [MessagesController, 'list'])
 
+    // Members
+    router.get('/channels/:id/members', [ChannelMembersController, 'get'])
+
+    // User management
     router.put('/users', [UsersController, 'update'])
     router.delete('/users', [UsersController, 'delete'])
 

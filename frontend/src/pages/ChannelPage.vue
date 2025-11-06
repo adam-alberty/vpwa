@@ -39,6 +39,7 @@ import ChannelMessage from '@/components/ChannelMessage.vue';
 import type { QScrollArea } from 'quasar';
 import MessageSkeleton from 'src/components/MessageSkeleton.vue';
 import { api } from 'src/services/api';
+import { useChannelStore } from 'src/stores/channel.store';
 import { useMessageStore } from 'src/stores/message.store';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
@@ -62,20 +63,26 @@ const allLoaded = computed(() => hasMoreMessages.value === false);
 
 const route = useRoute();
 const messageStore = useMessageStore();
+const channelStore = useChannelStore();
 
 watch(
   () => route.params.id,
   async (newId, oldId) => {
     if (newId !== oldId) {
-      await fetchMessages();
+      pageChange();
       scrollRef.value?.setScrollPercentage('vertical', 1, 0);
     }
   },
 );
 
 onMounted(() => {
-  fetchMessages();
+  pageChange();
 });
+
+async function pageChange() {
+  channelStore.setCurrentChannel(route.params.id as string);
+  fetchMessages();
+}
 
 async function fetchMessages() {
   loading.value = true;

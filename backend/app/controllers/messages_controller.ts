@@ -23,6 +23,7 @@ export default class MessagesController {
     return response.created(message)
   }
 
+  // Get messages
   public async list({ response, auth, params }: HttpContext) {
     const channelId = params.id as string
     const user = auth.user!
@@ -39,7 +40,7 @@ export default class MessagesController {
 
     const messages = await Message.query()
       .where('channel_id', channelId)
-      .orderBy('created_at', 'desc')
+      .orderBy('created_at', 'asc')
       .preload('sender')
 
     return response.ok({ messages })

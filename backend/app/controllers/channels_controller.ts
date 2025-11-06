@@ -64,4 +64,25 @@ export default class ChannelsController {
       channels: channels,
     })
   }
+
+  public async get({ response, params, auth }: HttpContext) {
+    const user = auth.user!
+    const channelId = params.id as string
+
+    const channel = await db
+      .query()
+      .from('channels')
+      .join('channel_members', 'channels.id', '=', 'channel_members.channel_id')
+      .where('channel_members.user_id', user.id)
+      .andWhere('channels.id', channelId)
+      .first()
+
+    if (!channel) {
+      throw new Error('You are not a member of this channel')
+    }
+
+    return response.ok({
+      channel,
+    })
+  }
 }

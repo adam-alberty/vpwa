@@ -13,9 +13,9 @@
         </q-btn>
         <q-toolbar-title>
           <ChannelName
-            v-if="currentChannel"
-            :name="currentChannel.name"
-            :isPrivate="currentChannel.type === 'private'"
+            v-if="channelStore.currentChannel"
+            :name="channelStore.currentChannel.name"
+            :isPrivate="channelStore.currentChannel.type === 'private'"
             highlight
           />
           <div v-else>Select a channel</div>
@@ -80,7 +80,6 @@ import ChannelList from '@/components/menus/ChannelsMenu.vue';
 import MembersMenu from '@/components/menus/MembersMenu.vue';
 import QuickSettingsDialog from '@/components/dialogs/QuickSettingsDialog.vue';
 import ChatInput from '@/components/ChatInput.vue';
-import { computed, ref, watch } from 'vue';
 import { useChannelStore } from '@/stores/channel.store';
 import { useRoute } from 'vue-router';
 import { useUiStore } from 'src/stores/ui.store';
@@ -91,10 +90,6 @@ const route = useRoute();
 
 // Load channels
 channelStore.loadChannels();
-
-const currentChannel = computed(() => {
-  return channelStore.channels.find((channel) => channel.id === route.params.id);
-});
 </script>
 
 <style lang="sass" scoped>

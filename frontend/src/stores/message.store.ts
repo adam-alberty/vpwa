@@ -1,5 +1,4 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import { api } from 'src/services/api';
 import { ref } from 'vue';
 
 export const useMessageStore = defineStore('message', () => {
