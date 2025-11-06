@@ -37,8 +37,8 @@ export default defineRouter(function (/* { store, ssrContext } */) {
   Router.beforeEach(async (to, from, next) => {
     const auth = useAuthStore();
     try {
+      if (to.path.includes('/auth')) next();
       await auth.me();
-      if (to.path.startsWith('/auth')) return next('/');
       next();
     } catch (err) {
       console.error('User not authenticated:', err);
