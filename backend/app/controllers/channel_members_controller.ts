@@ -18,11 +18,14 @@ export default class ChannelMembersController {
       return response.forbidden({ error: 'You are not a member of this channel' })
     }
 
-    const messages = await Message.query()
+    const members = await db
+      .query()
+      .from('channel_members')
       .where('channel_id', channelId)
+      .join('users', 'channel_members.user_id', '=', 'users.id')
       .orderBy('created_at', 'asc')
-      .preload('sender')
+      .select('username', 'role', 'status', 'user_id')
 
-    return response.ok({ messages })
+    return response.ok({ members })
   }
 }

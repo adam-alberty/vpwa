@@ -9,21 +9,14 @@
       </div>
     </div>
     <q-list class="q-pa-sm">
-      <User-Member-Card v-for="user in members" :key="user.id" v-bind="user" />
+      <UserMemberCard v-for="member in memberStore.members" :key="member.user_id" v-bind="member" />
     </q-list>
   </q-scroll-area>
 </template>
 
 <script setup lang="ts">
+import { useMemberStore } from 'src/stores/members.store';
 import UserMemberCard from '../UserMemberCard.vue';
-import { useChannelStore } from '@/stores/channel.store';
 
-const members: BasicUser[] = [
-  // TODO: Integrate to channel
-  { id: '1', username: 'You', status: 'online' },
-  { id: '2', username: 'bob', status: 'offline' },
-  { id: '3', username: 'alice', status: 'dnd' },
-];
-
-const channelStore = useChannelStore();
+const memberStore = useMemberStore();
 </script>

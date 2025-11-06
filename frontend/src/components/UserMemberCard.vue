@@ -13,20 +13,20 @@
     </div>
 
     <!-- Todo -->
-    <q-menu anchor="center start" self="center right" class="bg-blue-grey-8 q-py-sm q-px-md" :offset="[10, 5]">
-      <div class="typing-menu">
-        Yes that is a great
-      </div>
+    <q-menu
+      anchor="center start"
+      self="center right"
+      class="bg-blue-grey-8 q-py-sm q-px-md"
+      :offset="[10, 5]"
+    >
+      <div class="typing-menu">Yes that is a great</div>
     </q-menu>
   </q-card>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-
-import type { BasicUser } from '@/types/global';
-const props = defineProps<BasicUser>();
-const { id, username, status } = props;
+const props = defineProps<{ username: string; status: string }>();
+const { username, status } = props;
 </script>
 
 <style lang="sass" scoped>

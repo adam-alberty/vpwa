@@ -19,7 +19,7 @@
       </template>
 
       <p v-if="allLoaded" class="q-ma-lg g-mb-lg text-grey-6">
-        This is the beginning of <b>{{ channel?.name }}</b
+        This is the beginning of <b>{{ channelStore.currentChannel.name }}</b
         >...
       </p>
 
@@ -40,12 +40,12 @@ import type { QScrollArea } from 'quasar';
 import MessageSkeleton from 'src/components/MessageSkeleton.vue';
 import { api } from 'src/services/api';
 import { useChannelStore } from 'src/stores/channel.store';
+import { useMemberStore } from 'src/stores/members.store';
 import { useMessageStore } from 'src/stores/message.store';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 const loading = ref(true);
-const channel = ref(null);
 const hasMoreMessages = ref(false);
 
 const scrollRef = ref<QScrollArea | null>(null);
@@ -64,6 +64,7 @@ const allLoaded = computed(() => hasMoreMessages.value === false);
 const route = useRoute();
 const messageStore = useMessageStore();
 const channelStore = useChannelStore();
+const memberStore = useMemberStore();
 
 watch(
   () => route.params.id,
@@ -81,6 +82,7 @@ onMounted(() => {
 
 async function pageChange() {
   channelStore.setCurrentChannel(route.params.id as string);
+  memberStore.loadMembers(route.params.id as string);
   fetchMessages();
 }
 
