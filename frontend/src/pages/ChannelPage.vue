@@ -81,6 +81,7 @@ onMounted(() => {
 
 async function pageChange() {
   loading.value = true;
+  // TODO maybe add Promise.all()
   channelStore.setCurrentChannel(route.params.id as string);
   memberStore.loadMembers(route.params.id as string);
   messageStore.loadMessages(route.params.id as string);

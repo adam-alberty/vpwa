@@ -30,13 +30,13 @@
 </template>
 
 <script lang="ts" setup>
+import { Message } from 'src/types';
 import { computed } from 'vue';
 
-import type { Message } from '@/types/global';
 const props = withDefaults(defineProps<Message>(), {});
-const { sender, content, timestamp } = props;
+const { sender, content, createdAt } = props;
 
-const datetime = computed(() => new Date(timestamp));
+const datetime = computed(() => new Date(createdAt));
 
 const txtParts = computed(() => {
   const tokens = content.split(/(\s+)/);

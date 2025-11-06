@@ -1,0 +1,18 @@
+import server from '@adonisjs/core/services/server'
+import { Server } from 'socket.io'
+
+class Ws {
+  public io!: Server
+  private booted = false
+
+  public boot() {
+    if (this.booted) {
+      return
+    }
+    this.booted = true
+    this.io = new Server(server.getNodeServer())
+    return this.io
+  }
+}
+
+export default new Ws()

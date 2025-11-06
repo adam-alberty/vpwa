@@ -3,12 +3,31 @@
     <q-item-section>
       <div>
         <q-icon name="mail" color="primary" size="20px" class="q-my-none q-mb-xs" />
-        <Channel-Name v-bind="props" highlight />
+        <ChannelName v-bind="props" highlight />
 
-        <q-menu anchor="center end" self="center left" class="no-shadow bg-blue-grey-8 q-pa-xs" :offset="[5, 5]">
+        <q-menu
+          anchor="center end"
+          self="center left"
+          class="no-shadow bg-blue-grey-8 q-pa-xs"
+          :offset="[5, 5]"
+        >
           <div class="row q-gutter-x-sm">
-            <q-btn size="11px" dense flat icon="check" class="bg-positive text-white" @click="accept" />
-            <q-btn size="11px" dense flat icon="close" class="bg-negative text-white" @click="reject"/>
+            <q-btn
+              size="11px"
+              dense
+              flat
+              icon="check"
+              class="bg-positive text-white"
+              @click="accept"
+            />
+            <q-btn
+              size="11px"
+              dense
+              flat
+              icon="close"
+              class="bg-negative text-white"
+              @click="reject"
+            />
           </div>
         </q-menu>
       </div>
@@ -17,18 +36,16 @@
 </template>
 
 <script setup lang="ts">
+import { ChannelInvite } from 'src/types';
 import ChannelName from './ChannelName.vue';
 
-import type { ChannelInvite } from '@/types/global';
-const props = withDefaults(defineProps<ChannelInvite>(), {
-  isPrivate: false
-});
-const { name, isPrivate } = props;
+const props = defineProps<ChannelInvite>();
+const {} = props;
 
 const emit = defineEmits<{
-  (e: 'accept', value: ChannelInvite): void
-  (e: 'reject', value: ChannelInvite): void
-}>()
+  (e: 'accept', value: ChannelInvite): void;
+  (e: 'reject', value: ChannelInvite): void;
+}>();
 
 function accept() {
   emit('accept', props);

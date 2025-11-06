@@ -1,17 +1,34 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import { api } from 'src/services/api';
 import { ref } from 'vue';
+import { useWsStore } from './ws.store';
+import { Message } from 'src/types';
 
 export const useMessageStore = defineStore('message', () => {
-  const messages = ref<any[]>([]);
+  const wsStore = useWsStore();
+  const messages = ref<Message[]>([]);
 
+  async function createMessage(channelId: string, content: string) {
+    await api.post(`/channels/${channelId}/messages`, { content });
+  }
+
+  // Load messages with REST and then start listening to new messages with websocket
   async function loadMessages(channelId: string) {
     const data = await api.get(`/channels/${channelId}/messages`);
     console.log(data);
     messages.value = data.messages;
+
+    wsStore.connect();
+    wsStore.socket.emit('channel:join', channelId);
+    console.log(`[WS] joined channel ${channelId}`);
+
+    wsStore.socket.on('message:new', (msg: Message) => {
+      console.log(`[WS]: received message`, msg);
+      messages.value = [...messages.value, msg];
+    });
   }
 
-  return { messages, loadMessages };
+  return { messages, loadMessages, createMessage };
 });
 
 if (import.meta.hot) {

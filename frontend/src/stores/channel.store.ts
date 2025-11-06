@@ -1,7 +1,7 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import { api } from 'src/services/api';
 import { ref } from 'vue';
-import type { Channel } from '@/types/channel';
+import type { Channel } from '@/types';
 
 export const useChannelStore = defineStore('channel', () => {
   const channels = ref<Channel[]>([]);

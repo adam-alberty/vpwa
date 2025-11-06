@@ -11,7 +11,6 @@
 </template>
 
 <script setup lang="ts">
-import { api } from 'src/services/api';
 import { useChannelStore } from 'src/stores/channel.store';
 import { useMessageStore } from 'src/stores/message.store';
 import { useUiStore } from 'src/stores/ui.store';
@@ -72,7 +71,9 @@ function onTab(event: KeyboardEvent) {
 
 async function onEnter(event: KeyboardEvent) {
   if (event.shiftKey || !messageInput.value.length) return;
-  await api.post(`/channels/${route.params.id}/messages`, { content: messageInput.value });
+
+  messageStore.createMessage(route.params.id as string, messageInput.value);
+
   messageInput.value = '';
 }
 

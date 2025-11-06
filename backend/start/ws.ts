@@ -1,17 +1,17 @@
-import { Server } from 'socket.io'
 import app from '@adonisjs/core/services/app'
-import server from '@adonisjs/core/services/server'
+import ws from '#services/ws'
 
 app.ready(() => {
-  const io = new Server(server.getNodeServer())
+  ws.boot()
 
   // Client connects to websocket
-  io.on('connection', (socket) => {
+  ws.io.on('connection', (socket) => {
     console.log('socket connected', socket.id)
 
     // listens to messages
-    socket.on('join', (msg) => {
-      io.emit('chat message', msg)
+    socket.on('channel:join', (channelId) => {
+      socket.join(`channel:${channelId}`)
+      ws.io.to(`channel:${channelId}`).emit('nice')
     })
 
     socket.on('disconnect', () => {

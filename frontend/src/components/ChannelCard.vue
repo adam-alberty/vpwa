@@ -1,23 +1,19 @@
 <template>
   <q-item clickable @click="goToChannel()" class="item" :class="active && `bg-highlight`">
     <q-item-section>
-      <ChannelName
-        v-bind="props"
-        :is-private="type === 'private'"
-        :highlight="newMessageCount > 0 || active"
-      />
+      <ChannelName v-bind="props" :is-private="type === 'private'" />
     </q-item-section>
   </q-item>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { Channel } from '@/types/global';
 import { useRoute, useRouter } from 'vue-router';
 import ChannelName from './ChannelName.vue';
+import { Channel } from 'src/types';
 
 const props = defineProps<Channel>();
-const { id, name, type, newMessageCount } = props;
+const { id, type } = props;
 
 const router = useRouter();
 const route = useRoute();

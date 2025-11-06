@@ -1,11 +1,11 @@
-import type * as GlobalTypes from './global';
+// import type * as GlobalTypes from './global';
 
-export {};
+// export {};
 
-declare global {
-  type Channel = GlobalTypes.Channel;
-  type ChannelInvite = GlobalTypes.ChannelInvite;
-  type Message = GlobalTypes.Message;
-  type BasicUser = GlobalTypes.BasicUser;
-  type User = GlobalTypes.User;
-}
+// declare global {
+//   type Channel = GlobalTypes.Channel;
+//   type ChannelInvite = GlobalTypes.ChannelInvite;
+//   type Message = GlobalTypes.Message;
+//   type BasicUser = GlobalTypes.BasicUser;
+//   type User = GlobalTypes.User;
+// }

@@ -1,5 +1,5 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import type { ChannelInvite } from 'src/types/invite';
+import type { ChannelInvite } from 'src/types';
 
 export const useInviteStore = defineStore('invite', () => {
   const invites: ChannelInvite[] = [];

@@ -1,4 +1,5 @@
 import Message from '#models/message'
+import ws from '#services/ws'
 import { createMessageValidator } from '#validators/message'
 import type { HttpContext } from '@adonisjs/core/http'
 import db from '@adonisjs/lucid/services/db'
@@ -19,8 +20,22 @@ export default class MessagesController {
     if (!isMember) {
       return response.forbidden({ error: 'You are not a member of this channel' })
     }
-    await Message.create({ channelId, senderId: user.id, content: message.content })
-    return response.created(message)
+
+    const createdMessage = await Message.create({
+      channelId,
+      senderId: user.id,
+      content: message.content,
+    })
+    const newMessage = await Message.query()
+      .where('id', createdMessage.id)
+      .preload('sender')
+      .preload('mentionedUser')
+      .firstOrFail() // returns a single object
+
+    // send the message to clients in the channel
+    ws.io.to(`channel:${channelId}`).emit('message:new', newMessage)
+
+    return response.created()
   }
 
   // Get messages
@@ -40,8 +55,9 @@ export default class MessagesController {
 
     const messages = await Message.query()
       .where('channel_id', channelId)
-      .orderBy('created_at', 'asc')
       .preload('sender')
+      .preload('mentionedUser')
+      .orderBy('created_at', 'asc')
 
     return response.ok({ messages })
   }
