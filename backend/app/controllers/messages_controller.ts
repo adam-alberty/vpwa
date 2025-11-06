@@ -35,7 +35,7 @@ export default class MessagesController {
     // send the message to clients in the channel
     ws.io.to(`channel:${channelId}`).emit('message:new', newMessage)
 
-    return response.created()
+    return response.created('ok')
   }
 
   // Get messages

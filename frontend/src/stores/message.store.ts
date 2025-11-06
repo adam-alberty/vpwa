@@ -18,7 +18,9 @@ export const useMessageStore = defineStore('message', () => {
     console.log(data);
     messages.value = data.messages;
 
+    // Start listening for new messages
     wsStore.connect();
+    wsStore.socket.off('message:new');
     wsStore.socket.emit('channel:join', channelId);
     console.log(`[WS] joined channel ${channelId}`);
 

@@ -67,12 +67,9 @@
     </q-drawer>
 
     <q-page-container>
-      <q-page>
-        <router-view />
-        <div>
-          <div class="relative-position" style="top: -32px; left: 8px">
-            <q-spinner-dots color="primary" size="2em" />
-          </div>
+      <q-page class="page">
+        <div class="chat-area">
+          <router-view />
           <div class="chat-input">
             <ChatInput />
           </div>
@@ -107,14 +104,6 @@ channelStore.loadChannels();
   height: 100vh;
 }
 
-.chat-input {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 1rem;
-}
-
 .settings-dialog {
   margin-top: auto;
   width: 100%;
@@ -126,5 +115,25 @@ channelStore.loadChannels();
   background-color: $dark-page !important;
   border-left: 1px solid;
   border-color: $border;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.chat-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.chat-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1rem;
+  margin-top: auto;
 }
 </style>

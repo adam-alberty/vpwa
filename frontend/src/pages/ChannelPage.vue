@@ -1,10 +1,5 @@
 <template>
-  <q-scroll-area
-    v-if="!loading"
-    style="height: calc(100vh - 110px)"
-    ref="scrollRef"
-    class="chat-scroll"
-  >
+  <q-scroll-area v-if="!loading" ref="scrollRef" class="chat-scroll">
     <q-infinite-scroll
       reverse
       :offset="100"
@@ -97,3 +92,9 @@ function loadMoreMessages(index: number, done: () => void) {
   }, 2000);
 }
 </script>
+
+<style scoped lang="scss">
+.chat-scroll {
+  flex-grow: 1;
+}
+</style>
