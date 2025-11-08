@@ -28,6 +28,8 @@ export const useMessageStore = defineStore('message', () => {
       console.log(`[WS]: received message`, msg);
       messages.value = [...messages.value, msg];
     });
+
+    return data.messages;
   }
 
   return { messages, loadMessages, createMessage };

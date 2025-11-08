@@ -37,7 +37,7 @@ import { useChannelStore } from 'src/stores/channel.store';
 import { useMemberStore } from 'src/stores/members.store';
 import { useMessageStore } from 'src/stores/message.store';
 import { computed, onMounted, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { error } from '@/utils/toast'
 
 
@@ -58,6 +58,7 @@ const allLoaded = computed(() => hasMoreMessages.value === false);
 // );
 
 const route = useRoute();
+const router = useRouter();
 const messageStore = useMessageStore();
 const channelStore = useChannelStore();
 const memberStore = useMemberStore();
@@ -87,6 +88,7 @@ async function pageChange() {
   }
   catch (err) {
     error(err);
+    router.back();
   }
   finally {
     loading.value = false;

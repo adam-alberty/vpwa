@@ -15,12 +15,14 @@ export const useChannelStore = defineStore('channel', () => {
     const data = await api.get(`/channels/${id}`);
     console.log(data);
     currentChannel.value = data.channel;
+    return data.channel;
   }
 
   // Load the channels from API
   async function loadChannels() {
     const data = await api.get('/channels');
     channels.value = data.channels;
+    return data.channels;
   }
 
   // Create new channel and reload the channel list

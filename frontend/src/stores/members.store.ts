@@ -12,6 +12,7 @@ export const useMemberStore = defineStore('member', () => {
     const data = await api.get(`/channels/${channelId}/members`);
     console.log(data);
     members.value = data.members;
+    return data.members;
   }
 
   return { members, loadMembers };
