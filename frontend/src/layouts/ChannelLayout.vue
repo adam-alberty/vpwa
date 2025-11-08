@@ -88,13 +88,16 @@ import ChatInput from '@/components/ChatInput.vue';
 import { useChannelStore } from '@/stores/channel.store';
 import { useRoute } from 'vue-router';
 import { useUiStore } from 'src/stores/ui.store';
+import { error } from '@/utils/toast';
 
 const channelStore = useChannelStore();
 const uiStore = useUiStore();
 const route = useRoute();
 
 // Load channels
-channelStore.loadChannels();
+channelStore.loadChannels().catch(err => {
+  error(err);
+});
 </script>
 
 <style scoped lang="scss">

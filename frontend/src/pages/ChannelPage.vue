@@ -38,6 +38,8 @@ import { useMemberStore } from 'src/stores/members.store';
 import { useMessageStore } from 'src/stores/message.store';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
+import { error } from '@/utils/toast'
+
 
 const loading = ref(true);
 const hasMoreMessages = ref(false);
@@ -64,23 +66,31 @@ watch(
   () => route.params.id,
   async (newId, oldId) => {
     if (newId !== oldId) {
-      pageChange();
+      await pageChange();
       scrollRef.value?.setScrollPercentage('vertical', 1, 0);
     }
   },
 );
 
-onMounted(() => {
-  pageChange();
+onMounted(async () => {
+  await pageChange();
 });
 
 async function pageChange() {
   loading.value = true;
-  // TODO maybe add Promise.all()
-  channelStore.setCurrentChannel(route.params.id as string);
-  memberStore.loadMembers(route.params.id as string);
-  messageStore.loadMessages(route.params.id as string);
-  loading.value = false;
+  try {
+    await Promise.all([
+      channelStore.setCurrentChannel(route.params.id as string),
+      memberStore.loadMembers(route.params.id as string),
+      messageStore.loadMessages(route.params.id as string),
+    ])
+  }
+  catch (err) {
+    error(err);
+  }
+  finally {
+    loading.value = false;
+  }
 }
 
 function loadMoreMessages(index: number, done: () => void) {

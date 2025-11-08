@@ -63,6 +63,7 @@ import { api } from '@/services/api';
 import { useAuthStore } from '@/stores/auth.store';
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { error } from '@/utils/toast';
 
 const $q = useQuasar();
 const router = useRouter();
@@ -86,11 +87,7 @@ async function onSubmit() {
     await auth.register(formData);
     await router.push('/');
   } catch (err) {
-    $q.notify({
-      message: err.message,
-      color: 'red',
-      position: 'top',
-    });
+    error(err);
   }
   finally {
     setTimeout(() =>  loading.value = false, 250);

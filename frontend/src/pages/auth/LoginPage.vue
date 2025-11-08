@@ -33,6 +33,7 @@ import { useQuasar } from 'quasar';
 import { useAuthStore } from '@/stores/auth.store';
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { error } from '@/utils/toast';
 
 const router = useRouter();
 const auth = useAuthStore();
@@ -51,11 +52,7 @@ async function onSubmit() {
     await auth.login(formData);
     await router.push('/').catch(console.error);
   } catch (err) {
-    $q.notify({
-      message: err.message,
-      color: 'red',
-      position: 'top',
-    });
+    error(err);
   }
   finally {
     setTimeout(() =>  loading.value = false, 250);
