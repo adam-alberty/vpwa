@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Message } from 'src/types';
+import type { Message } from 'src/types';
 import { computed } from 'vue';
 
 const props = withDefaults(defineProps<Message>(), {});

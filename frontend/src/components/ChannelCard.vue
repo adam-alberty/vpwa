@@ -10,7 +10,7 @@
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import ChannelName from './ChannelName.vue';
-import { Channel } from 'src/types';
+import type { Channel } from 'src/types';
 
 const props = defineProps<Channel>();
 const { id, type } = props;
@@ -18,8 +18,8 @@ const { id, type } = props;
 const router = useRouter();
 const route = useRoute();
 
-function goToChannel() {
-  router.push({ name: 'Channels', params: { id } });
+async function goToChannel() {
+  await router.push({ name: 'Channels', params: { id } });
 }
 
 const active = computed(() => route.params.id == id);

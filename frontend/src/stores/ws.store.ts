@@ -1,10 +1,11 @@
 // src/stores/wsStore.ts
 import { acceptHMRUpdate, defineStore } from 'pinia';
 import { io } from 'socket.io-client';
+import type { Socket } from 'socket.io-client';
 import { ref } from 'vue';
 
 export const useWsStore = defineStore('websocket', () => {
-  const socket = ref<any>(null);
+  const socket = ref<Socket>(null);
   const connected = ref(false);
 
   function connect() {

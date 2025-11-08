@@ -3,7 +3,7 @@ import { api } from 'src/services/api';
 import { ref } from 'vue';
 
 export const useMemberStore = defineStore('member', () => {
-  const members = ref<any[]>([]);
+  const members = ref<any[]>([]); // TODO : type this properly
 
   async function loadMembers(channelId: string | null) {
     if (!channelId) {

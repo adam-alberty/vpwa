@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { ChannelInvite } from 'src/types';
+import type { ChannelInvite } from 'src/types';
 import ChannelName from './ChannelName.vue';
 
 const props = defineProps<ChannelInvite>();

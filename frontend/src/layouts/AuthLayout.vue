@@ -5,7 +5,7 @@
         <div class="full-width row justify-center">
           <div class="full-width" style="max-width: 400px">
             <div class="q-mt-xl">
-              <Logo size="32px" />
+              <AppLogo size="32px" />
             </div>
             <router-view />
           </div>
@@ -16,5 +16,5 @@
 </template>
 
 <script setup lang="ts">
-import Logo from '@/components/Logo.vue';
+import AppLogo from 'src/components/AppLogo.vue';
 </script>

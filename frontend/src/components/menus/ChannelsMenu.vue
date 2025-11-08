@@ -5,7 +5,7 @@
       style="position: sticky; top: 0px; z-index: 1; height: 51px; line-height: 1"
     >
       <div class="row items-center q-gutter-x-sm">
-        <Logo />
+        <AppLogo />
         <span class="q-ma-none q-ml-sm">Channels</span>
       </div>
       <CreateChannelDialog />
@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import Logo from '@/components/Logo.vue';
+import AppLogo from 'src/components/AppLogo.vue';
 import CreateChannelDialog from '@/components/dialogs/CreateChannelDialog.vue';
 import ChannelInviteCard from '@/components/ChannelInviteCard.vue';
 import ChannelCard from '@/components/ChannelCard.vue';

@@ -2,7 +2,7 @@ import { defineStore, acceptHMRUpdate } from 'pinia';
 import { api } from 'src/services/api';
 import { ref } from 'vue';
 import { useWsStore } from './ws.store';
-import { Message } from 'src/types';
+import type { Message } from 'src/types';
 
 export const useMessageStore = defineStore('message', () => {
   const wsStore = useWsStore();

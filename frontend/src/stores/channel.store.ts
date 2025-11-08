@@ -10,6 +10,7 @@ export const useChannelStore = defineStore('channel', () => {
   async function setCurrentChannel(id: string | null) {
     if (!id) {
       currentChannel.value = null;
+      return;
     }
     const data = await api.get(`/channels/${id}`);
     console.log(data);

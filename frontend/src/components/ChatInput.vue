@@ -36,7 +36,8 @@ const commands = [
 ];
 
 const command = computed(() => {
-  if (!messageInput.value.startsWith('/')) return undefined;
+  if (!messageInput.value.startsWith('/'))
+    return undefined;
   return messageInput.value.substring(1).split(' ')[0];
 });
 
@@ -46,7 +47,8 @@ const validCommand = computed(() => {
 });
 
 const commandArgs = computed(() => {
-  if (!command.value) return undefined;
+  if (!command.value)
+    return undefined;
   return messageInput.value
     .substring(command.value.length + 1)
     .split(/ +/)
