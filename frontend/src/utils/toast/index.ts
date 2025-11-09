@@ -8,6 +8,7 @@ export function success(message, timeout = 5000, position: Position = 'top') {
     color: 'positive',
     position,
     timeout,
+    html: true,
   })
 }
 
@@ -17,5 +18,16 @@ export function error(message, timeout = 5000, position: Position = 'top') {
     color: 'negative',
     position,
     timeout,
+    html: true,
+  })
+}
+
+export function info(message, timeout = 5000, position: Position = 'top') {
+  Notify.create({
+    message: message ?? message?.message ?? 'Info',
+    color: 'gray',
+    position,
+    timeout,
+    html: true,
   })
 }

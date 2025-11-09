@@ -29,7 +29,7 @@
               round
               dense
               icon="group_remove"
-              @click="channelStore.leaveChannel(route.params.id as string)"
+              @click="leaveChannel(route.params.id as string, true)"
             />
             <q-tooltip>Leave channel</q-tooltip>
           </div>
@@ -86,18 +86,35 @@ import MembersMenu from '@/components/menus/MembersMenu.vue';
 import QuickSettingsDialog from '@/components/dialogs/QuickSettingsDialog.vue';
 import ChatInput from '@/components/ChatInput.vue';
 import { useChannelStore } from '@/stores/channel.store';
-import { useRoute } from 'vue-router';
-import { useUiStore } from 'src/stores/ui.store';
+import { useRoute, useRouter } from 'vue-router';
 import { error } from '@/utils/toast';
+import { confirmDanger, confirm } from '@/utils/popups';
+
+import { useUiStore } from 'src/stores/ui.store';
 
 const channelStore = useChannelStore();
 const uiStore = useUiStore();
 const route = useRoute();
+const router = useRouter();
 
 // Load channels
 channelStore.loadChannels().catch(err => {
   error(err);
 });
+
+async function leaveChannel(channel: string, doConfirm = false) {
+  if (doConfirm) {
+    return confirmDanger('Are you sure you want to leave this channel?').onOk(() => this.leaveChannel(channel))
+  }
+
+  try {
+    await channelStore.leaveChannel(channel);
+    await router.replace('/');
+  }
+  catch (err) {
+    error(err);
+  }
+}
 </script>
 
 <style scoped lang="scss">

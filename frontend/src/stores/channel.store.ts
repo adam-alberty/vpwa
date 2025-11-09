@@ -7,7 +7,7 @@ export const useChannelStore = defineStore('channel', () => {
   const channels = ref<Channel[]>([]);
   const currentChannel = ref<Channel | null>(null);
 
-  async function setCurrentChannel(id: string | null) {
+  async function setCurrentChannel(id?: string) {
     if (!id) {
       currentChannel.value = null;
       return;
@@ -32,9 +32,12 @@ export const useChannelStore = defineStore('channel', () => {
   }
 
   // Leave channel and reload the channel list
-  async function leaveChannel(id: string) {
-    await api.delete(`/channels/${id}`);
-    await loadChannels();
+  async function leaveChannel(id: string, set = true) {
+    const data = await api.delete(`/channels/${id}`);
+    channels.value = channels.value.filter((c) => c.id != data.channel.id);
+    if (set)
+      await setCurrentChannel(null);
+    return data.channel;
   }
 
   return { channels, currentChannel, loadChannels, createChannel, leaveChannel, setCurrentChannel };
