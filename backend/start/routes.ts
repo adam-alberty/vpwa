@@ -29,6 +29,7 @@ router
     router.delete('/channels/:id', [ChannelsController, 'leave'])
     router.get('/channels', [ChannelsController, 'list'])
     router.get('/channels/:id', [ChannelsController, 'get'])
+    router.post('/channels/join', [ChannelsController, 'join'])
 
     // Messages
     router.post('/channels/:id/messages', [MessagesController, 'create'])

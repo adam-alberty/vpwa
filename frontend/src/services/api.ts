@@ -14,12 +14,12 @@ async function request(endpoint: string, options: RequestInit = {}) {
       ...options,
     });
 
+    const data = await response.json();
+    data.status ??= response.status;
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `API error: ${response.status}`);
+      throw data || `API error: ${response.status}`;
     }
-
-    return response.json();
+    return data;
   } catch (err) {
     console.error(`API request failed: ${url}`, err);
     throw err;
@@ -29,9 +29,9 @@ async function request(endpoint: string, options: RequestInit = {}) {
 export const api = {
   get: (endpoint: string, options?: RequestInit) =>
     request(endpoint, { ...options, method: 'GET' }),
-  post: (endpoint: string, data: any, options?: RequestInit) =>
+  post: (endpoint: string, data, options?: RequestInit) =>
     request(endpoint, { ...options, method: 'POST', body: JSON.stringify(data) }),
-  put: (endpoint: string, data: any, options?: RequestInit) =>
+  put: (endpoint: string, data, options?: RequestInit) =>
     request(endpoint, { ...options, method: 'PUT', body: JSON.stringify(data) }),
   delete: (endpoint: string, options?: RequestInit) =>
     request(endpoint, { ...options, method: 'DELETE' }),

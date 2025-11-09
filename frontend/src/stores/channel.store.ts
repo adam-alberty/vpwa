@@ -27,8 +27,16 @@ export const useChannelStore = defineStore('channel', () => {
 
   // Create new channel and reload the channel list
   async function createChannel(name: string, type: string) {
-    const res = await api.post('/channels', { name, type });
-    await loadChannels();
+    const data = await api.post('/channels', { name, type });
+    channels.value.unshift(data.channel);
+    return data.channel;
+  }
+
+  // Join channel and reload the channel list
+  async function joinChannel(name: string) {
+    const data = await api.post(`/channels/join`, { name });
+    channels.value.unshift(data.channel);
+    return data.channel;
   }
 
   // Leave channel and reload the channel list
@@ -40,7 +48,7 @@ export const useChannelStore = defineStore('channel', () => {
     return data.channel;
   }
 
-  return { channels, currentChannel, loadChannels, createChannel, leaveChannel, setCurrentChannel };
+  return { channels, currentChannel, loadChannels, createChannel, leaveChannel, setCurrentChannel, joinChannel };
 });
 
 if (import.meta.hot) {

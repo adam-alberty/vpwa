@@ -10,3 +10,9 @@ export const createChannelValidator = vine.compile(
     type: vine.enum(Object.values(ChannelType)),
   })
 )
+
+export const joinChannelValidator = vine.compile(
+  vine.object({
+    name: vine.string().trim(),
+  })
+)

@@ -6,7 +6,7 @@
   <q-dialog v-model="show" backdrop-filter="brightness(70%)">
     <q-card style="min-width: 350px">
       <q-card-section>
-        <div class="text-h6">Create a new channel</div>
+        <div class="text-h6">Add a channel</div>
       </q-card-section>
 
       <q-card-section class="q-pt-none">
@@ -36,7 +36,7 @@
 
           <q-card-actions align="right" class="text-primary">
             <q-btn flat label="Cancel" v-close-popup />
-            <q-btn flat label="Create Channel" type="submit" />
+            <q-btn flat label="Add" type="submit" />
           </q-card-actions>
         </q-form>
       </q-card-section>
@@ -48,6 +48,11 @@
 import { reactive, ref } from 'vue';
 import { useChannelStore } from 'src/stores/channel.store';
 import { Notify } from 'quasar';
+import { error } from '@/utils/toast';
+import { confirm } from '@/utils/popups';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const show = ref(false);
 const formData = reactive({
@@ -58,12 +63,28 @@ const formData = reactive({
 const formRef = ref(null);
 const channelStore = useChannelStore();
 
+function resetForm(showState = false) {
+  formData.name = '';
+  formData.type = 'private';
+  show.value = showState;
+}
+
 async function onSubmit() {
   try {
-    await channelStore.createChannel(formData.name, formData.type);
-    show.value = false;
+    const channel = await channelStore.createChannel(formData.name, formData.type);
+    resetForm()
+    await router.push({ name: 'Channels', params: { id: channel.id } });
   } catch (err) {
-    Notify.create(err.message);
+    if (err.status == 409 && err?.channel?.type == 'public') {
+      return confirm('Public channel with this name already exists. Do you want to join it?', 'Join existing channel?').onOk(() => {
+        channelStore.joinChannel(formData.name).then(async channel => {
+          resetForm();
+          await router.push({ name: 'Channels', params: { id: channel.id } });
+        }).catch(error)
+      })
+    }
+
+    error(err);
   }
 }
 </script>
