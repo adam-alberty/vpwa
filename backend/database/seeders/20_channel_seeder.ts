@@ -24,7 +24,7 @@ export default class ChannelSeeder extends BaseSeeder {
     const channels = await Promise.all(
       Array.from({ length: 4 }).map((_, i) =>
         Channel.create({
-          name: faker.commerce.department() + ` ${i + 1}`,
+          name: (faker.commerce.department() + ` ${i + 1}`).replace(/\s+/g, '-'),
           type: faker.helpers.arrayElement([ChannelType.PUBLIC, ChannelType.PRIVATE]),
         })
       )
