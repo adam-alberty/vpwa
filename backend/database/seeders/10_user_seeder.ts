@@ -27,7 +27,7 @@ export default class UserSeeder extends BaseSeeder {
         lastName = faker.person.lastName()
 
         // 15% chance this user is an admin
-        const isAdmin = faker.number.int({ min: 1, max: 100 }) <= 15
+        const isAdmin = Math.random() < 0.15
 
         return User.create({
           username: faker.internet.username({ firstName, lastName }),
