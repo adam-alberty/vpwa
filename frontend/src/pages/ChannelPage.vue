@@ -1,5 +1,5 @@
 <template>
-  <q-scroll-area v-if="!loading" ref="scrollRef" class="chat-scroll">
+  <q-scroll-area style="height: calc(100vh - 160px);" ref="scrollRef" class="chat-scroll">
     <q-infinite-scroll
       reverse
       :offset="100"
@@ -8,8 +8,8 @@
       @load="loadMoreMessages"
     >
       <template v-slot:loading>
-        <div class="row justify-center q-my-md">
-          <q-spinner color="primary" name="dots" size="40px" />
+        <div v-for="_ in 20" :key="_">
+          <MessageSkeleton />
         </div>
       </template>
 
@@ -20,12 +20,6 @@
 
       <ChannelMessage v-for="message in messageStore.messages" :key="message.id" v-bind="message" />
     </q-infinite-scroll>
-  </q-scroll-area>
-
-  <q-scroll-area v-else style="height: calc(100vh - 110px)" class="chat-scroll">
-    <div v-for="_ in 20">
-      <MessageSkeleton />
-    </div>
   </q-scroll-area>
 </template>
 
@@ -39,7 +33,6 @@ import { useMessageStore } from 'src/stores/message.store';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { error } from '@/utils/toast'
-
 
 const loading = ref(true);
 const hasMoreMessages = ref(false);
@@ -107,6 +100,10 @@ function loadMoreMessages(index: number, done: () => void) {
 
 <style scoped lang="scss">
 .chat-scroll {
-  flex-grow: 1;
+  height: 100%; // take full height of its flex parent
+  display: flex;
+  flex-direction: column;
 }
+
+
 </style>
