@@ -1,5 +1,5 @@
 <template>
-  <q-item clickable @click="goToChannel()" class="item" :class="active && `bg-highlight`">
+  <q-item clickable @click="goToChannel()" class="item" :class="active && `bg-highlight`" dense>
     <q-item-section>
       <ChannelName v-bind="props" :is-private="type === 'private'" />
     </q-item-section>

@@ -23,6 +23,7 @@
         :key="channel.id"
         v-bind="channel"
         @click="changeChannel(channel.id)"
+        class="q-mb-sm"
       />
     </q-list>
   </q-scroll-area>
