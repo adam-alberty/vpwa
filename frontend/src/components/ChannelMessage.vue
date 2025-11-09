@@ -1,9 +1,7 @@
 <template>
   <div class="channel-message q-py-md q-px-lg row no-wrap">
     <q-item-section avatar>
-      <q-avatar size="40px" color="secondary" text-color="white"
-        >{{ sender.username.charAt(0).toUpperCase() }}
-      </q-avatar>
+      <UserAvatar :username="sender.username" :status="sender.status" size="40px" color="secondary" text-color="white" />
     </q-item-section>
     <div>
       <div class="row items-center q-gutter-sm q-mb-xs">
@@ -30,6 +28,7 @@
 </template>
 
 <script lang="ts" setup>
+import UserAvatar from './UserAvatar.vue';
 import type { Message } from 'src/types';
 import { computed } from 'vue';
 

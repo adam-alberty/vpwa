@@ -1,9 +1,7 @@
 <template>
-  <div style="position: relative">
+  <div v-if="auth?.user" style="position: relative">
     <button class="settings-dialog" @click="show = !show">
-      <q-avatar size="40px" color="primary" text-color="black">{{
-        auth.user.username.charAt(0).toUpperCase()
-      }}</q-avatar>
+      <UserAvatar :username="auth.user.username" :status="auth.user.status" size="40px" color="primary" text-color="white" />
       <div class="settings-dialog__user">
         <div>{{ auth.user.firstName }} {{ auth.user.lastName }}</div>
         <div class="text-left text-grey-5">@{{ auth.user.username }}</div>
@@ -12,8 +10,8 @@
 
     <div v-if="show" class="dropdown">
       <q-btn-toggle
-        v-model="status"
-        :toggle-color="statusColors[status]"
+        v-model="auth.user.status"
+        :toggle-color="statusColors[auth.user.status]"
         :options="[
           { label: 'Online', value: 'online', class: `text-positive` },
           { label: 'DND', value: 'dnd', class: 'text-negative' },
@@ -42,8 +40,9 @@
 </template>
 
 <script lang="ts" setup>
+import UserAvatar from '@/components/UserAvatar.vue';
 import { useAuthStore } from '@/stores/auth.store';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 const statusColors = {
@@ -56,7 +55,8 @@ const router = useRouter();
 const auth = useAuthStore();
 
 const show = ref(false);
-const status = ref('online');
+
+watch(() => auth.user.status, (status) => console.log('Status changed', status));
 
 async function logout() {
   await auth.logout();

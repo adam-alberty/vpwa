@@ -17,6 +17,11 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
+  status: 'online' | 'offline' | 'dnd';
+}
+
+export interface UserMember extends User {
+  role: 'admin' | 'member';
 }
 
 export interface Message {
