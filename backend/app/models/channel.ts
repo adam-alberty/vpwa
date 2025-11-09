@@ -10,7 +10,7 @@ export enum ChannelType {
 
 export enum ChannelMemberRole {
   MEMBER = 'member',
-  ADMIN = 'admin', // TODO: maybe rename to owner to fit the usecase more closely
+  ADMIN = 'admin', // Maybe rename to owner to fit the usecase more closely
 }
 
 export default class Channel extends BaseModel {

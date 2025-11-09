@@ -4,9 +4,13 @@ import { ref } from 'vue';
 import { useWsStore } from './ws.store';
 import type { Message } from 'src/types';
 
+import { useChannelStore } from './channel.store';
+
 export const useMessageStore = defineStore('message', () => {
   const wsStore = useWsStore();
   const messages = ref<Message[]>([]);
+
+  const channelStore = useChannelStore();
 
   async function createMessage(channelId: string, content: string) {
     await api.post(`/channels/${channelId}/messages`, { content });
@@ -26,7 +30,7 @@ export const useMessageStore = defineStore('message', () => {
 
     wsStore.socket.on('message:new', (msg: Message) => {
       console.log(`[WS]: received message`, msg);
-      messages.value = [...messages.value, msg];
+      messages.value.push(msg);
     });
 
     return data.messages;
