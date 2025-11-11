@@ -1,6 +1,6 @@
 <template>
   <div v-if="auth?.user" style="position: relative">
-    <button class="settings-dialog" @click="show = !show">
+    <button class="settings-dialog">
       <UserAvatar :username="auth.user.username" :status="auth.user.status" size="40px" color="primary" text-color="white" />
       <div class="settings-dialog__user">
         <div>{{ auth.user.firstName }} {{ auth.user.lastName }}</div>
@@ -8,38 +8,45 @@
       </div>
     </button>
 
-    <div v-if="show" class="dropdown">
-      <q-btn-toggle
-        v-model="auth.user.status"
-        :toggle-color="statusColors[auth.user.status]"
-        :options="[
-          { label: 'Online', value: 'online', class: `text-positive` },
-          { label: 'DND', value: 'dnd', class: 'text-negative' },
-          { label: 'Offline', value: 'offline', class: 'text-accent' },
-        ]"
-      />
-      <!-- <q-btn
-        outline
-        to="/settings"
-        label="Account settings"
-        icon="settings"
-        color="primary"
-        class="full-width"
-        align="left"
-      /> -->
-      <q-toggle
-        v-model="notifyOnMentionsOnly"
-        label="Notify only on mentions"
-      />
-      <q-btn
-        align="left"
-        label="Logout"
-        icon="logout"
-        color="red"
-        class="full-width"
-        @click="logout"
-      />
-    </div>
+    <q-menu
+      anchor="top middle"
+      self="bottom middle"
+      class="no-shadow"
+      :offset="[10, 5]"
+    >
+      <div class="dropdown">
+        <q-btn-toggle
+          v-model="auth.user.status"
+          :toggle-color="statusColors[auth.user.status]"
+          :options="[
+            { label: 'Online', value: 'online', class: `text-positive` },
+            { label: 'DND', value: 'dnd', class: 'text-negative' },
+            { label: 'Offline', value: 'offline', class: 'text-accent' },
+          ]"
+        />
+        <!-- <q-btn
+          outline
+          to="/settings"
+          label="Account settings"
+          icon="settings"
+          color="primary"
+          class="full-width"
+          align="left"
+        /> -->
+        <q-toggle
+          v-model="notifyOnMentionsOnly"
+          label="Notify only on mentions"
+        />
+        <q-btn
+          align="left"
+          label="Logout"
+          icon="logout"
+          color="red"
+          class="full-width"
+          @click="logout"
+        />
+      </div>
+    </q-menu>
   </div>
 </template>
 
@@ -57,8 +64,6 @@ const statusColors = {
 
 const router = useRouter();
 const auth = useAuthStore();
-
-const show = ref(false);
 
 const notifyOnMentionsOnly = ref(false);
 
@@ -108,9 +113,7 @@ async function logout() {
 }
 
 .dropdown {
-  position: absolute;
-  bottom: 100%;
-  background-color: $dark-page;
+  background-color: $highlight;
   margin-bottom: 1rem;
   padding: 1rem;
   border-radius: 0.5rem;
