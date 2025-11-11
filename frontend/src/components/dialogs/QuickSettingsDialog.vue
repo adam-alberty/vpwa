@@ -62,7 +62,7 @@ const show = ref(false);
 
 const notifyOnMentionsOnly = ref(false);
 
-watch(() => auth.user.status, (status) => console.log('Status changed', status));
+watch(() => auth.user?.status, (status) => console.log('Status changed', status));
 
 async function logout() {
   await auth.logout();

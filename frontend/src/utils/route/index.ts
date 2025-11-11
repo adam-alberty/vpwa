@@ -10,7 +10,7 @@ export default (
   return {
     path,
     name: title,
-    meta: {title, requiresAuth: requiresAuth},
+    meta: {title, requiresAuth},
     component: component,
     // beforeEnter: loginGuardIsLoggedIn,
     ...others

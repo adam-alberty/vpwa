@@ -6,7 +6,7 @@ import {
   createWebHistory,
 } from 'vue-router';
 import routes from './routes';
-import { useAuthStore } from 'src/stores/auth.store';
+import { loginGuardIfMetaSet } from '@/utils/route/loginGuard';
 
 /*
  * If not building with SSR mode, you can
@@ -34,17 +34,8 @@ export default defineRouter(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.VUE_ROUTER_BASE),
   });
 
-  Router.beforeEach(async (to, from, next) => {
-    const auth = useAuthStore();
-    try {
-      if (to.path.includes('/auth')) next();
-      await auth.me();
-      next();
-    } catch (err) {
-      console.error('User not authenticated:', err);
-      next('/auth');
-    }
-  });
+  // Auth guard
+  Router.beforeEach(loginGuardIfMetaSet);
 
   return Router;
 });
