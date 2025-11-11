@@ -1,5 +1,5 @@
-import User from '#models/user'
-import { registerUserValidator, updateUserValidator } from '#validators/user'
+import User, { UserStatus } from '#models/user'
+import { registerUserValidator, updateUserValidator, changeStatus } from '#validators/user'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class UsersController {
@@ -21,6 +21,25 @@ export default class UsersController {
       user: user,
       token: token.value?.release(),
     })
+  }
+
+  public async changeStatus({ auth, request, response }: HttpContext) {
+    const { status } = await request.validateUsing(changeStatus)
+
+    const user = auth.user!
+    user.status = status as UserStatus
+    await user.save()
+
+    // ws.io.emit(`user:${user.id}:status`, { status: user.status })
+
+    return response.ok({
+      message: 'Status updated successfully',
+      user: {
+        id: user.id,
+        status: user.status,
+      },
+    })
+
   }
 
   /**

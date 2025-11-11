@@ -1,4 +1,5 @@
 import vine from '@vinejs/vine'
+import { UserStatus } from '#models/user'
 
 /**
  * Validates the user's registration action
@@ -10,6 +11,12 @@ export const registerUserValidator = vine.compile(
     firstName: vine.string().trim(),
     lastName: vine.string().trim(),
     password: vine.string().minLength(8),
+  })
+)
+
+export const changeStatus = vine.compile(
+  vine.object({
+    status: vine.enum([UserStatus.ONLINE, UserStatus.OFFLINE, UserStatus.DND]),
   })
 )
 
