@@ -18,7 +18,7 @@
           { label: 'Offline', value: 'offline', class: 'text-accent' },
         ]"
       />
-      <q-btn
+      <!-- <q-btn
         outline
         to="/settings"
         label="Account settings"
@@ -26,6 +26,10 @@
         color="primary"
         class="full-width"
         align="left"
+      /> -->
+      <q-toggle
+        v-model="notifyOnMentionsOnly"
+        label="Notify only on mentions"
       />
       <q-btn
         align="left"
@@ -55,6 +59,8 @@ const router = useRouter();
 const auth = useAuthStore();
 
 const show = ref(false);
+
+const notifyOnMentionsOnly = ref(false);
 
 watch(() => auth.user.status, (status) => console.log('Status changed', status));
 
