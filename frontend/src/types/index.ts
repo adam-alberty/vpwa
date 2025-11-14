@@ -1,7 +1,23 @@
+export enum UserStatus {
+  ONLINE = 'online',
+  DND = 'dnd',
+  OFFLINE = 'offline',
+}
+
+export enum ChannelType {
+  PUBLIC = 'public',
+  PRIVATE = 'private',
+}
+
+export enum ChannelMemberRole {
+  MEMBER = 'member',
+  ADMIN = 'admin', // Owner...
+}
+
 export interface Channel {
   id: string;
   name: string;
-  type: 'public' | 'private';
+  type: ChannelType;
   createdAt: string;
 }
 
@@ -17,11 +33,11 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
-  status: 'online' | 'offline' | 'dnd';
+  status: UserStatus;
 }
 
 export interface UserMember extends User {
-  role: 'admin' | 'member';
+  role: ChannelMemberRole
 }
 
 export interface Message {

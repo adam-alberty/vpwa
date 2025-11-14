@@ -1,5 +1,5 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import { api } from 'src/services/api';
+import api from 'src/services/api';
 import type { User } from 'src/types';
 import { ref } from 'vue';
 
@@ -33,7 +33,17 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = usr;
   }
 
-  return { login, logout, register, me, user };
+  async function changeStatus(status?: string) {
+    status ??= user.value?.status
+    if (!status)
+      return;
+
+    const data = await api.put('/user/status', { status })
+    user.value.status = data.user.status;
+    return data.user;
+  }
+
+  return { login, logout, register, me, changeStatus, user };
 });
 
 if (import.meta.hot) {

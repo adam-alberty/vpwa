@@ -1,14 +1,19 @@
 <template>
   <div v-if="auth?.user" style="position: relative">
     <button class="settings-dialog">
-      <UserAvatar :username="auth.user.username" :status="auth.user.status" size="40px" color="primary" text-color="white" />
+      <UserAvatar
+        v-bind="auth.user"
+        size="40px"
+        color="primary"
+        text-color="white"
+      />
       <div class="settings-dialog__user">
         <div>{{ auth.user.firstName }} {{ auth.user.lastName }}</div>
         <div class="text-left text-grey-5">@{{ auth.user.username }}</div>
       </div>
     </button>
 
-    <q-menu
+    <q-menu @hide="onHide"
       anchor="top middle"
       self="bottom middle"
       class="no-shadow"
@@ -52,9 +57,10 @@
 
 <script lang="ts" setup>
 import UserAvatar from '@/components/UserAvatar.vue';
-import { useAuthStore } from '@/stores/auth.store';
+import { useAuthStore } from '@/stores/auth-user.store';
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import { error } from '@/utils/toast';
 
 const statusColors = {
   online: 'positive',
@@ -67,7 +73,24 @@ const auth = useAuthStore();
 
 const notifyOnMentionsOnly = ref(false);
 
-watch(() => auth.user?.status, (status) => console.log('Status changed', status));
+let timeout
+
+function onHide() {
+  if (timeout) {
+    clearTimeout(timeout);
+    timeout = null;
+
+    auth.changeStatus().catch(error);
+  }
+}
+
+watch(() => auth.user?.status, () => {
+  clearTimeout(timeout);
+  timeout = setTimeout(() => {
+    auth.changeStatus().catch(error);
+    timeout = null;
+  }, 1000);
+});
 
 async function logout() {
   await auth.logout();

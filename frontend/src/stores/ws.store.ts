@@ -35,6 +35,8 @@ export const useWsStore = defineStore('websocket', () => {
     }
   }
 
+  connect()
+
   return { socket, connected, connect, disconnect };
 });
 

@@ -1,7 +1,15 @@
 <template>
   <q-card class="user-member-card row items-center q-pa-sm no-border no-shadow">
     <q-item-section avatar>
-      <UserAvatar :username="username" :status="status" size="36px" color="grey-8" text-color="white" />
+      <UserAvatar
+        :username="username"
+        :status="status"
+        :id="id"
+        size="36px"
+        color="grey-8"
+        text-color="white"
+        updateStatus
+      />
     </q-item-section>
 
     <div class="column justify-center">
@@ -27,7 +35,6 @@ import UserAvatar from './UserAvatar.vue';
 import type { UserMember } from 'src/types';
 
 const props = defineProps<UserMember>();
-const { username, status } = props;
 </script>
 
 <style lang="sass" scoped>

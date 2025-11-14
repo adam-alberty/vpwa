@@ -17,7 +17,6 @@ export default class UserSeeder extends BaseSeeder {
       email: `test@own.co`,
       firstName,
       lastName,
-      status: UserStatus.OFFLINE,
       password: '12345678',
     })
 
@@ -34,7 +33,6 @@ export default class UserSeeder extends BaseSeeder {
           email: `${firstName.toLowerCase()}${i}@${isAdmin ? 'own' : 'tst'}.co`,
           firstName,
           lastName,
-          status: UserStatus.OFFLINE,
           password: '12345678',
         })
       })

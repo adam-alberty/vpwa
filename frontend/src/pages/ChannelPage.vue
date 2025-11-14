@@ -30,6 +30,7 @@ import MessageSkeleton from 'src/components/MessageSkeleton.vue';
 import { useChannelStore } from 'src/stores/channel.store';
 import { useMemberStore } from 'src/stores/members.store';
 import { useMessageStore } from 'src/stores/message.store';
+import { useWsStore } from 'src/stores/ws.store';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { error } from '@/utils/toast'
@@ -52,6 +53,7 @@ const allLoaded = computed(() => hasMoreMessages.value === false);
 
 const route = useRoute();
 const router = useRouter();
+const wsStore = useWsStore();
 const messageStore = useMessageStore();
 const channelStore = useChannelStore();
 const memberStore = useMemberStore();
@@ -73,6 +75,7 @@ onMounted(async () => {
 async function pageChange() {
   loading.value = true;
   try {
+    wsStore.connect();
     await Promise.all([
       channelStore.setCurrentChannel(route.params.id as string),
       memberStore.loadMembers(route.params.id as string),

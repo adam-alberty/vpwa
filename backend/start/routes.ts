@@ -40,7 +40,9 @@ router
 
     // User management
     router.put('/users', [UsersController, 'update'])
+    router.put('/user/status', [UsersController, 'changeStatus'])
     router.delete('/users', [UsersController, 'delete'])
+
 
     router.delete('/session', [SessionController, 'delete'])
     router.get('/session', [SessionController, 'me'])

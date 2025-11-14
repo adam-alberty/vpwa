@@ -1,4 +1,5 @@
 import User, { UserStatus } from '#models/user'
+import ws from '#services/ws'
 import { registerUserValidator, updateUserValidator, changeStatus } from '#validators/user'
 import type { HttpContext } from '@adonisjs/core/http'
 
@@ -30,12 +31,12 @@ export default class UsersController {
     user.status = status as UserStatus
     await user.save()
 
-    // ws.io.emit(`user:${user.id}:status`, { status: user.status })
+    ws.io.emit(`user:${user.id}:status`, { status: user.status })
 
     return response.ok({
       message: 'Status updated successfully',
       user: {
-        id: user.id,
+        // id: user.id,
         status: user.status,
       },
     })
