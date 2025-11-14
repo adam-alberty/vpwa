@@ -1,5 +1,5 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import { api } from 'src/services/api';
+import api from 'src/services/api';
 import type { UserMember } from 'src/types';
 import { ref } from 'vue';
 

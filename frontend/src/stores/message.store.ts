@@ -1,5 +1,5 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import { api } from 'src/services/api';
+import api from 'src/services/api';
 import { ref } from 'vue';
 import { useWsStore } from './ws.store';
 import type { Message } from 'src/types';
@@ -23,7 +23,6 @@ export const useMessageStore = defineStore('message', () => {
     messages.value = data.messages;
 
     // Start listening for new messages
-    wsStore.connect();
     wsStore.socket.off('message:new');
     wsStore.socket.emit('channel:join', channelId);
     console.log(`[WS] joined channel ${channelId}`);

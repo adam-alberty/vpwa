@@ -1,4 +1,4 @@
-import { useAuthStore } from '@/stores/auth.store';
+import { useAuthStore } from '@/stores/auth-user.store';
 
 export async function loginGuardIfMetaSet(to, form, next) {
   if (!to.meta.requiresAuth)

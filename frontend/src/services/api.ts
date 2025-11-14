@@ -26,7 +26,7 @@ async function request(endpoint: string, options: RequestInit = {}) {
   }
 }
 
-export const api = {
+export default {
   get: (endpoint: string, options?: RequestInit) =>
     request(endpoint, { ...options, method: 'GET' }),
   post: (endpoint: string, data, options?: RequestInit) =>
@@ -35,4 +35,6 @@ export const api = {
     request(endpoint, { ...options, method: 'PUT', body: JSON.stringify(data) }),
   delete: (endpoint: string, options?: RequestInit) =>
     request(endpoint, { ...options, method: 'DELETE' }),
+
+  request
 };
