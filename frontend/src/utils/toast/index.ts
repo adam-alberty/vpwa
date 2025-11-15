@@ -2,9 +2,10 @@ import { Notify } from 'quasar'
 
 type Position = "top" | "top-left" | "top-right" | "bottom-left" | "bottom-right" | "bottom" | "left" | "right" | "center"
 
-export function success(message, timeout = 5000, position: Position = 'top') {
+export function success(msg, timeout = 5000, position: Position = 'top') {
+  const message = msg?.message ?? msg ?? 'Success';
   Notify.create({
-    message: message?.message ?? message ?? 'Success',
+    message,
     color: 'positive',
     position,
     timeout,
@@ -12,9 +13,17 @@ export function success(message, timeout = 5000, position: Position = 'top') {
   })
 }
 
-export function error(message, timeout = 5000, position: Position = 'top') {
+export function error(msg, timeout = 5000, position: Position = 'top') {
+  var message = '';
+  if (msg?.errors) {
+    for (const err of msg.errors)
+      message += `${err.message}<br>`;
+  }
+  else
+    message = msg?.message ?? msg ?? 'Error';
+
   Notify.create({
-    message: message?.message ?? message ?? 'Error',
+    message,
     color: 'negative',
     position,
     timeout,
@@ -22,9 +31,10 @@ export function error(message, timeout = 5000, position: Position = 'top') {
   })
 }
 
-export function info(message, timeout = 5000, position: Position = 'top') {
+export function info(msg, timeout = 5000, position: Position = 'top') {
+  const message = msg?.message ?? msg ?? 'Info';
   Notify.create({
-    message: message?.message ?? message ?? 'Info',
+    message,
     color: 'gray',
     position,
     timeout,
