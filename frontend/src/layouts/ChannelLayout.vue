@@ -89,6 +89,7 @@ import { useChannelStore } from '@/stores/channel.store';
 import { useRoute, useRouter } from 'vue-router';
 import { error } from '@/utils/toast';
 import { confirmDanger, confirm } from '@/utils/popups';
+import { useWsStore } from 'src/stores/ws.store';
 
 import { useUiStore } from 'src/stores/ui.store';
 
@@ -96,6 +97,10 @@ const channelStore = useChannelStore();
 const uiStore = useUiStore();
 const route = useRoute();
 const router = useRouter();
+
+const wsStore = useWsStore();
+
+wsStore.connect()
 
 // Load channels
 channelStore.loadChannels().catch(err => {

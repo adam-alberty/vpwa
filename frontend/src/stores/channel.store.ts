@@ -1,19 +1,43 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import api from 'src/services/api';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import type { Channel } from '@/types';
+import { useWsStore } from './ws.store';
+
 
 export const useChannelStore = defineStore('channel', () => {
+  const wsStore = useWsStore();
+
   const channels = ref<Channel[]>([]);
   const currentChannel = ref<Channel | null>(null);
 
+  watch(() => wsStore.connected, (connected) => {
+    if (!currentChannel.value?.id)
+      return;
+
+    wsStore.socket?.emit('channel:leave', currentChannel.value.id) // Just in case
+    if (connected) {
+      wsStore.socket.emit('channel:join', currentChannel.value.id); // Reconnect...
+      console.log(`[WS] rejoined channel ${currentChannel.value.id}`);
+    }
+  });
+
   async function setCurrentChannel(id?: string) {
+    if (currentChannel.value?.id) {
+      wsStore.socket.emit('channel:leave', currentChannel.value.id) // Leave the prev channel room
+      console.log(`[WS] left channel ${currentChannel.value.id}`)
+    }
+
     if (!id) {
       currentChannel.value = null;
       return;
     }
     const data = await api.get(`/channels/${id}`);
     console.log(data);
+
+    wsStore.socket.emit('channel:join', data.channel.id); // Join the channel room
+    console.log(`[WS] joined channel ${data.channel.id}`);
+
     currentChannel.value = data.channel;
     return data.channel;
   }

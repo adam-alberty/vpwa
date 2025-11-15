@@ -28,10 +28,14 @@ import QuickSettingsDialog from '@/components/dialogs/QuickSettingsDialog.vue';
 import ChatInput from '@/components/ChatInput.vue';
 import { useChannelStore } from '@/stores/channel.store';
 import { useUiStore } from 'src/stores/ui.store';
+import { useWsStore } from '@/stores/ws.store';
 import { error } from '@/utils/toast';
 
 const channelStore = useChannelStore();
 const uiStore = useUiStore();
+const wsStore = useWsStore();
+
+wsStore.connect()
 
 // Load channels
 channelStore.loadChannels().catch(err => {

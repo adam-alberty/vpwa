@@ -1,16 +1,29 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import api from 'src/services/api';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useWsStore } from './ws.store';
+import { useChannelStore } from './channel.store';
 import type { Message } from 'src/types';
 
-import { useChannelStore } from './channel.store';
 
 export const useMessageStore = defineStore('message', () => {
   const wsStore = useWsStore();
+
   const messages = ref<Message[]>([]);
 
-  const channelStore = useChannelStore();
+  watch(() => wsStore.connected, (connected) => {
+    wsStore.socket?.off('message:new', handleMessageReceived);
+    if (connected) {
+      // Start listening for new messages
+      console.log('[WS]: listening for new messages');
+      wsStore.socket.on('message:new', handleMessageReceived);
+    }
+  });
+
+  function handleMessageReceived(msg: Message) {
+    console.log(`[WS]: received message`, msg);
+    messages.value.push(msg);
+  }
 
   async function createMessage(channelId: string, content: string) {
     await api.post(`/channels/${channelId}/messages`, { content });
@@ -21,16 +34,6 @@ export const useMessageStore = defineStore('message', () => {
     const data = await api.get(`/channels/${channelId}/messages`);
     console.log(data);
     messages.value = data.messages;
-
-    // Start listening for new messages
-    wsStore.socket.off('message:new');
-    wsStore.socket.emit('channel:join', channelId);
-    console.log(`[WS] joined channel ${channelId}`);
-
-    wsStore.socket.on('message:new', (msg: Message) => {
-      console.log(`[WS]: received message`, msg);
-      messages.value.push(msg);
-    });
 
     return data.messages;
   }

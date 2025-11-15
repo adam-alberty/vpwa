@@ -1,4 +1,3 @@
-// src/stores/wsStore.ts
 import { acceptHMRUpdate, defineStore } from 'pinia';
 import { io } from 'socket.io-client';
 import type { Socket } from 'socket.io-client';
@@ -34,8 +33,6 @@ export const useWsStore = defineStore('websocket', () => {
       connected.value = false;
     }
   }
-
-  connect()
 
   return { socket, connected, connect, disconnect };
 });

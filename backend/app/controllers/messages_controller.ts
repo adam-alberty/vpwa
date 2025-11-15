@@ -30,12 +30,13 @@ export default class MessagesController {
       .where('id', createdMessage.id)
       .preload('sender')
       .preload('mentionedUser')
-      .firstOrFail() // returns a single object
+      .firstOrFail()
 
     // send the message to clients in the channel
-    ws.io.to(`channel:${channelId}`).emit('message:new', newMessage)
+    // console.log('Emitting to channel/' + channelId)
+    ws.io.to(`channel/${channelId}`).emit('message:new', newMessage)
 
-    return response.created('ok')
+    return response.created({ message: "Sent successfully" })
   }
 
   // Get messages

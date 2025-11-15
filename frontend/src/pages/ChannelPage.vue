@@ -76,8 +76,8 @@ async function pageChange() {
   loading.value = true;
   try {
     wsStore.connect();
+    await channelStore.setCurrentChannel(route.params.id as string) // Load/switch channel first!
     await Promise.all([
-      channelStore.setCurrentChannel(route.params.id as string),
       memberStore.loadMembers(route.params.id as string),
       messageStore.loadMessages(route.params.id as string),
     ])

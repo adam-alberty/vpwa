@@ -1,11 +1,14 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import api from 'src/services/api';
 import type { UserMember } from 'src/types';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
+import { useWsStore } from './ws.store';
 
 import { useChannelStore } from './channel.store';
 
 export const useMemberStore = defineStore('member', () => {
+  const wsStore = useWsStore();
+
   const members = ref<UserMember[]>([]);
 
   async function loadMembers(channelId: string | null) {
