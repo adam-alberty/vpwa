@@ -7,7 +7,7 @@ class Ws {
 
   public boot() {
     if (this.booted) {
-      return
+      return this.io
     }
     this.booted = true
     this.io = new Server(server.getNodeServer())

@@ -13,6 +13,9 @@ export const useWsStore = defineStore('websocket', () => {
     socket.value = io(import.meta.env.VITE_API_URL, {
       transports: ['websocket'],
       withCredentials: true,
+      auth: {
+        token: localStorage.getItem('token'),
+      }
     });
 
     socket.value.on('connect', () => {

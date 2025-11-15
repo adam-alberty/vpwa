@@ -13,8 +13,6 @@ export default class SessionController {
       user.status = UserStatus.ONLINE
       await user.save()
     }
-    if (user.status != UserStatus.OFFLINE)
-      ws.io.emit(`user:${user.id}:status`, { status: user.status })
 
     const token = await User.accessTokens.create(user)
     return {
@@ -32,9 +30,6 @@ export default class SessionController {
 
   // Destroy session
   public async delete({ auth, response }: HttpContext) {
-    const user = auth.user!
-    if (user.status != UserStatus.OFFLINE)
-      ws.io.emit(`user:${user.id}:status`, { status: UserStatus.OFFLINE })
     await auth.use('api').invalidateToken()
 
     return response.ok({ message: 'Logged out' })
