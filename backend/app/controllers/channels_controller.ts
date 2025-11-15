@@ -139,20 +139,35 @@ export default class ChannelsController {
     const user = auth.user!
     const channelId = params.id as string
 
-    const channel = await db
-      .query()
-      .from('channels')
-      .join('channel_members', 'channels.id', '=', 'channel_members.channel_id')
-      .where('channel_members.user_id', user.id)
-      .andWhere('channels.id', channelId)
+    // Channel + membership
+    const channel = await Channel.query()
+      .where('id', channelId)
+      .preload('members', (membersQuery) => {
+        membersQuery
+          .where('users.id', user.id)
+          .pivotColumns(['role', 'joined_at'])
+      })
       .first()
 
-    if (!channel) {
-      throw new Error('You are not a member of this channel')
+    if (!channel || channel.members?.length == 0) {
+      return response.forbidden({
+        error: 'You are not a member of this channel',
+      })
     }
 
+    const membership = channel.members[0].$extras
     return response.ok({
-      channel,
+      channel: {
+        id: channel.id,
+        name: channel.name,
+        type: channel.type,
+        createdAt: channel.createdAt,
+      },
+      membership: {
+        userId: user.id,
+        role: membership.role,
+        joinedAt: membership.joined_at,
+      }
     })
   }
 }

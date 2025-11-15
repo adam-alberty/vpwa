@@ -33,7 +33,7 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
-  status: UserStatus;
+  status: UserStatus | null;
 }
 
 export interface UserMember extends User {

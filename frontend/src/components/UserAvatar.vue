@@ -9,7 +9,7 @@
 import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useWsStore } from "@/stores/ws.store";
 
-const props = withDefaults(defineProps<{ username: string; status: string, id?: string, showStatus?: boolean, updateStatus?: boolean }>(), {
+const props = withDefaults(defineProps<{ username: string; status?: string, id?: string, showStatus?: boolean, updateStatus?: boolean }>(), {
   showStatus: true
 })
 const { id, showStatus, updateStatus } = props;
