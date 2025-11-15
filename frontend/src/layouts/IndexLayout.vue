@@ -38,9 +38,8 @@ const wsStore = useWsStore();
 wsStore.connect()
 
 // Load channels
-channelStore.loadChannels().catch(err => {
-  error(err);
-});
+if (!channelStore.channels.length)
+  channelStore.loadChannels().catch(error);
 </script>
 
 <style scoped lang="scss">

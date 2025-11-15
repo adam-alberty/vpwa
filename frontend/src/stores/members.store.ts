@@ -11,6 +11,26 @@ export const useMemberStore = defineStore('member', () => {
 
   const members = ref<UserMember[]>([]);
 
+  watch(() => wsStore.connected, (connected) => {
+    wsStore.socket?.off('member:joined', handleMemberJoined);
+    wsStore.socket?.off('member:left', handleMemberLeft);
+    if (connected) {
+      // Listen for joining users...
+      wsStore.socket.on('member:joined', handleMemberJoined);
+      wsStore.socket.on('member:left', handleMemberLeft);
+    }
+  });
+
+  function handleMemberJoined(member: UserMember) {
+    console.log(`[WS]: Member joined`, member);
+    members.value.push(member);
+  }
+
+  function handleMemberLeft(member) {
+    console.log(`[WS]: Member left`, member);
+    members.value = members.value.filter((m) => m.id != member.id);
+  }
+
   async function loadMembers(channelId: string | null) {
     if (!channelId) {
       members.value = null;

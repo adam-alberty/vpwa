@@ -9,7 +9,7 @@ export default class SessionController {
   public async login({ request }: HttpContext) {
     const data = await request.validateUsing(loginUservalidator)
     const user = await User.verifyCredentials(data.email, data.password)
-    if (!user.status) { // Null initially
+    if (!user.status) {
       user.status = UserStatus.ONLINE
       await user.save()
     }

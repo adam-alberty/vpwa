@@ -12,7 +12,7 @@ app.ready(() => {
 
   // Client connects to websocket
   io.on('connection', async (socket) => {
-    console.log('[WS] connected', socket.id)
+    console.log('[WS] Connected', socket.id)
 
     try { // Auth
       const token = await User.accessTokens.verify(new Secret(socket.handshake.auth.token))

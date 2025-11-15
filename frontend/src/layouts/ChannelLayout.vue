@@ -103,9 +103,9 @@ const wsStore = useWsStore();
 wsStore.connect()
 
 // Load channels
-channelStore.loadChannels().catch(err => {
-  error(err);
-});
+
+if (!channelStore.channels.length)
+  channelStore.loadChannels().catch(error);
 
 async function leaveChannel(channel: string, doConfirm = false) {
   if (doConfirm) {

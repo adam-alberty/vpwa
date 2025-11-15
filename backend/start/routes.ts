@@ -26,16 +26,16 @@ router
   .group(() => {
     // Channels
     router.post('/channels', [ChannelsController, 'create'])
-    router.delete('/channels/:id', [ChannelsController, 'leave'])
     router.get('/channels', [ChannelsController, 'list'])
     router.get('/channels/:id', [ChannelsController, 'get'])
-    router.post('/channels/join', [ChannelsController, 'join'])
 
     // Messages
     router.post('/channels/:id/messages', [MessagesController, 'create'])
     router.get('/channels/:id/messages', [MessagesController, 'list'])
 
-    // Members
+    // Channel members
+    router.post('/channels/join', [ChannelMembersController, 'join'])
+    router.delete('/channels/:id', [ChannelMembersController, 'leave'])
     router.get('/channels/:id/members', [ChannelMembersController, 'get'])
 
     // User management
