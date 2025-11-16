@@ -1,6 +1,6 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import api from 'src/services/api';
-import type { UserMember } from 'src/types';
+import { ChannelMemberRole, type UserMember } from '@/types';
 import { ref, watch } from 'vue';
 import { useWsStore } from './ws.store';
 
@@ -31,6 +31,14 @@ export const useMemberStore = defineStore('member', () => {
     members.value = members.value.filter((m) => m.id != member.id);
   }
 
+  function getAdmins() {
+    return members.value.filter((m) => m.role == ChannelMemberRole.ADMIN);
+  }
+
+  function getMember(userId: string) {
+    return members.value.find((m) => m.id == userId) || null;
+  }
+
   async function loadMembers(channelId: string | null) {
     if (!channelId) {
       members.value = null;
@@ -42,7 +50,7 @@ export const useMemberStore = defineStore('member', () => {
     return data.members;
   }
 
-  return { members, loadMembers };
+  return { members, loadMembers, getAdmins, getMember };
 });
 
 if (import.meta.hot) {

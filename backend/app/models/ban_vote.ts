@@ -5,6 +5,8 @@ export default class BanVote extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
+
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

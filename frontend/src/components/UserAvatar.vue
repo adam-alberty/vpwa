@@ -12,7 +12,7 @@ import { useWsStore } from "@/stores/ws.store";
 const props = withDefaults(defineProps<{ username: string; status?: string, id?: string, showStatus?: boolean, updateStatus?: boolean }>(), {
   showStatus: true
 })
-const { id, showStatus, updateStatus } = props;
+const { id, updateStatus } = props;
 
 const wsStore = useWsStore();
 
@@ -20,19 +20,41 @@ const status = ref(props.status || 'offline');
 if (!updateStatus)
   watch(() => props.status, newStatus => status.value = newStatus)
 
+const showStatus = ref(props.showStatus);
+
 function updateStatusListener(data) {
   status.value = data.status;
+}
+
+function handleJoined(data) {
+  if (data.id == id) {
+    showStatus.value = true;
+  }
+}
+
+function handleLeft(data) {
+  if (data.id == id) {
+    showStatus.value = false;
+  }
 }
 
 onMounted(() => {
   if (updateStatus && id) {
     wsStore.socket.on(`user:${id}:status`, updateStatusListener);
+    if (props.showStatus) {
+      wsStore.socket.on('member:joined', handleJoined);
+      wsStore.socket.on('member:left', handleLeft);
+    }
   }
 })
 
 onUnmounted(() => {
   if (updateStatus && id) {
     wsStore.socket.off(`user:${id}:status`, updateStatusListener);
+    if (props.showStatus) {
+      wsStore.socket.off('member:joined', handleJoined);
+      wsStore.socket.off('member:left', handleLeft);
+    }
   }
 })
 </script>
