@@ -8,8 +8,11 @@ import type { Message } from 'src/types';
 
 export const useMessageStore = defineStore('message', () => {
   const wsStore = useWsStore();
+  const channelStore = useChannelStore();
 
   const messages = ref<Message[]>([]);
+
+  const loading = ref(null);
 
   watch(() => wsStore.connected, (connected) => {
     wsStore.socket?.off('message:new', handleMessageReceived);
@@ -31,14 +34,15 @@ export const useMessageStore = defineStore('message', () => {
 
   // Load messages with REST and then start listening to new messages with websocket
   async function loadMessages(channelId: string) {
-    const data = await api.get(`/channels/${channelId}/messages`);
+    const data = await (loading.value = api.get(`/channels/${channelId}/messages`))
+      .finally(() => (loading.value = null));
+
     console.log(data);
     messages.value = data.messages;
-
     return data.messages;
   }
 
-  return { messages, loadMessages, createMessage };
+  return { messages, loading, loadMessages, createMessage };
 });
 
 if (import.meta.hot) {

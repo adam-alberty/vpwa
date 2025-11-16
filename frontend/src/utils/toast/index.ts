@@ -20,7 +20,7 @@ export function error(msg, timeout = 5000, position: Position = 'top') {
       message += `${err.message}<br>`;
   }
   else
-    message = msg?.message ?? msg ?? 'Error';
+    message = msg?.message ?? msg?.error ?? msg ?? 'Error';
 
   Notify.create({
     message,

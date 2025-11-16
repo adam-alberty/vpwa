@@ -3,6 +3,7 @@
     <q-item-section avatar>
       <UserAvatar
         v-bind="props"
+        :status="status || 'offline'"
         size="36px"
         :color="color"
         text-color="white"
@@ -24,29 +25,66 @@
     >
       <div class="typing-menu">Yes that is a great</div>
     </q-menu>
+
+    <q-menu
+      anchor="top right"
+      self="top left"
+      class="bg-highlight q-py-sm q-px-md"
+      context-menu
+    >
+      <q-list dense style="min-width: 100px">
+        <template v-if="!isMe">
+          <q-item v-if="amIAdmin" clickable v-close-popup @click="kick">
+            <q-item-section>Kick</q-item-section>
+          </q-item>
+          <q-item v-else-if="!isAdmin && channel.type == 'public'" clickable v-close-popup @click="kick">
+            <q-item-section>Vote Kick</q-item-section>
+          </q-item>
+        </template>
+      </q-list>
+    </q-menu>
   </q-card>
 </template>
 
 <script setup lang="ts">
 import UserAvatar from './UserAvatar.vue';
+import type { Channel} from '@/types';
 import { ChannelMemberRole } from '@/types';
 import { useAuthStore } from '@/stores/auth-user.store';
+import { useMemberStore } from '@/stores/member.store';
 
 import type { UserMember } from 'src/types';
 import { computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { error } from '@/utils/toast';
+
+const route = useRoute();
 
 const auth = useAuthStore();
+const memberStore = useMemberStore();
 
-const props = defineProps<UserMember>();
+type Props = UserMember & {
+  channel: Channel
+};
+const props = defineProps<Props>();
 
-const itsMe = computed(() => auth.user?.id == props.id);
+const isMe = computed(() => auth.user?.id == props.id);
+const isAdmin = computed(() => props.role == ChannelMemberRole.ADMIN);
+
+const amIAdmin = computed(() => memberStore.getAdmin(auth.user.id)?.id == auth.user?.id);
+
 const color = computed(() => {
-  if (props.role == ChannelMemberRole.ADMIN)
+  if (isAdmin.value)
     return 'orange-13';
-  if (itsMe.value)
+  if (isMe.value)
     return 'primary';
   return 'grey-8';
 });
+
+async function kick() {
+  console.log('Kicking', props.id);
+  return memberStore.kickMember(route.params.id as string, props.id).catch(error);
+}
 </script>
 
 <style lang="sass" scoped>

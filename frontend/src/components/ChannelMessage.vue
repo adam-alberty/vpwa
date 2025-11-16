@@ -1,6 +1,6 @@
 <template>
   <div class="channel-message q-py-md q-px-lg row no-wrap">
-    <q-item-section avatar>
+    <q-item-section :key="sender.status" avatar>
       <UserAvatar v-bind="sender" size="40px" color="secondary" text-color="white" updateStatus />
     </q-item-section>
     <div>
@@ -29,8 +29,10 @@
 
 <script lang="ts" setup>
 import UserAvatar from './UserAvatar.vue';
-import type { Message } from 'src/types';
-import { computed } from 'vue';
+import type { Message} from 'src/types';
+import { UserStatus } from 'src/types';
+import { computed, ref, watch } from 'vue';
+import { useMemberStore } from '@/stores/member.store';
 
 const props = withDefaults(defineProps<Message>(), {});
 const { sender, content, createdAt } = props;

@@ -28,7 +28,7 @@ import ChannelMessage from '@/components/ChannelMessage.vue';
 import type { QScrollArea } from 'quasar';
 import MessageSkeleton from 'src/components/MessageSkeleton.vue';
 import { useChannelStore } from 'src/stores/channel.store';
-import { useMemberStore } from 'src/stores/members.store';
+import { useMemberStore } from 'src/stores/member.store';
 import { useMessageStore } from 'src/stores/message.store';
 import { useWsStore } from 'src/stores/ws.store';
 import { computed, onMounted, ref, watch } from 'vue';
@@ -84,7 +84,7 @@ async function pageChange() {
   }
   catch (err) {
     error(err);
-    router.back();
+    router.replace('/').catch(console.error);
   }
   finally {
     loading.value = false;

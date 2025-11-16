@@ -15,19 +15,38 @@
           <ChannelName
             v-if="channelStore.currentChannel"
             :name="channelStore.currentChannel.name"
-            :isPrivate="channelStore.currentChannel.type === 'private'"
+            :isPrivate="channelStore.currentChannel.type == 'private'"
             highlight
           />
           <div v-else>Select a channel</div>
         </q-toolbar-title>
 
         <div class="row q-gutter-sm">
+          <div v-if="amIAdmin || channelStore.currentChannel?.type == 'public'">
+            <q-btn flat round dense
+              icon="add"
+            />
+            <q-menu
+              class="no-shadow"
+              :offset="[5, 5]"
+            >
+              <div class="dropdown" style="min-width: 280px">
+                <q-input
+                  v-model="inviteNick"
+                  label="Nickname to invite *"
+                  lazy-rules
+                  :rules="[(val) => (val && val.length > 0) || 'Please type something']"
+                  @keypress.enter="ev => console.log(ev)"
+                  autofocus
+                />
+              </div>
+            </q-menu>
+            <q-tooltip>Invite user</q-tooltip>
+          </div>
+
           <div>
-            <q-btn
+            <q-btn flat round dense
               color="red-4"
-              flat
-              round
-              dense
               icon="group_remove"
               @click="leaveChannel(route.params.id as string, true)"
             />
@@ -35,10 +54,7 @@
           </div>
 
           <div>
-            <q-btn
-              flat
-              round
-              dense
+            <q-btn flat round dense
               icon="group"
               :color="uiStore.rightDrawerOpen ? 'white' : 'grey-5'"
               @click="uiStore.toggleRightDrawer()"
@@ -85,15 +101,20 @@ import ChannelList from '@/components/menus/ChannelsMenu.vue';
 import MembersMenu from '@/components/menus/MembersMenu.vue';
 import QuickSettingsDialog from '@/components/dialogs/QuickSettingsDialog.vue';
 import ChatInput from '@/components/ChatInput.vue';
-import { useChannelStore } from '@/stores/channel.store';
 import { useRoute, useRouter } from 'vue-router';
 import { error } from '@/utils/toast';
 import { confirmDanger, confirm } from '@/utils/popups';
 import { useWsStore } from 'src/stores/ws.store';
 
-import { useUiStore } from 'src/stores/ui.store';
+import { useChannelStore } from '@/stores/channel.store';
+import { useMemberStore } from 'src/stores/member.store';
+import { useAuthStore } from '@/stores/auth-user.store';
+import { useUiStore } from '@/stores/ui.store';
+import { computed, ref } from 'vue';
 
+const auth = useAuthStore();
 const channelStore = useChannelStore();
+const memberStore = useMemberStore();
 const uiStore = useUiStore();
 const route = useRoute();
 const router = useRouter();
@@ -102,8 +123,11 @@ const wsStore = useWsStore();
 
 wsStore.connect()
 
-// Load channels
+const inviteNick = ref('');
 
+const amIAdmin = computed(() => memberStore.getAdmin(auth.user.id)?.id == auth.user?.id);
+
+// Load channels
 if (!channelStore.channels.length)
   channelStore.loadChannels().catch(error);
 

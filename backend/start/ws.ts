@@ -3,43 +3,44 @@ import ws from '#services/ws'
 import User, { UserStatus } from '#models/user'
 import { Secret } from '@adonisjs/core/helpers'
 
-function userSockets(io: typeof ws.io, userId: string) {
-  return io.fetchSockets().then(sockets => sockets.filter(s => s.data.userId == userId))
+export function userSockets(userId: string, io?: typeof ws.io) {
+  return (io ?? ws.io).fetchSockets().then(sockets => sockets.filter(s => s.data.userId == userId))
 }
 
 app.ready(() => {
   const io = ws.boot()
 
   // Client connects to websocket
-  io.on('connection', async (socket) => {
+  io.on('connection', (socket) => {
     console.log('[WS] Connected', socket.id)
 
-    try { // Auth
-      const token = await User.accessTokens.verify(new Secret(socket.handshake.auth.token))
+    // Auth
+    User.accessTokens.verify(new Secret(socket.handshake.auth.token)).then(token => {
       if (!token)
         throw new Error('Invalid token')
 
       socket.data.userId = token.tokenableId
       console.log(`[WS] ${socket.id} authed`)
-    } catch (err) {
+    }).catch(err => {
       console.error('[WS] Invalid token for socket', socket.id, err)
       return socket.disconnect()
-    }
+    })
 
     const userId = socket.data.userId
     if (userId) {
-      const sockets = await userSockets(io, userId)
-      if (sockets.length == 1) { // Send status on first connection
-        const user = await User.find(userId).catch(() => null)
-        if (user && user.status != UserStatus.OFFLINE)
-          io.emit(`user:${user.id}:status`, { status: user.status })
-      }
+      userSockets(userId, io).then(async sockets => {
+        if (sockets.length == 1) { // Send status on first connection
+          const user = await User.find(userId).catch(() => null)
+          if (user && user.status != UserStatus.OFFLINE)
+            io.emit(`user:${user.id}:status`, { status: user.status })
+        }
+      })
     }
 
     // Join channel room
     socket.on('channel:join', (id) => {
-      if (!socket.data.userId)
-        return
+      // if (!socket.data.userId)
+      //   return console.error(`[WS] Invalid token for room`)
 
       socket.join(`channel/${id}`)
       console.log(`[WS] ${socket.id} joined channel/${id}`)
@@ -54,14 +55,15 @@ app.ready(() => {
     socket.on('disconnect', async () => {
       console.log('[WS] User disconnected:', socket.id)
 
-      const userId = socket.data.userId
-      if (userId) {
-        const sockets = await userSockets(io, userId)
-        if (!sockets.length) { // Handle offline on last disconnect
-          const user = await User.find(userId).catch(() => null)
-          if (user && user.status != UserStatus.OFFLINE)
-            io.emit(`user:${user.id}:status`, { status: UserStatus.OFFLINE })
-        }
+      const disconnectUserId = socket.data.userId
+      if (disconnectUserId) {
+        userSockets(disconnectUserId, io).then(async sockets => {
+          if (!sockets.length) { // Handle offline on last disconnect
+            const user = await User.find(disconnectUserId).catch(() => null)
+            if (user && user.status != UserStatus.OFFLINE)
+              io.emit(`user:${user.id}:status`, { status: UserStatus.OFFLINE })
+          }
+        })
       }
     })
   })

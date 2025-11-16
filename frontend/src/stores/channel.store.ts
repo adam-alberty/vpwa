@@ -11,6 +11,8 @@ export const useChannelStore = defineStore('channel', () => {
   const channels = ref<Channel[]>([]);
   const currentChannel = ref<Channel | null>(null);
 
+  const loading = ref(null);
+
   watch(() => wsStore.connected, (connected) => {
     if (!currentChannel.value?.id)
       return;
@@ -44,7 +46,9 @@ export const useChannelStore = defineStore('channel', () => {
 
   // Load the channels from API
   async function loadChannels() {
-    const data = await api.get('/channels');
+    const data = await (loading.value = api.get('/channels'))
+      .finally(() => (loading.value = null));
+
     channels.value = data.channels;
     return data.channels;
   }
@@ -72,7 +76,7 @@ export const useChannelStore = defineStore('channel', () => {
     return data.channel;
   }
 
-  return { channels, currentChannel, loadChannels, createChannel, leaveChannel, setCurrentChannel, joinChannel };
+  return { channels, currentChannel, loading, loadChannels, createChannel, leaveChannel, setCurrentChannel, joinChannel };
 });
 
 if (import.meta.hot) {

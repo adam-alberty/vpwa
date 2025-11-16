@@ -45,24 +45,24 @@ export default class ChannelMembersController {
     const channel = await Channel.findBy('name', data.name, { client: tx })
     if (!channel) {
       await tx.rollback()
-      return response.notFound(`Channel "${data.name}" not found!`)
+      return response.notFound(`Channel "${data.name}" not found`)
     }
 
     const membership = await ChannelMembersController.getMembership(channel.id, user.id, tx)
     if (membership) { // Check if user is already a member
       await tx.rollback()
-      return response.conflict({ message: 'You are already a member of this channel!' })
+      return response.conflict({ message: 'You are already a member of this channel' })
     }
 
     if (channel.type == ChannelType.PRIVATE) {
       await tx.rollback()
-      return response.forbidden({ message: 'This channel is private. Ask for invite!' })
+      return response.forbidden({ message: 'This channel is private. Ask for invite' })
     }
 
     const banned = await BanVote.isBanned(channel.id, user.id, tx)
     if (banned) {
       await tx.rollback()
-      return response.forbidden({ message: 'You are not allowed to join this channel!' })
+      return response.forbidden({ message: 'You are not allowed to join this channel' })
     }
 
     const role = {
@@ -77,7 +77,7 @@ export default class ChannelMembersController {
 
     await tx.commit()
 
-    ws.io.to(`channel/${channel.id}`).emit('member:joined', { ...user.serialize(), ...role })
+    ws.to(`channel/${channel.id}`).emit('member:joined', { ...user.serialize(), ...role })
 
     return response.created({
       message: `Joined channel successfully`,
@@ -105,7 +105,7 @@ export default class ChannelMembersController {
 
     await tx.commit()
 
-    ws.io.to(`channel/${channelId}`).emit('member:left', { id: user.id })
+    ws.to(`channel/${channelId}`).emit('member:left', { id: user.id })
 
     return response.ok({
       channel: { id: channelId },

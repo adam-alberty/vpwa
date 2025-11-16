@@ -13,6 +13,10 @@ class Ws {
     this.io = new Server(server.getNodeServer())
     return this.io
   }
+
+  public to(room: string | string[]) {
+    return this.io.to(room)
+  }
 }
 
 export default new Ws()

@@ -55,3 +55,12 @@ input,
 textarea {
   background-color: $input;
 }
+
+.dropdown {
+  background-color: $highlight;
+  padding: 1rem;
+  border-radius: 0.5rem;
+
+  display: grid;
+  gap: 1rem;
+}

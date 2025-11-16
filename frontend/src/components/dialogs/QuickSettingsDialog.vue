@@ -17,7 +17,7 @@
       anchor="top middle"
       self="bottom middle"
       class="no-shadow"
-      :offset="[10, 5]"
+      :offset="[10, 20]"
     >
       <div class="dropdown">
         <q-btn-toggle
@@ -133,15 +133,5 @@ async function logout() {
     margin-left: 0.8rem;
     line-height: 1.3;
   }
-}
-
-.dropdown {
-  background-color: $highlight;
-  margin-bottom: 1rem;
-  padding: 1rem;
-  border-radius: 0.5rem;
-
-  display: grid;
-  gap: 1rem;
 }
 </style>

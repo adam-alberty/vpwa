@@ -1,4 +1,5 @@
 import Message from '#models/message'
+import { UserStatus } from '#models/user'
 import ws from '#services/ws'
 import { createMessageValidator } from '#validators/message'
 import type { HttpContext } from '@adonisjs/core/http'
@@ -34,7 +35,7 @@ export default class MessagesController {
 
     // send the message to clients in the channel
     // console.log('Emitting to channel/' + channelId)
-    ws.io.to(`channel/${channelId}`).emit('message:new', newMessage)
+    ws.to(`channel/${channelId}`).emit('message:new', newMessage)
 
     return response.created({ message: "Sent successfully" })
   }
@@ -54,12 +55,37 @@ export default class MessagesController {
       return response.forbidden({ error: 'You are not a member of this channel' })
     }
 
-    const messages = await Message.query()
+    var messages = await Message.query()
       .where('channel_id', channelId)
-      .preload('sender')
+      .preload('sender', (senderQuery) => {
+        senderQuery
+          .select([
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'status',
+            'email',
+          ])
+          .withAggregate('channels', (memberQuery) => {
+            memberQuery
+              .where('channel_members.channel_id', channelId)
+              .count('*')
+              .as('is_member')
+          })
+      })
       .preload('mentionedUser')
       .orderBy('created_at', 'asc')
 
-    return response.ok({ messages })
+    const serialized = messages.map((m) => {
+      const msg = m.serialize()
+      msg.sender.status ??= UserStatus.OFFLINE
+
+      if (m.sender.$extras.is_member == 0) {
+        msg.sender.status = null
+      }
+      return msg
+    })
+    return response.ok({ messages: serialized })
   }
 }
