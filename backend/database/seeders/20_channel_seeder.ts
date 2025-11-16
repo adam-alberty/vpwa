@@ -38,7 +38,7 @@ export default class ChannelSeeder extends BaseSeeder {
 
     for (const channel of channels) {
       const members = faker.helpers.arrayElements(users, faker.number.int({ min: 3, max: 7 })) // Rand memebers
-      const admin = users.filter((u) => u.email.includes('@own.co'))[0]
+      const admin = users.filter((u) => u.email.includes('own.co'))[0] ?? faker.helpers.arrayElement(users)
 
       for (const user of members) {
         const role = user.id == admin.id ? ChannelMemberRole.ADMIN : ChannelMemberRole.MEMBER
