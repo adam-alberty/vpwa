@@ -3,19 +3,15 @@ import db from '@adonisjs/lucid/services/db'
 import Channel, { ChannelMemberRole, ChannelType } from '#models/channel'
 import { createChannelValidator, joinChannelValidator } from '#validators/channel'
 import ws from '#services/ws'
+import { TransactionClientContract } from '@adonisjs/lucid/types/database'
 
 export default class ChannelMembersController {
   public async get({ response, auth, params }: HttpContext) {
     const channelId = params.id as string
     const user = auth.user!
 
-    const isMember = await db
-      .from('channel_members')
-      .where('channel_id', channelId)
-      .andWhere('user_id', user.id)
-      .first()
-
-    if (!isMember) {
+    const membership = await ChannelMembersController.getMembership(channelId, user.id)
+    if (!membership) {
       return response.forbidden({ error: 'You are not a member of this channel' })
     }
 
@@ -37,7 +33,7 @@ export default class ChannelMembersController {
     return response.ok({ members })
   }
 
-   public async join({ request, response, auth }: HttpContext) {
+  public async join({ request, response, auth }: HttpContext) {
     const user = auth.user!
     const data = await request.validateUsing(joinChannelValidator)
     data.name = data.name.replace(/\s+/g, '-')
@@ -54,12 +50,7 @@ export default class ChannelMembersController {
       throw new Error(`Channel "${data.name}" not found!`)
     }
 
-    const membership = await tx
-      .from('channel_members')
-      .where('channel_id', channel.id)
-      .andWhere('user_id', user.id)
-      .first()
-
+    const membership = await ChannelMembersController.getMembership(channel.id, user.id, tx)
     if (membership) { // Check if user is already a member
       await tx.rollback()
       return response.conflict({ message: 'You are already a member of this channel!' })
@@ -96,12 +87,7 @@ export default class ChannelMembersController {
 
     const tx = await db.transaction()
 
-    const membership = await tx
-      .from('channel_members')
-      .where('channel_id', channelId)
-      .andWhere('user_id', user.id)
-      .first()
-
+    const membership = await ChannelMembersController.getMembership(channelId, user.id, tx)
     if (!membership) {
       throw new Error('You are not a member of this channel')
     }
@@ -123,5 +109,14 @@ export default class ChannelMembersController {
     return response.ok({
       channel: { id: channelId },
     })
+  }
+
+  // Returns membership if the user is a member of channel
+  public static getMembership(channelId: string, userId: string, tx?: TransactionClientContract) {
+    return (tx ?? db)
+      .from('channel_members')
+      .where('channel_id', channelId)
+      .andWhere('user_id', userId)
+      .first()
   }
 }
