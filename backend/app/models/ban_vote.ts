@@ -32,9 +32,6 @@ export default class BanVote extends BaseModel {
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime
-
   public static async isBanned(channelId: string, userId: string, tx?: TransactionClientContract) {
     const client = tx ? { client: tx } : undefined
 

@@ -8,7 +8,7 @@ import ChannelMembersController from './channel_members_controller.js'
 
 export default class BanVotesController {
   // Apply kick or ban to a userId in channelId
-  public async kick({ request, response, params, auth }: HttpContext) {
+  public async kickMember({ request, response, params, auth }: HttpContext) {
     const currentUser = auth.user! // Kicker...
     const userId = params.userId as string // The one to kick
     const channelId = params.id as string
@@ -42,6 +42,8 @@ export default class BanVotesController {
       if (isPrivate && isAdmin) {
         await ChannelMembersController.deleteMembership(channelId, userId, tx)
 
+        ws.to(`channel/${channelId}`).emit('member:left', { id: userId })
+
         await tx.commit()
         return response.ok({ message: 'User removed from private channel (admin action)' })
       }
@@ -60,8 +62,10 @@ export default class BanVotesController {
       if (isAdmin) {
         await ChannelMembersController.deleteMembership(channelId, userId, tx)
 
+        ws.to(`channel/${channelId}`).emit('member:left', { id: userId })
+
         await tx.commit()
-        return response.ok({ message: 'User kicked by admin' })
+        return response.ok({ message: 'User kicked by admin', user: { id: userId } })
       }
 
       // For regular user, check if sufficient bans and remove
@@ -69,8 +73,10 @@ export default class BanVotesController {
       if (banned) {
         await ChannelMembersController.deleteMembership(channelId, userId, tx)
 
+        ws.to(`channel/${channelId}`).emit('member:left', { id: userId })
+
         await tx.commit()
-        return response.ok({ message: 'User kicked by majority' })
+        return response.ok({ message: 'User kicked by majority', user: { id: userId } })
       }
 
       await tx.commit()
