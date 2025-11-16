@@ -51,8 +51,8 @@ export default class BanVote extends BaseModel {
 
     // Admin voter
     const adminBan = await BanVote.query(client)
-      .where('channelId', channelId)
-      .andWhere('bannedId', userId)
+      .where('ban_votes.channel_id', channelId)
+      .andWhere('ban_votes.banned_id', userId)
       .join('channel_members', 'channel_members.user_id', '=', 'ban_votes.voter_id')
       .andWhere('channel_members.role', ChannelMemberRole.ADMIN)
       .first()

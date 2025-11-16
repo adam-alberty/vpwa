@@ -4,6 +4,7 @@ import Channel, { ChannelMemberRole, ChannelType } from '#models/channel'
 import { createChannelValidator, joinChannelValidator } from '#validators/channel'
 import ws from '#services/ws'
 import { TransactionClientContract } from '@adonisjs/lucid/types/database'
+import BanVote from '#models/ban_vote'
 
 export default class ChannelMembersController {
   public async get({ response, auth, params }: HttpContext) {
@@ -41,13 +42,10 @@ export default class ChannelMembersController {
     const tx = await db.transaction()
 
     // Get channel
-    const channel = await Channel.query({ client: tx })
-      .where('name', data.name)
-      .first()
-
+    const channel = await Channel.findBy('name', data.name, { client: tx })
     if (!channel) {
       await tx.rollback()
-      throw new Error(`Channel "${data.name}" not found!`)
+      return response.notFound(`Channel "${data.name}" not found!`)
     }
 
     const membership = await ChannelMembersController.getMembership(channel.id, user.id, tx)
@@ -59,6 +57,12 @@ export default class ChannelMembersController {
     if (channel.type == ChannelType.PRIVATE) {
       await tx.rollback()
       return response.forbidden({ message: 'This channel is private. Ask for invite!' })
+    }
+
+    const banned = await BanVote.isBanned(channel.id, user.id, tx)
+    if (banned) {
+      await tx.rollback()
+      return response.forbidden({ message: 'You are not allowed to join this channel!' })
     }
 
     const role = {
@@ -89,17 +93,14 @@ export default class ChannelMembersController {
 
     const membership = await ChannelMembersController.getMembership(channelId, user.id, tx)
     if (!membership) {
-      throw new Error('You are not a member of this channel')
+      await tx.rollback()
+      return response.forbidden('You are not a member of this channel')
     }
 
-    if (membership.role === ChannelMemberRole.ADMIN) {
+    if (membership.role == ChannelMemberRole.ADMIN) {
       await tx.from('channels').where('id', channelId).delete()
     } else {
-      await tx
-        .from('channel_members')
-        .where('channel_id', channelId)
-        .andWhere('user_id', user.id)
-        .delete()
+      await ChannelMembersController.deleteMembership(channelId, user.id, tx)
     }
 
     await tx.commit()
@@ -118,5 +119,13 @@ export default class ChannelMembersController {
       .where('channel_id', channelId)
       .andWhere('user_id', userId)
       .first()
+  }
+
+  public static deleteMembership(channelId: string, userId: string, tx?: TransactionClientContract) {
+    return (tx ?? db)
+      .from('channel_members')
+      .where('channel_id', channelId)
+      .andWhere('user_id', userId)
+      .delete()
   }
 }
