@@ -1,5 +1,5 @@
 <template>
-  <q-item class="bg-grey-9">
+  <q-item class="item bg-grey-9">
     <q-item-section>
       <div>
         <q-icon name="mail" color="primary" size="20px" class="q-my-none q-mb-xs" />
@@ -8,7 +8,7 @@
         <q-menu
           anchor="center end"
           self="center left"
-          class="no-shadow bg-blue-grey-8 q-pa-xs"
+          class="no-shadow bg-highlight q-pa-xs"
           :offset="[5, 5]"
         >
           <div class="row q-gutter-x-sm">
@@ -19,7 +19,9 @@
               icon="check"
               class="bg-positive text-white"
               @click="accept"
-            />
+            >
+              <q-tooltip>Accept invite</q-tooltip>
+            </q-btn>
             <q-btn
               size="11px"
               dense
@@ -27,7 +29,9 @@
               icon="close"
               class="bg-negative text-white"
               @click="reject"
-            />
+            >
+              <q-tooltip>Reject invite</q-tooltip>
+            </q-btn>
           </div>
         </q-menu>
       </div>
@@ -58,6 +62,6 @@ function reject() {
 
 <style lang="sass" scoped>
 .q-item
-  border-left: 5px solid var(--q-primary)
   padding-left: 12px
+  padding-bottom: 4px
 </style>

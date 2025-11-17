@@ -56,7 +56,7 @@ import { useMemberStore } from '@/stores/member.store';
 import type { UserMember } from 'src/types';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { error } from '@/utils/toast';
+import { success, error } from '@/utils/toast';
 
 const route = useRoute();
 
@@ -82,7 +82,7 @@ const color = computed(() => {
 });
 
 async function kick() {
-  return memberStore.kickMember(route.params.id as string, props.id).catch(error);
+  return memberStore.kickMember(route.params.id as string, props.id).then(success).catch(error);
 }
 </script>
 

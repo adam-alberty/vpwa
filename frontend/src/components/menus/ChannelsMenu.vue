@@ -11,13 +11,16 @@
       <CreateChannelDialog />
     </div>
     <q-list class="list">
-      <ChannelInviteCard
-        v-for="invite in inviteStore.invites"
-        :key="invite.channelId"
-        v-bind="invite"
-        @reject="inviteStore.rejectInvite"
-        @accept="inviteStore.acceptInvite"
-      />
+      <div v-if="inviteStore.invites?.length" class="q-mb-md">
+        <ChannelInviteCard
+          v-for="invite in inviteStore.invites"
+          :key="invite.channelId"
+          v-bind="invite"
+          @reject="inviteStore.rejectInvite"
+          @accept="inviteStore.acceptInvite"
+          class="q-mb-sm"
+        />
+      </div>
       <ChannelCard
         v-for="channel in channelStore.channels"
         :key="channel.id"
@@ -36,11 +39,16 @@ import ChannelInviteCard from '@/components/ChannelInviteCard.vue';
 import ChannelCard from '@/components/ChannelCard.vue';
 import { useChannelStore } from '@/stores/channel.store';
 import { useInviteStore } from 'src/stores/invite.store';
+import { useRouter } from 'vue-router';
 
 const channelStore = useChannelStore();
 const inviteStore = useInviteStore();
 
-function changeChannel(id: string) {}
+const router = useRouter();
+
+async function changeChannel(id: string) {
+  await router.push({ name: 'Channels', params: { id } });
+}
 </script>
 
 <style scoped lang="scss">

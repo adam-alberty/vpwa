@@ -56,6 +56,11 @@ textarea {
   background-color: $input;
 }
 
+.item {
+  border-radius: 0.7rem;
+  padding: 0rem 1rem;
+}
+
 .dropdown {
   background-color: $highlight;
   padding: 1rem;
