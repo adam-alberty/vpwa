@@ -47,8 +47,8 @@ export const useMemberStore = defineStore('member', () => {
     return data;
   }
 
-  function getMember(userId: string) {
-    return members.value.find((m) => m.id == userId);
+  function getMember(nameOrId: string) {
+    return members.value.find((m) => m.id == nameOrId || m.username == nameOrId);
   }
 
   function getAdmin(indexOrId: string | number | null = 0) {
