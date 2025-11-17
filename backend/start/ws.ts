@@ -11,20 +11,36 @@ app.ready(() => {
   const io = ws.boot()
 
   // Client connects to websocket
-  io.on('connection', (socket) => {
-    console.log('[WS] Connected', socket.id)
-
-    // Auth
-    User.accessTokens.verify(new Secret(socket.handshake.auth.token)).then(token => {
+  io.on('connection', async (socket) => {
+    try { // Auth
+      const token = await User.accessTokens.verify(new Secret(socket.handshake.auth.token))
       if (!token)
         throw new Error('Invalid token')
 
       socket.data.userId = token.tokenableId
       console.log(`[WS] ${socket.id} authed`)
-    }).catch(err => {
+    } catch (err) {
       console.error('[WS] Invalid token for socket', socket.id, err)
       return socket.disconnect()
+    }
+
+    // Join channel room
+    socket.on('channel:join', (id) => {
+      if (!socket.data.userId)
+        return console.error(`[WS] Invalid token for room`)
+
+      socket.join(`channel/${id}`)
+      console.log(`[WS] ${socket.id} joined channel/${id}`)
     })
+
+    // Leave channel room
+    socket.on('channel:leave', (id) => {
+      socket.leave(`channel/${id}`)
+      console.log(`[WS] ${socket.id} left channel/${id}`)
+    })
+
+    console.log(`[WS] ${socket.id} connected`)
+    socket.emit('connected', { id: socket.id })
 
     const userId = socket.data.userId
     if (userId) {
@@ -37,23 +53,8 @@ app.ready(() => {
       })
     }
 
-    // Join channel room
-    socket.on('channel:join', (id) => {
-      // if (!socket.data.userId)
-      //   return console.error(`[WS] Invalid token for room`)
-
-      socket.join(`channel/${id}`)
-      console.log(`[WS] ${socket.id} joined channel/${id}`)
-    })
-
-    // Leave channel room
-    socket.on('channel:leave', (id) => {
-      socket.leave(`channel/${id}`)
-      console.log(`[WS] ${socket.id} left channel/${id}`)
-    })
-
-    socket.on('disconnect', async () => {
-      console.log('[WS] User disconnected:', socket.id)
+    socket.on('disconnect', () => {
+      console.log(`[WS] ${socket.id} disconnected`)
 
       const disconnectUserId = socket.data.userId
       if (disconnectUserId) {

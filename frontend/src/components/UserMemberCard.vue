@@ -35,7 +35,7 @@
       <q-list dense style="min-width: 100px">
         <template v-if="!isMe">
           <q-item v-if="amIAdmin" clickable v-close-popup @click="kick">
-            <q-item-section>Kick</q-item-section>
+            <q-item-section>Kick and Ban</q-item-section>
           </q-item>
           <q-item v-else-if="!isAdmin && channel.type == 'public'" clickable v-close-popup @click="kick">
             <q-item-section>Vote Kick</q-item-section>

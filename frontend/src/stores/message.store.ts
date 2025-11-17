@@ -18,8 +18,8 @@ export const useMessageStore = defineStore('message', () => {
     wsStore.socket?.off('message:new', handleMessageReceived);
     if (connected) {
       // Start listening for new messages
-      console.log('[WS]: listening for new messages');
       wsStore.socket.on('message:new', handleMessageReceived);
+      console.log('[WS]: listening for new messages');
     }
   });
 

@@ -5,7 +5,6 @@ import User from '#models/user'
 import { belongsTo } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import { TransactionClientContract } from '@adonisjs/lucid/types/database'
-import db from '@adonisjs/lucid/services/db'
 
 export default class BanVote extends BaseModel {
   @column({ isPrimary: true })

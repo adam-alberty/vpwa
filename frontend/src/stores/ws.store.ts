@@ -18,7 +18,7 @@ export const useWsStore = defineStore('websocket', () => {
       }
     });
 
-    socket.value.on('connect', () => {
+    socket.value.on('connected', () => {
       connected.value = true;
       console.log('[WS] connected');
     });

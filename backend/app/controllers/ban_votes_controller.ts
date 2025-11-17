@@ -43,6 +43,7 @@ export default class BanVotesController {
         await ChannelMembersController.deleteMembership(channelId, userId, tx)
 
         ws.to(`channel/${channelId}`).emit('member:left', { id: userId })
+         // TODO: Notify the kicked one...
 
         await tx.commit()
         return response.ok({ message: 'User removed from private channel (admin action)' })
@@ -63,6 +64,7 @@ export default class BanVotesController {
         await ChannelMembersController.deleteMembership(channelId, userId, tx)
 
         ws.to(`channel/${channelId}`).emit('member:left', { id: userId })
+         // TODO: Notify the kicked one...
 
         await tx.commit()
         return response.ok({ message: 'User kicked by admin', user: { id: userId } })
@@ -74,9 +76,15 @@ export default class BanVotesController {
         await ChannelMembersController.deleteMembership(channelId, userId, tx)
 
         ws.to(`channel/${channelId}`).emit('member:left', { id: userId })
+        // TODO: Notify the kicked one...
 
         await tx.commit()
-        return response.ok({ message: 'User kicked by majority', user: { id: userId } })
+        return response.ok({ message: 'User kicked by majority',
+          user: {
+            id: userId,
+            voteCount: +banned || 0
+          }
+        })
       }
 
       await tx.commit()
