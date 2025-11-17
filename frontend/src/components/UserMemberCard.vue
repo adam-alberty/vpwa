@@ -37,7 +37,7 @@
           <q-item v-if="amIAdmin" clickable v-close-popup @click="kick">
             <q-item-section>Kick and Ban</q-item-section>
           </q-item>
-          <q-item v-else-if="!isAdmin && channel.type == 'public'" clickable v-close-popup @click="kick">
+          <q-item v-else-if="!isAdmin && channel?.type == 'public'" clickable v-close-popup @click="kick">
             <q-item-section>Vote Kick</q-item-section>
           </q-item>
         </template>
@@ -64,7 +64,7 @@ const auth = useAuthStore();
 const memberStore = useMemberStore();
 
 type Props = UserMember & {
-  channel: Channel
+  channel?: Channel
 };
 const props = defineProps<Props>();
 

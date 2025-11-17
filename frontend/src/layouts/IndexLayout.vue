@@ -31,19 +31,28 @@ import { useUiStore } from 'src/stores/ui.store';
 import { useWsStore } from '@/stores/ws.store';
 import { error } from '@/utils/toast';
 import { useInviteStore } from '@/stores/invite.store';
+import { useRouter } from 'vue-router';
 
 const channelStore = useChannelStore();
 const inviteStore = useInviteStore();
 const uiStore = useUiStore();
 const wsStore = useWsStore();
+const router = useRouter();
 
 wsStore.connect()
 
 // Load channels and invites
 if (!channelStore.channels.length)
-  channelStore.loadChannels().catch(error);
+  channelStore.loadChannels().then(async data => {
+    if (!channelStore.currentChannel && data.channels?.length)
+      await router.push({ name: 'Channels', params: { id: data.channels[0].id } });
+  }).catch(error);
+
 if (!inviteStore.invites.length)
   inviteStore.loadInvites().catch(error);
+
+if (!channelStore.currentChannel && channelStore.channels.length)
+  router.replace({ name: 'Channels', params: { id: channelStore.channels[0].id } }).catch(console.error);
 </script>
 
 <style scoped lang="scss">

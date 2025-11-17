@@ -4,7 +4,6 @@ import { ref, watch } from 'vue';
 import type { Channel } from '@/types';
 import { useWsStore } from './ws.store';
 
-
 export const useChannelStore = defineStore('channel', () => {
   const wsStore = useWsStore();
 
@@ -17,15 +16,28 @@ export const useChannelStore = defineStore('channel', () => {
     if (!currentChannel.value?.id)
       return;
 
+    wsStore.socket?.off('channel:removed', handleChannelRemoved);
     wsStore.socket?.emit('channel:leave', currentChannel.value.id) // Just in case
     if (connected) {
+      wsStore.socket.on('channel:removed', handleChannelRemoved);
       wsStore.socket.emit('channel:join', currentChannel.value.id); // Reconnect...
       console.log(`[WS] rejoined channel ${currentChannel.value.id}`);
     }
   });
 
-  async function setCurrentChannel(id?: string) {
+  function handleChannelRemoved(data) {
+    channels.value = channels.value.filter((c) => c.id != data.channel.id);
+    if (currentChannel.value?.id == data.channel.id)
+      setCurrentChannel(null).catch(console.error);
+    console.log(`[WS]: Channel removed`, data.channel, data.message);
+  }
+
+  async function setCurrentChannel(id?: string | number) {
+    if (typeof id == 'number')
+      id = channels.value?.[id]?.id || null;
+
     if (currentChannel.value?.id) {
+      wsStore.socket.off('channel:removed', handleChannelRemoved);
       wsStore.socket.emit('channel:leave', currentChannel.value.id) // Leave the prev channel room
       console.log(`[WS] left channel ${currentChannel.value.id}`)
     }
@@ -37,6 +49,7 @@ export const useChannelStore = defineStore('channel', () => {
     const data = await api.get(`/channels/${id}`);
     console.log(data);
 
+    wsStore.socket.on('channel:removed', handleChannelRemoved);
     wsStore.socket.emit('channel:join', data.channel.id); // Join the channel room
     console.log(`[WS] joined channel ${data.channel.id}`);
 

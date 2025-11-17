@@ -30,8 +30,8 @@
             >
               <q-form @submit="onInvite" class="dropdown" style="min-width: 280px">
                 <q-input
-                  v-model="inviteNick"
-                  label="Nickname to invite *"
+                  v-model="inviteUsername"
+                  label="Username to invite *"
                   lazy-rules
                   :rules="[(val) => (val && val.length >= 3) || 'Please type at least 3 characters']"
                   autofocus
@@ -123,7 +123,7 @@ const wsStore = useWsStore();
 
 wsStore.connect()
 
-const inviteNick = ref('');
+const inviteUsername = ref('');
 const inviteOpen = ref(false);
 
 const amIAdmin = computed(() => memberStore.getAdmin(auth.user.id)?.id == auth.user?.id);
@@ -150,8 +150,8 @@ async function leaveChannel(channel: string, doConfirm = false) {
 
 async function onInvite() {
   try {
-    const data = await inviteStore.invite(route.params.id as string, inviteNick.value);
-    inviteNick.value = '';
+    const data = await inviteStore.invite(route.params.id as string, inviteUsername.value);
+    inviteUsername.value = '';
     inviteOpen.value = false;
 
     success(data.message);

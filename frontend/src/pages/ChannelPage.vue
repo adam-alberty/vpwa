@@ -31,9 +31,9 @@ import { useChannelStore } from 'src/stores/channel.store';
 import { useMemberStore } from 'src/stores/member.store';
 import { useMessageStore } from 'src/stores/message.store';
 import { useWsStore } from 'src/stores/ws.store';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { error } from '@/utils/toast'
+import { error, info } from '@/utils/toast'
 
 const loading = ref(true);
 const hasMoreMessages = ref(false);
@@ -61,7 +61,7 @@ const memberStore = useMemberStore();
 watch(
   () => route.params.id,
   async (newId, oldId) => {
-    if (newId !== oldId) {
+    if (newId != oldId) {
       await pageChange();
       scrollRef.value?.setScrollPercentage('vertical', 1, 0);
     }
@@ -70,7 +70,21 @@ watch(
 
 onMounted(async () => {
   await pageChange();
+
+  wsStore.socket.on('channel:removed', handleChannelRemoved);
 });
+
+onUnmounted(() => {
+  wsStore.socket.off('channel:removed', handleChannelRemoved);
+})
+
+async function handleChannelRemoved(data) {
+  if (data.channel.id == route.params.id) {
+    if (data.message)
+      info(`Channel removed: ${data.message}`);
+    await router.replace('/');
+  }
+}
 
 async function pageChange() {
   loading.value = true;
