@@ -17,9 +17,6 @@ export default class extends BaseSchema {
 
       table.uuid('sender_id').notNullable().references('id').inTable('users').onDelete('CASCADE')
 
-      // TODO after mention is deleted, set the mention to @DELETED_USER for example
-      table.uuid('mention_user_id').references('id').inTable('users').onDelete('CASCADE')
-
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at')
     })

@@ -30,7 +30,6 @@ export default class MessagesController {
     const newMessage = await Message.query()
       .where('id', createdMessage.id)
       .preload('sender')
-      .preload('mentionedUser')
       .firstOrFail()
 
     // send the message to clients in the channel
@@ -74,7 +73,6 @@ export default class MessagesController {
               .as('is_member')
           })
       })
-      .preload('mentionedUser')
       .orderBy('created_at', 'asc')
 
     const serialized = messages.map((m) => {

@@ -16,11 +16,6 @@ export default class ChannelSeeder extends BaseSeeder {
       console.warn('No users found, creating channels without members!')
     }
 
-    await Channel.create({
-      name: 'general',
-      type: faker.helpers.arrayElement([ChannelType.PUBLIC]),
-    })
-
     const channels = await Promise.all(
       Array.from({ length: 4 }).map((_, i) =>
         Channel.create({
@@ -28,6 +23,12 @@ export default class ChannelSeeder extends BaseSeeder {
           type: faker.helpers.arrayElement([ChannelType.PUBLIC, ChannelType.PRIVATE]),
         })
       )
+    )
+    channels.push(
+      await Channel.create({
+        name: 'general',
+        type: faker.helpers.arrayElement([ChannelType.PUBLIC]),
+      })
     )
 
     // Attach random members (if users exist)

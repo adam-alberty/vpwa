@@ -45,7 +45,6 @@ export interface Message {
   id: string;
   content: string;
   sender: User;
-  mentionedUser: User | null;
   createdAt: string;
   updatedAt: string;
 }

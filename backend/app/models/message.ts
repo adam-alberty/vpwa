@@ -31,7 +31,4 @@ export default class Message extends BaseModel {
 
   @belongsTo(() => User, { foreignKey: 'senderId' })
   declare sender: BelongsTo<typeof User>
-
-  @belongsTo(() => User, { foreignKey: 'mentionUserId' })
-  declare mentionedUser: BelongsTo<typeof User>
 }
