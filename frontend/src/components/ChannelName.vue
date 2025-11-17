@@ -1,7 +1,7 @@
 <template>
   <div class="row items-center no-wrap">
     <q-icon
-      :name="isPrivate ? 'lock' : 'tag'"
+      :name="type == 'private' ? 'lock' : 'tag'"
       class="q-mr-sm"
       :class="{ 'text-bold': highlight, 'text-grey-5': !highlight }"
     ></q-icon>
@@ -10,9 +10,11 @@
 </template>
 
 <script setup lang="ts">
+import type { ChannelType } from '@/types';
+
 interface Props {
   name: string;
-  isPrivate?: boolean;
+  type: ChannelType;
   highlight?: boolean;
 }
 

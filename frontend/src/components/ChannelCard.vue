@@ -1,7 +1,7 @@
 <template>
   <q-item clickable @click="goToChannel()" class="item" :class="active && `bg-highlight`" dense>
     <q-item-section>
-      <ChannelName v-bind="props" :is-private="type === 'private'" />
+      <ChannelName v-bind="props" />
     </q-item-section>
   </q-item>
 </template>
@@ -13,7 +13,7 @@ import ChannelName from './ChannelName.vue';
 import type { Channel } from 'src/types';
 
 const props = defineProps<Channel>();
-const { id, type } = props;
+const { id } = props;
 
 const router = useRouter();
 const route = useRoute();

@@ -11,10 +11,8 @@ export default class ChannelsController {
 
     // Check if already exists
     const tx = await db.transaction()
-    let channel = await Channel.query({ client: tx })
-      .where('name', data.name)
-      .first()
 
+    let channel = await Channel.findBy('name', data.name, { client: tx })
     if (channel) {
       await tx.rollback()
       return response.conflict({
@@ -66,9 +64,7 @@ export default class ChannelsController {
       .first()
 
     if (!channel || channel.members?.length == 0) {
-      return response.forbidden({
-        error: 'You are not a member of this channel',
-      })
+      return response.forbidden({ message: 'You are not a member of this channel' })
     }
 
     const membership = channel.members[0].$extras

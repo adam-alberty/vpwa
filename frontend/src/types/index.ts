@@ -25,6 +25,7 @@ export interface ChannelInvite {
   id: string;
   channelId: string;
   name: string;
+  type: ChannelType;
 }
 
 export interface User {

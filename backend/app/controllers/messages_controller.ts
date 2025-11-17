@@ -19,7 +19,7 @@ export default class MessagesController {
       .first()
 
     if (!isMember) {
-      return response.forbidden({ error: 'You are not a member of this channel' })
+      return response.forbidden({ message: 'You are not a member of this channel' })
     }
 
     const createdMessage = await Message.create({
@@ -52,7 +52,7 @@ export default class MessagesController {
       .first()
 
     if (!isMember) {
-      return response.forbidden({ error: 'You are not a member of this channel' })
+      return response.forbidden({ message: 'You are not a member of this channel' })
     }
 
     var messages = await Message.query()

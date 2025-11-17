@@ -37,9 +37,12 @@ router
     // Channel members
     router.post('/channels/join', [ChannelMembersController, 'join'])
     router.delete('/channels/:id', [ChannelMembersController, 'leave'])
-    router.get('/channels/:id/members', [ChannelMembersController, 'get'])
+    router.get('/channels/:id/members', [ChannelMembersController, 'list'])
 
     router.delete('/channels/:id/kick/:userId', [BanVotesController, 'kickMember'])
+
+    // Invites
+    router.get('/channels/:id/invites', [ChannelMembersController, 'list'])
 
     // User management
     router.put('/users', [UsersController, 'update'])

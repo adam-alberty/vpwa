@@ -7,13 +7,13 @@ import { TransactionClientContract } from '@adonisjs/lucid/types/database'
 import BanVote from '#models/ban_vote'
 
 export default class ChannelMembersController {
-  public async get({ response, auth, params }: HttpContext) {
+  public async list({ response, auth, params }: HttpContext) {
     const channelId = params.id as string
     const user = auth.user!
 
     const membership = await ChannelMembersController.getMembership(channelId, user.id)
     if (!membership) {
-      return response.forbidden({ error: 'You are not a member of this channel' })
+      return response.forbidden({ message: 'You are not a member of this channel' })
     }
 
     const members = await db

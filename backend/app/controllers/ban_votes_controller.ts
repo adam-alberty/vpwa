@@ -5,48 +5,55 @@ import User from '#models/user'
 import BanVote from '#models/ban_vote'
 import ws from '#services/ws'
 import ChannelMembersController from './channel_members_controller.js'
+import is from '@adonisjs/core/helpers/is'
 
 export default class BanVotesController {
-  // Apply kick or ban to a userId in channelId
+  // Apply kick/ban to a userId in channelId
   public async kickMember({ request, response, params, auth }: HttpContext) {
     const currentUser = auth.user! // Kicker...
     const userId = params.userId as string // The one to kick
     const channelId = params.id as string
 
     if (userId == currentUser.id) {
-      return response.badRequest({ error: 'You cannot kick yourself' })
+      return response.badRequest({ message: 'You cannot kick yourself' })
     }
 
     const tx = await db.transaction()
     try {
+      // Validation checks...
       const myMembership = await ChannelMembersController.getMembership(channelId, currentUser.id, tx)
       if (!myMembership) {
         await tx.rollback()
-        return response.forbidden({ error: 'You are not in this channel' })
+        return response.forbidden({ message: 'You are not in this channel' })
       }
 
       const targetMembership = await ChannelMembersController.getMembership(channelId, userId, tx)
       if (!targetMembership) {
         await tx.rollback()
-        return response.badRequest({ error: 'Cant kick the user that is not in the channel' })
+        return response.badRequest({ message: 'Cant kick the user that is not in the channel' })
       }
 
       const channel = await Channel.find(channelId, { client: tx })
       if (!channel) {
         await tx.rollback()
-        return response.notFound({ error: 'Channel not found' })
+        return response.notFound({ message: 'Channel not found' })
       }
 
       const isAdmin = myMembership.role == ChannelMemberRole.ADMIN
       const isPrivate = channel.type == ChannelType.PRIVATE
-      if (isPrivate && isAdmin) {
-        await ChannelMembersController.deleteMembership(channelId, userId, tx)
+      if (isPrivate) {
+        if (isAdmin) {
+          await ChannelMembersController.deleteMembership(channelId, userId, tx)
 
-        ws.to(`channel/${channelId}`).emit('member:left', { id: userId })
-         // TODO: Notify the kicked one...
+          ws.to(`channel/${channelId}`).emit('member:left', { id: userId })
+           // TODO: Notify the kicked one...
 
-        await tx.commit()
-        return response.ok({ message: 'User removed from private channel (admin action)' })
+          await tx.commit()
+          return response.ok({ message: 'User removed from private channel (admin action)' })
+        }
+
+        await tx.rollback()
+        return response.forbidden({ message: 'You are not allowed to kick users in private channel' })
       }
 
       // Add the vote
@@ -64,7 +71,7 @@ export default class BanVotesController {
         await ChannelMembersController.deleteMembership(channelId, userId, tx)
 
         ws.to(`channel/${channelId}`).emit('member:left', { id: userId })
-         // TODO: Notify the kicked one...
+        // TODO: Notify the kicked one...
 
         await tx.commit()
         return response.ok({ message: 'User kicked by admin', user: { id: userId } })
@@ -93,7 +100,7 @@ export default class BanVotesController {
     catch (err) {
       console.error(err)
       await tx.rollback()
-      return response.internalServerError({ error: 'Failed to process kick action' })
+      return response.internalServerError({ message: 'Failed to process kick action' })
     }
   }
 }

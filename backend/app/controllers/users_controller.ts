@@ -64,8 +64,6 @@ export default class UsersController {
    */
   public async delete({ auth, response }: HttpContext) {
     await auth.user?.delete()
-    return response.ok({
-      message: 'Your account has been deleted successfully',
-    })
+    return response.ok({ message: 'Your account has been deleted successfully' })
   }
 }

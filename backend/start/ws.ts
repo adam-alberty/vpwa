@@ -3,10 +3,6 @@ import ws from '#services/ws'
 import User, { UserStatus } from '#models/user'
 import { Secret } from '@adonisjs/core/helpers'
 
-export function userSockets(userId: string, io?: typeof ws.io) {
-  return (io ?? ws.io).fetchSockets().then(sockets => sockets.filter(s => s.data.userId == userId))
-}
-
 app.ready(() => {
   const io = ws.boot()
 
@@ -40,11 +36,12 @@ app.ready(() => {
     })
 
     console.log(`[WS] ${socket.id} connected`)
+    socket.join(`/${socket.data.userId}`)
     socket.emit('connected', { id: socket.id })
 
     const userId = socket.data.userId
     if (userId) {
-      userSockets(userId, io).then(async sockets => {
+      ws.userSockets(userId).then(async sockets => {
         if (sockets.length == 1) { // Send status on first connection
           const user = await User.find(userId).catch(() => null)
           if (user && user.status != UserStatus.OFFLINE)
@@ -54,11 +51,11 @@ app.ready(() => {
     }
 
     socket.on('disconnect', () => {
-      console.log(`[WS] ${socket.id} disconnected`)
+      socket.leave(`/${socket.data.userId}`)
 
       const disconnectUserId = socket.data.userId
       if (disconnectUserId) {
-        userSockets(disconnectUserId, io).then(async sockets => {
+        ws.userSockets(disconnectUserId).then(async sockets => {
           if (!sockets.length) { // Handle offline on last disconnect
             const user = await User.find(disconnectUserId).catch(() => null)
             if (user && user.status != UserStatus.OFFLINE)
@@ -66,6 +63,8 @@ app.ready(() => {
           }
         })
       }
+
+      console.log(`[WS] ${socket.id} disconnected`)
     })
   })
 })

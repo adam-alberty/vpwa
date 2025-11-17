@@ -14,8 +14,7 @@
         <q-toolbar-title>
           <ChannelName
             v-if="channelStore.currentChannel"
-            :name="channelStore.currentChannel.name"
-            :isPrivate="channelStore.currentChannel.type == 'private'"
+            v-bind="channelStore.currentChannel"
             highlight
           />
           <div v-else>Select a channel</div>
@@ -35,7 +34,7 @@
                   v-model="inviteNick"
                   label="Nickname to invite *"
                   lazy-rules
-                  :rules="[(val) => (val && val.length > 0) || 'Please type something']"
+                  :rules="[(val) => (val && val.length >= 3) || 'Please type at least 3 characters']"
                   @keypress.enter="ev => console.log(ev)"
                   autofocus
                 />

@@ -82,7 +82,6 @@ const color = computed(() => {
 });
 
 async function kick() {
-  console.log('Kicking', props.id);
   return memberStore.kickMember(route.params.id as string, props.id).catch(error);
 }
 </script>
