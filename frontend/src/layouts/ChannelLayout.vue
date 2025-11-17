@@ -22,23 +22,22 @@
 
         <div class="row q-gutter-sm">
           <div v-if="amIAdmin || channelStore.currentChannel?.type == 'public'">
-            <q-btn flat round dense
-              icon="add"
-            />
+            <q-btn flat round dense icon="add" />
             <q-menu
+              v-model="inviteOpen"
               class="no-shadow"
               :offset="[5, 5]"
             >
-              <div class="dropdown" style="min-width: 280px">
+              <q-form @submit="onInvite" class="dropdown" style="min-width: 280px">
                 <q-input
                   v-model="inviteNick"
                   label="Nickname to invite *"
                   lazy-rules
                   :rules="[(val) => (val && val.length >= 3) || 'Please type at least 3 characters']"
-                  @keypress.enter="ev => console.log(ev)"
                   autofocus
                 />
-              </div>
+                <q-btn push label="Invite" type="submit" color="primary" class="full-width" />
+              </q-form>
             </q-menu>
             <q-tooltip>Invite user</q-tooltip>
           </div>
@@ -101,7 +100,7 @@ import MembersMenu from '@/components/menus/MembersMenu.vue';
 import QuickSettingsDialog from '@/components/dialogs/QuickSettingsDialog.vue';
 import ChatInput from '@/components/ChatInput.vue';
 import { useRoute, useRouter } from 'vue-router';
-import { error } from '@/utils/toast';
+import { success, error } from '@/utils/toast';
 import { confirmDanger, confirm } from '@/utils/popups';
 import { useWsStore } from 'src/stores/ws.store';
 
@@ -110,9 +109,11 @@ import { useMemberStore } from 'src/stores/member.store';
 import { useAuthStore } from '@/stores/auth-user.store';
 import { useUiStore } from '@/stores/ui.store';
 import { computed, ref } from 'vue';
+import { useInviteStore } from 'src/stores/invite.store';
 
 const auth = useAuthStore();
 const channelStore = useChannelStore();
+const inviteStore = useInviteStore();
 const memberStore = useMemberStore();
 const uiStore = useUiStore();
 const route = useRoute();
@@ -123,12 +124,15 @@ const wsStore = useWsStore();
 wsStore.connect()
 
 const inviteNick = ref('');
+const inviteOpen = ref(false);
 
 const amIAdmin = computed(() => memberStore.getAdmin(auth.user.id)?.id == auth.user?.id);
 
-// Load channels
+// Load channels and invites
 if (!channelStore.channels.length)
   channelStore.loadChannels().catch(error);
+if (!inviteStore.invites.length)
+  inviteStore.loadInvites().catch(error);
 
 async function leaveChannel(channel: string, doConfirm = false) {
   if (doConfirm) {
@@ -138,6 +142,19 @@ async function leaveChannel(channel: string, doConfirm = false) {
   try {
     await channelStore.leaveChannel(channel);
     await router.replace('/');
+  }
+  catch (err) {
+    error(err);
+  }
+}
+
+async function onInvite() {
+  try {
+    const data = await inviteStore.invite(route.params.id as string, inviteNick.value);
+    inviteNick.value = '';
+    inviteOpen.value = false;
+
+    success(data.message);
   }
   catch (err) {
     error(err);

@@ -34,6 +34,19 @@ export const useMemberStore = defineStore('member', () => {
     members.value = members.value.filter((m) => m.id != member.id);
   }
 
+  async function loadMembers(channelId: string | null) {
+    if (!channelId) {
+      members.value = [];
+      return;
+    }
+    const data = await (loading.value = api.get(`/channels/${channelId}/members`))
+      .finally(() => (loading.value = null));
+
+    console.log(data);
+    members.value = data.members;
+    return data;
+  }
+
   function getMember(userId: string) {
     return members.value.find((m) => m.id == userId);
   }
@@ -44,19 +57,6 @@ export const useMemberStore = defineStore('member', () => {
       return member?.role == ChannelMemberRole.ADMIN ? member : null;
     }
     return !indexOrId ? null : members.value.filter((m) => m.role == ChannelMemberRole.ADMIN)?.[indexOrId];
-  }
-
-  async function loadMembers(channelId: string | null) {
-    if (!channelId) {
-      members.value = null;
-      return;
-    }
-    const data = await (loading.value = api.get(`/channels/${channelId}/members`))
-      .finally(() => (loading.value = null));
-
-    console.log(data);
-    members.value = data.members;
-    return data.members;
   }
 
   async function kickMember(channelId: string, userId: string) {

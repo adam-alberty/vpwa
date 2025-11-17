@@ -40,7 +40,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     const data = await api.put('/user/status', { status })
     user.value.status = data.user.status;
-    return data.user;
+    return data;
   }
 
   return { login, logout, register, me, changeStatus, user };

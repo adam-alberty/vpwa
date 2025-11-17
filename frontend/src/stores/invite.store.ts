@@ -1,28 +1,54 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import type { ChannelInvite } from 'src/types';
+import { ChannelType, type ChannelInvite } from 'src/types';
+import { useWsStore } from './ws.store';
+import { ref, watch } from 'vue';
+import api from '@/services/api';
 
 export const useInviteStore = defineStore('invite', () => {
-  const invites: ChannelInvite[] = [];
+  const wsStore = useWsStore();
+
+  const invites = ref<ChannelInvite[]>([]);
+
+  watch(() => wsStore.connected, (connected) => {
+    wsStore.socket?.off('invite:new', handleInviteReceived);
+    if (connected) {
+      // Start listening for new invites
+      wsStore.socket.on('invite:new', handleInviteReceived);
+      console.log('[WS]: listening for new invites');
+    }
+  });
+
+  function handleInviteReceived(invite: ChannelInvite) {
+    invites.value.unshift(invite);
+    console.log(`[WS]: received invite`, invite);
+  }
+
+  async function loadInvites() {
+    const data = await api.get(`/invites`);
+    console.log(data);
+
+    invites.value = data.invites;
+    return data;
+  }
+
+  async function invite(channelId: string, username: string) {
+    const data = await api.post(`/channels/${channelId}/invite`, { username });
+    return data;
+  }
 
   async function acceptInvite(invite: ChannelInvite) {
-    // // TODO: Send to BE and update invites based on response...
-    // invites = this.invites.filter((i) => i.channelId !== invite.channelId);
-    // const invitedChannel: Channel = {
-    //   id: invite.channelId,
-    //   name: invite.name,
-    //   isPrivate: invite.isPrivate,
-    //   // latestMessage: 'Somebody: Hey there, how is it going?',
-    // }; // (from BE)
-    // this.channels.unshift(invitedChannel);
-    // this.changeChannel(invitedChannel);
+    const data = await api.delete(`/channels/${invite.channelId}/invite/accept`);
+    invites.value = invites.value.filter((inv) => inv.id != invite.id);
+    return data;
   }
 
   async function rejectInvite(invite: ChannelInvite) {
-    // // TODO: Send to BE and update invites based on response...
-    // this.invites = this.invites.filter((i) => i.channelId !== invite.channelId);
+    const data = await api.delete(`/channels/${invite.channelId}/invite/reject`);
+    invites.value = invites.value.filter((inv) => inv.id != invite.id);
+    return data;
   }
 
-  return { invites, acceptInvite, rejectInvite };
+  return { invites, loadInvites, invite, acceptInvite, rejectInvite };
 });
 
 if (import.meta.hot) {

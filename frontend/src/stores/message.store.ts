@@ -28,18 +28,23 @@ export const useMessageStore = defineStore('message', () => {
     messages.value.push(msg);
   }
 
-  async function createMessage(channelId: string, content: string) {
-    await api.post(`/channels/${channelId}/messages`, { content });
-  }
-
-  // Load messages with REST and then start listening to new messages with websocket
+  // Load messages
   async function loadMessages(channelId: string) {
+    if (!channelId) {
+      messages.value = [];
+      return;
+    }
+
     const data = await (loading.value = api.get(`/channels/${channelId}/messages`))
       .finally(() => (loading.value = null));
 
     console.log(data);
     messages.value = data.messages;
-    return data.messages;
+    return data;
+  }
+
+  async function createMessage(channelId: string, content: string) {
+    await api.post(`/channels/${channelId}/messages`, { content });
   }
 
   return { messages, loading, loadMessages, createMessage };

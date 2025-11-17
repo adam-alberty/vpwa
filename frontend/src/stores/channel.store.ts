@@ -41,7 +41,7 @@ export const useChannelStore = defineStore('channel', () => {
     console.log(`[WS] joined channel ${data.channel.id}`);
 
     currentChannel.value = data.channel;
-    return data.channel;
+    return data;
   }
 
   // Load the channels from API
@@ -50,21 +50,21 @@ export const useChannelStore = defineStore('channel', () => {
       .finally(() => (loading.value = null));
 
     channels.value = data.channels;
-    return data.channels;
+    return data;
   }
 
   // Create new channel and reload the channel list
   async function createChannel(name: string, type: string) {
     const data = await api.post('/channels', { name, type });
     channels.value.unshift(data.channel);
-    return data.channel;
+    return data;
   }
 
   // Join channel and reload the channel list
   async function joinChannel(name: string) {
     const data = await api.post(`/channels/join`, { name });
     channels.value.unshift(data.channel);
-    return data.channel;
+    return data;
   }
 
   // Leave channel and reload the channel list
@@ -73,7 +73,7 @@ export const useChannelStore = defineStore('channel', () => {
     channels.value = channels.value.filter((c) => c.id != data.channel.id);
     if (set)
       await setCurrentChannel(null);
-    return data.channel;
+    return data;
   }
 
   return { channels, currentChannel, loading, loadChannels, createChannel, leaveChannel, setCurrentChannel, joinChannel };

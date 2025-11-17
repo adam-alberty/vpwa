@@ -36,7 +36,7 @@ app.ready(() => {
     })
 
     console.log(`[WS] ${socket.id} connected`)
-    socket.join(`/${socket.data.userId}`)
+    socket.join(`@${socket.data.userId}`)
     socket.emit('connected', { id: socket.id })
 
     const userId = socket.data.userId
@@ -51,7 +51,7 @@ app.ready(() => {
     }
 
     socket.on('disconnect', () => {
-      socket.leave(`/${socket.data.userId}`)
+      socket.leave(`@${socket.data.userId}`)
 
       const disconnectUserId = socket.data.userId
       if (disconnectUserId) {

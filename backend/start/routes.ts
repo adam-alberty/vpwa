@@ -15,6 +15,7 @@ import UsersController from '#controllers/users_controller'
 import MessagesController from '#controllers/messages_controller'
 import ChannelMembersController from '#controllers/channel_members_controller'
 import BanVotesController from '#controllers/ban_votes_controller'
+import ChannelInvitesController from '#controllers/channel_invites_controller'
 
 // Global matcher for "id" to be uuid
 router.where('id', router.matchers.uuid())
@@ -42,7 +43,10 @@ router
     router.delete('/channels/:id/kick/:userId', [BanVotesController, 'kickMember'])
 
     // Invites
-    router.get('/channels/:id/invites', [ChannelMembersController, 'list'])
+    router.get('/invites', [ChannelInvitesController, 'list'])
+    router.post('/channels/:id/invite', [ChannelInvitesController, 'invite'])
+    router.delete('/channels/:id/invite/accept', [ChannelInvitesController, 'acceptInvite'])
+    router.delete('/channels/:id/invite/reject', [ChannelInvitesController, 'rejectInvite'])
 
     // User management
     router.put('/users', [UsersController, 'update'])

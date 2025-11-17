@@ -16,8 +16,8 @@
           v-for="invite in inviteStore.invites"
           :key="invite.channelId"
           v-bind="invite"
-          @reject="inviteStore.rejectInvite"
-          @accept="inviteStore.acceptInvite"
+          @accept="acceptInvite"
+          @reject="rejectInvite"
           class="q-mb-sm"
         />
       </div>
@@ -40,6 +40,8 @@ import ChannelCard from '@/components/ChannelCard.vue';
 import { useChannelStore } from '@/stores/channel.store';
 import { useInviteStore } from 'src/stores/invite.store';
 import { useRouter } from 'vue-router';
+import { error } from '@/utils/toast';
+import type { ChannelInvite } from '@/types';
 
 const channelStore = useChannelStore();
 const inviteStore = useInviteStore();
@@ -48,6 +50,21 @@ const router = useRouter();
 
 async function changeChannel(id: string) {
   await router.push({ name: 'Channels', params: { id } });
+}
+
+async function acceptInvite(invite: ChannelInvite) {
+  try {
+    const data = await inviteStore.acceptInvite(invite);
+    channelStore.channels.unshift(data.channel);
+    await changeChannel(data.channel.id);
+  }
+  catch (err) {
+    console.error(err);
+  }
+}
+
+async function rejectInvite(invite: ChannelInvite) {
+  return inviteStore.rejectInvite(invite).catch(error);
 }
 </script>
 

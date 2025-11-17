@@ -11,20 +11,21 @@ import { inviteUserValidator } from '#validators/invites'
 export default class ChannelInvitesController {
   // Get users invites for the channel
   public async list({ response, params, auth }: HttpContext) {
-    const channelId = params.id as string
+    // const channelId = params.id as string
     const user = auth.user!
 
-    const membership = await ChannelMembersController.getMembership(channelId, user.id)
-    if (!membership) {
-      return response.forbidden({ message: 'You are not a member of this channel' })
-    }
+    // const membership = await ChannelMembersController.getMembership(channelId, user.id)
+    // if (!membership) {
+    //   return response.forbidden({ message: 'You are not a member of this channel' })
+    // }
 
     const invites = await ChannelInvite.query()
-      .where('channelId', channelId)
+      // .where('channelId', channelId)
       .andWhere('userId', user.id)
       .preload('channel', (query) => {
         query.select(['id', 'name', 'type'])
       })
+      .orderBy('created_at', 'desc')
 
     const serialized = invites.map((invite) => ({
       id: invite.id,
@@ -89,7 +90,12 @@ export default class ChannelInvitesController {
       if (isAdmin) { // Admin can always invite
         const invite = await ChannelInvite.create({ channelId, userId }, { client: tx })
 
-        // TODO:
+        ws.to(`@${userId}`).emit('invite:new', {
+          id: invite.id,
+          channelId,
+          name: channel.name,
+          type: channel.type,
+        })
 
         await tx.commit()
         return response.created({
@@ -118,6 +124,13 @@ export default class ChannelInvitesController {
 
       const invite = await ChannelInvite.create({ channelId, userId }, { client: tx })
 
+      ws.to(`@${userId}`).emit('invite:new', {
+        id: invite.id,
+        channelId,
+        name: channel.name,
+        type: channel.type,
+      })
+
       await tx.commit()
       return response.created({
         message: 'User invited successfully',
@@ -134,5 +147,75 @@ export default class ChannelInvitesController {
       await tx.rollback()
       return response.internalServerError({ message: 'Failed to process invite action' })
     }
+  }
+
+  // The user accepts invite
+  public async acceptInvite({ request, response, auth, params }: HttpContext) {
+    const user = auth.user!
+    const channelId = params.id as string
+
+    const tx = await db.transaction()
+
+    const invite = await ChannelInvite.query({ client: tx })
+      .where('channelId', channelId)
+      .andWhere('userId', user.id)
+      .first()
+
+    if (!invite) {
+      await tx.rollback()
+      return response.notFound({ message: 'Invite not found' })
+    }
+
+    // Remove all bans of this user
+    await BanVote.query({ client: tx })
+      .where('channelId', channelId)
+      .andWhere('bannedId', user.id)
+      .delete()
+
+    const channel = await Channel.find(channelId, { client: tx })
+    if (!channel) {
+      await tx.rollback()
+      return response.notFound({ message: 'Channel not found' })
+    }
+
+    // Add user to channel
+    const role = {
+      role: ChannelMemberRole.MEMBER,
+    }
+    await channel.related('members').attach(
+      {
+        [user.id]: role
+      },
+      tx
+    )
+
+    await invite.delete()
+    await tx.commit()
+
+    ws.to(`channel/${channel.id}`).emit('member:joined', { ...user.serialize(), ...role })
+
+    return response.created({
+      message: `Accepted invite to channel successfully`,
+      channel,
+      invite: { id: invite.id },
+    })
+  }
+
+  // The user rejects invite
+  public async rejectInvite({ request, response, auth, params }: HttpContext) {
+    const user = auth.user!
+    const channelId = params.id as string
+
+    const invite = await ChannelInvite.query()
+      .where('channelId', channelId)
+      .andWhere('userId', user.id)
+      .first()
+
+    if (!invite) {
+      return response.notFound({ message: 'Invite not found' })
+    }
+
+    await invite.delete()
+    return response.ok({ message: 'Invite rejected successfully', invite: { id: invite.id } })
   }
 }

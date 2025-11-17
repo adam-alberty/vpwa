@@ -30,16 +30,20 @@ import { useChannelStore } from '@/stores/channel.store';
 import { useUiStore } from 'src/stores/ui.store';
 import { useWsStore } from '@/stores/ws.store';
 import { error } from '@/utils/toast';
+import { useInviteStore } from '@/stores/invite.store';
 
 const channelStore = useChannelStore();
+const inviteStore = useInviteStore();
 const uiStore = useUiStore();
 const wsStore = useWsStore();
 
 wsStore.connect()
 
-// Load channels
+// Load channels and invites
 if (!channelStore.channels.length)
   channelStore.loadChannels().catch(error);
+if (!inviteStore.invites.length)
+  inviteStore.loadInvites().catch(error);
 </script>
 
 <style scoped lang="scss">
