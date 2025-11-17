@@ -5,7 +5,6 @@ import { ref, watch } from 'vue';
 import { useWsStore } from './ws.store';
 
 import { useChannelStore } from './channel.store';
-import { get } from 'http';
 
 export const useMemberStore = defineStore('member', () => {
   const wsStore = useWsStore();

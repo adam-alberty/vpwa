@@ -32,8 +32,7 @@ import UserAvatar from './UserAvatar.vue';
 import type { Message} from 'src/types';
 import { UserStatus } from 'src/types';
 import { computed, ref, watch } from 'vue';
-import { useMemberStore } from '@/stores/member.store';
-import { useAuthStore } from 'src/stores/auth-user.store';
+import { useAuthStore, useMemberStore } from '@/stores';
 
 const props = withDefaults(defineProps<Message>(), {});
 const { sender, content, createdAt } = props;

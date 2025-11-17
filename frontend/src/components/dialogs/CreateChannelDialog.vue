@@ -1,9 +1,9 @@
 <template>
-  <q-btn flat dense round icon="add" color="white" @click="show = true">
+  <q-btn flat dense round icon="add" color="white" @click="uiStore.addChannelDialogOpen = true">
     <q-tooltip>Add channel</q-tooltip>
   </q-btn>
 
-  <q-dialog v-model="show" backdrop-filter="brightness(70%)">
+  <q-dialog v-model="uiStore.addChannelDialogOpen" backdrop-filter="brightness(70%)">
     <q-card style="min-width: 350px">
       <q-card-section>
         <div class="text-h6">Add a channel</div>
@@ -46,15 +46,14 @@
 
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
-import { useChannelStore } from 'src/stores/channel.store';
-import { Notify } from 'quasar';
+import { useChannelStore, useUiStore } from 'src/stores';
 import { error } from '@/utils/toast';
 import { confirm } from '@/utils/popups';
 import { useRouter } from 'vue-router';
 
+const uiStore = useUiStore();
 const router = useRouter();
 
-const show = ref(false);
 const formData = reactive({
   name: '',
   type: 'private',
@@ -66,7 +65,7 @@ const channelStore = useChannelStore();
 function resetForm(showState = false) {
   formData.name = '';
   formData.type = 'private';
-  show.value = showState;
+  uiStore.addChannelDialogOpen = showState;
 }
 
 async function onSubmit() {

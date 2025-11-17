@@ -50,8 +50,7 @@
 import UserAvatar from './UserAvatar.vue';
 import type { Channel} from '@/types';
 import { ChannelMemberRole } from '@/types';
-import { useAuthStore } from '@/stores/auth-user.store';
-import { useMemberStore } from '@/stores/member.store';
+import { useAuthStore, useMemberStore } from '@/stores';
 
 import type { UserMember } from 'src/types';
 import { computed } from 'vue';

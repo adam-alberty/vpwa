@@ -4,7 +4,7 @@
 
     <q-drawer show-if-above v-model="uiStore.leftDrawerOpen" side="left" :breakpoint="850">
       <div class="left-menu">
-        <ChannelList />
+        <ChannelsMenu />
         <div class="settings-dialog">
           <QuickSettingsDialog />
         </div>
@@ -15,7 +15,10 @@
       <q-page>
         <router-view />
         <div class="chat-input">
-          <ChatInput />
+          <ChatInput
+            @command="handleCommand"
+            :commands="['join']"
+          />
         </div>
       </q-page>
     </q-page-container>
@@ -23,22 +26,20 @@
 </template>
 
 <script setup lang="ts">
-import ChannelList from '@/components/menus/ChannelsMenu.vue';
+import ChannelsMenu from '@/components/menus/ChannelsMenu.vue';
 import QuickSettingsDialog from '@/components/dialogs/QuickSettingsDialog.vue';
 import ChatInput from '@/components/ChatInput.vue';
-import { useChannelStore } from '@/stores/channel.store';
-import { useUiStore } from 'src/stores/ui.store';
-import { useWsStore } from '@/stores/ws.store';
+import { useChannelStore, useUiStore, useWsStore, useInviteStore } from '@/stores';
 import { error } from '@/utils/toast';
-import { useInviteStore } from '@/stores/invite.store';
 import { useRouter } from 'vue-router';
+import { ref } from 'vue';
 
 const channelStore = useChannelStore();
 const inviteStore = useInviteStore();
 const uiStore = useUiStore();
-const wsStore = useWsStore();
 const router = useRouter();
 
+const wsStore = useWsStore();
 wsStore.connect()
 
 // Load channels and invites
@@ -53,6 +54,17 @@ if (!inviteStore.invites.length)
 
 if (!channelStore.currentChannel && channelStore.channels.length)
   router.replace({ name: 'Channels', params: { id: channelStore.channels[0].id } }).catch(console.error);
+
+function handleCommand(command: string, args: string[]) {
+  if (command == 'join') {
+    if (!args.length)
+      return uiStore.addChannelDialogOpen = true;
+
+    channelStore.joinChannel(args.join('-')).then(data =>
+      router.push({ name: 'Channels', params: { id: data.channel.id } })
+    ).catch(error);
+  }
+}
 </script>
 
 <style scoped lang="scss">

@@ -2,121 +2,89 @@
   <textarea
     class="text-white"
     :class="{ 'text-italic': command, 'text-red-3': command && !validCommand }"
-    v-model="messageInput"
+    v-model="value"
     placeholder="Type a message"
     @input="onInput"
     @keydown.enter.prevent="onEnter"
     @keydown.tab.prevent="onTab"
   ></textarea>
+  <!-- {{ value }} -->
 </template>
 
 <script setup lang="ts">
-import { useChannelStore } from 'src/stores/channel.store';
-import { useMessageStore } from 'src/stores/message.store';
-import { useUiStore } from 'src/stores/ui.store';
-import { computed, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { computed, defineEmits, defineProps, ref, watch } from 'vue';
 
-const messageStore = useMessageStore();
-const uiStore = useUiStore();
-const channelStore = useChannelStore();
-const route = useRoute();
+const props = defineProps<{
+  modelValue?: string;
+  commands?: string[];
+}>();
 
-const messageInput = ref('');
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: string): void;
+  (e: 'submit', value?: string): void;
+  (e: 'command', value?: string, args?: Array<string>): void;
+}>();
 
-const commands = [
-  // Fetch from BE based on channel (most likely)
-  'list',
-  'invite',
-  'join',
-  'kick',
-  'revoke',
-  'quit',
-  'cancel',
-];
+const value = ref(props.modelValue);
 
+watch(value, (val) => emit('update:modelValue', val));
 const command = computed(() => {
-  if (!messageInput.value.startsWith('/'))
-    return undefined;
-  return messageInput.value.substring(1).split(' ')[0];
+  if (!value.value?.startsWith('/')) return undefined;
+  return value.value.substring(1).split(' ')[0];
 });
 
 const validCommand = computed(() => {
-  if (commands?.includes(command.value)) return undefined;
+  if (!props.commands?.includes(command.value)) return undefined;
   return command.value;
 });
 
 const commandArgs = computed(() => {
-  if (!command.value)
-    return undefined;
-  return messageInput.value
-    .substring(command.value.length + 1)
+  if (!command.value) return undefined;
+  return value.value
+    ?.substring(command.value.length + 1)
     .split(/ +/)
     .filter(Boolean);
 });
 
 function onInput(event: Event) {
   const target = event.target as HTMLTextAreaElement;
-  // value.value = target.value.trim();
-  // emit('update:modelValue', value.value);
+  value.value = target.value;
 }
 
 function onTab(event: KeyboardEvent) {
   if (command.value && !validCommand.value) {
-    const autoComplete = commands?.find((cmd) => cmd.startsWith(command.value));
+    const autoComplete = props.commands?.find((cmd) => cmd.startsWith(command.value));
     if (!autoComplete) return;
 
-    // value.value = `/${autoComplete}`;
-    // emit('update:modelValue', value.value);
+    value.value = `/${autoComplete}`;
   }
 }
 
-async function onEnter(event: KeyboardEvent) {
-  if (event.shiftKey || !messageInput.value.length) return;
+function onEnter(event: KeyboardEvent) {
+  const trimmedValue = value.value.trim()
+  if (event.shiftKey || !trimmedValue?.length) return;
 
-  messageStore.createMessage(route.params.id as string, messageInput.value);
-
-  messageInput.value = '';
-}
-
-function handleCommand(command: string, args: string[]) {
-  switch (command) {
-    case 'list':
-      uiStore.toggleRightDrawer();
-      break;
-    case 'invite':
-      console.log('Invite');
-      break;
-    case 'join':
-      // if (!args.length) return newChannelDialog.value?.open();
-      break;
-    case 'kick':
-      console.log('Kick');
-      break;
-    case 'revoke':
-      console.log('Revoke');
-      break;
-    case 'quit':
-      console.log('Quit');
-      break;
-    case 'cancel':
-      channelStore.leaveChannel(route.params.id as string);
-      break;
+  if (command.value) {
+    emit('command', command.value, commandArgs.value);
+    value.value = '';
+    return;
   }
+
+  emit('submit', trimmedValue);
+  value.value = '';
 }
 </script>
 
-<style lang="scss" scoped>
-textarea {
-  box-sizing: border-box;
-  border: none;
-  outline: none;
-  resize: none;
-  font-size: large;
-  border-radius: 0.7rem;
-  width: 100%;
-  padding: 1rem;
-  height: 70px;
-  border: 1px solid #26272b;
-}
+<style lang="sass" scoped>
+textarea
+  box-sizing: border-box
+  border: none
+  outline: none
+  resize: none
+  font-size: large
+  border-radius: 0.7rem
+  width: 100%
+  padding: 1rem
+  height: 70px
+  border: 1px solid #26272b
 </style>

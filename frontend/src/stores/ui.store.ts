@@ -5,6 +5,8 @@ export const useUiStore = defineStore('ui', () => {
   const leftDrawerOpen = ref(false);
   const rightDrawerOpen = ref(false);
 
+  const addChannelDialogOpen = ref(false);
+
   function toggleLeftDrawer(open?: boolean) {
     if (typeof open === 'boolean') {
       leftDrawerOpen.value = open;
@@ -21,7 +23,7 @@ export const useUiStore = defineStore('ui', () => {
     rightDrawerOpen.value = !rightDrawerOpen.value;
   }
 
-  return { leftDrawerOpen, rightDrawerOpen, toggleLeftDrawer, toggleRightDrawer };
+  return { leftDrawerOpen, rightDrawerOpen, addChannelDialogOpen, toggleLeftDrawer, toggleRightDrawer };
 });
 
 if (import.meta.hot) {

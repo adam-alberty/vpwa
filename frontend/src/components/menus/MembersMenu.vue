@@ -7,8 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { useChannelStore } from '@/stores/channel.store';
-import { useMemberStore } from 'src/stores/member.store';
+import { useChannelStore, useMemberStore } from '@/stores';
 import UserMemberCard from '../UserMemberCard.vue';
 
 const memberStore = useMemberStore();

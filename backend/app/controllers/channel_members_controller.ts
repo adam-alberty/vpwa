@@ -45,7 +45,7 @@ export default class ChannelMembersController {
     const channel = await Channel.findBy('name', data.name, { client: tx })
     if (!channel) {
       await tx.rollback()
-      return response.notFound(`Channel "${data.name}" not found`)
+      return response.notFound({ message: `Channel "${data.name}" not found` })
     }
 
     const membership = await ChannelMembersController.getMembership(channel.id, user.id, tx)

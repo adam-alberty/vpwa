@@ -8,9 +8,9 @@ import type { Message } from 'src/types';
 
 export const useMessageStore = defineStore('message', () => {
   const wsStore = useWsStore();
-  const channelStore = useChannelStore();
 
   const messages = ref<Message[]>([]);
+  const currentMessage = ref('');
 
   const loading = ref(null);
 
@@ -43,11 +43,12 @@ export const useMessageStore = defineStore('message', () => {
     return data;
   }
 
-  async function createMessage(channelId: string, content: string) {
+  async function sendMessage(channelId: string, content?: string) {
+    content ??= currentMessage.value.trim();
     await api.post(`/channels/${channelId}/messages`, { content });
   }
 
-  return { messages, loading, loadMessages, createMessage };
+  return { messages, currentMessage, loading, loadMessages, sendMessage };
 });
 
 if (import.meta.hot) {

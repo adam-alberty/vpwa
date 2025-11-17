@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 import AppLogo from 'src/components/AppLogo.vue';
-import { useWsStore } from 'src/stores/ws.store';
+import { useWsStore } from '@/stores/ws.store';
 import { onMounted } from 'vue';
 
 const wsStore = useWsStore();

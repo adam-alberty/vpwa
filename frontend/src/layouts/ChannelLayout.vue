@@ -67,7 +67,7 @@
 
     <q-drawer show-if-above v-model="uiStore.leftDrawerOpen" side="left" :breakpoint="850">
       <div class="left-menu">
-        <ChannelList />
+        <ChannelsMenu />
         <div class="settings-dialog">
           <QuickSettingsDialog />
         </div>
@@ -85,7 +85,13 @@
         <div class="chat-area">
           <router-view />
           <div class="chat-input">
-            <ChatInput />
+            <ChatInput
+              v-model="messageStore.currentMessage"
+              @submit="onSubmit"
+              @command="handleCommand"
+              :commands="['join', 'invite', 'kick', 'cancel', 'list']"
+            />
+            <!-- {{messageStore.currentMessage}} -->
           </div>
         </div>
       </q-page>
@@ -95,32 +101,28 @@
 
 <script setup lang="ts">
 import ChannelName from '@/components/ChannelName.vue';
-import ChannelList from '@/components/menus/ChannelsMenu.vue';
+import ChannelsMenu from '@/components/menus/ChannelsMenu.vue';
 import MembersMenu from '@/components/menus/MembersMenu.vue';
 import QuickSettingsDialog from '@/components/dialogs/QuickSettingsDialog.vue';
 import ChatInput from '@/components/ChatInput.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { success, error } from '@/utils/toast';
 import { confirmDanger, confirm } from '@/utils/popups';
-import { useWsStore } from 'src/stores/ws.store';
 
-import { useChannelStore } from '@/stores/channel.store';
-import { useMemberStore } from 'src/stores/member.store';
-import { useAuthStore } from '@/stores/auth-user.store';
-import { useUiStore } from '@/stores/ui.store';
+import { useChannelStore, useMemberStore, useAuthStore, useUiStore, useInviteStore, useMessageStore, useWsStore } from '@/stores';
 import { computed, ref } from 'vue';
-import { useInviteStore } from 'src/stores/invite.store';
 
 const auth = useAuthStore();
 const channelStore = useChannelStore();
 const inviteStore = useInviteStore();
 const memberStore = useMemberStore();
 const uiStore = useUiStore();
+const messageStore = useMessageStore();
+
 const route = useRoute();
 const router = useRouter();
 
 const wsStore = useWsStore();
-
 wsStore.connect()
 
 const inviteUsername = ref('');
@@ -158,6 +160,36 @@ async function onInvite() {
   }
   catch (err) {
     error(err);
+  }
+}
+
+async function onSubmit() {
+  await messageStore.sendMessage(route.params.id as string).catch(error);
+}
+
+function handleCommand(command: string, args: string[]) {
+  if (command == 'join') {
+    if (!args.length)
+      return uiStore.addChannelDialogOpen = true;
+
+    return channelStore.joinChannel(args.join('-')).then(data =>
+      router.push({ name: 'Channels', params: { id: data.channel.id } })
+    ).catch(error);
+  }
+  if (command == 'invite') {
+    return inviteStore.invite(route.params.id as string, args.join('-')).catch(error);
+  }
+  if (command == 'kick') {
+    const member = memberStore.getMember(args.join('-'));
+    if (!member)
+      return error('User not found');
+    return memberStore.kickMember(route.params.id as string, member.id).catch(error);
+  }
+  if (command == 'cancel') {
+    return leaveChannel(route.params.id as string, false);
+  }
+  if (command == 'list') {
+    return uiStore.toggleRightDrawer();
   }
 }
 </script>
