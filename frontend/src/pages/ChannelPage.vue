@@ -80,8 +80,7 @@ onUnmounted(() => {
 
 async function handleChannelRemoved(data) {
   if (data.channel.id == route.params.id) {
-    if (data.message)
-      info(`Channel removed: ${data.message}`);
+    info(data.message ? `Channel removed: ${data.message}` : 'Channel removed');
     await router.replace('/');
   }
 }

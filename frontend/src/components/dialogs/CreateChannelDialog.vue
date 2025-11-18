@@ -70,9 +70,9 @@ function resetForm(showState = false) {
 
 async function onSubmit() {
   try {
-    const channel = await channelStore.createChannel(formData.name, formData.type);
+    const data = await channelStore.createChannel(formData.name, formData.type);
     resetForm()
-    await router.push({ name: 'Channels', params: { id: channel.id } });
+    await router.push({ name: 'Channels', params: { id: data.channel.id } });
   } catch (err) {
     if (err.status == 409 && err?.channel?.type == 'public') {
       return confirm('Public channel with this name already exists. Do you want to join it?', 'Join existing channel?').onOk(() => {
