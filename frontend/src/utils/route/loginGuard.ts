@@ -6,7 +6,7 @@ export async function loginGuardIfMetaSet(to, form, next) {
 
   const auth = useAuthStore();
   try {
-    if (to.path.includes('/auth'))
+    if (to.path.includes('/auth')) // TODO: Should not allow when already logged in
       return next();
     await auth.me();
     return next();

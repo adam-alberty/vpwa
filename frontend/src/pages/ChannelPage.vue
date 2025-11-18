@@ -1,19 +1,18 @@
 <template>
-  <q-scroll-area style="height: calc(100vh - 160px);" ref="scrollRef" class="chat-scroll">
+  <q-scroll-area style="height: calc(100vh - 160px)" class="scroll" ref="scrollRef">
     <q-infinite-scroll
-      reverse
-      :offset="100"
-      scroll-target=".chat-scroll__content"
-      :disable="allLoaded"
       @load="loadMoreMessages"
+      :disable="!nextPage"
+      :offset="100"
+      reverse
     >
       <template v-slot:loading>
-        <div v-for="_ in 20" :key="_">
-          <MessageSkeleton />
+        <div class="q-pa-sm">
+          <q-skeleton type="rect" class="full-width" />
         </div>
       </template>
 
-      <p v-if="allLoaded" class="q-ma-lg g-mb-lg text-grey-6">
+      <p v-if="!nextPage" class="q-ma-lg g-mb-lg text-grey-6">
         This is the beginning of <b>{{ channelStore.currentChannel?.name }}</b
         >...
       </p>
@@ -25,8 +24,7 @@
 
 <script setup lang="ts">
 import ChannelMessage from '@/components/ChannelMessage.vue';
-import type { QScrollArea } from 'quasar';
-import MessageSkeleton from 'src/components/MessageSkeleton.vue';
+import { QScrollArea } from 'quasar'
 import { useChannelStore } from 'src/stores/channel.store';
 import { useMemberStore } from 'src/stores/member.store';
 import { useMessageStore } from 'src/stores/message.store';
@@ -36,10 +34,9 @@ import { useRoute, useRouter } from 'vue-router';
 import { error, info } from '@/utils/toast'
 
 const loading = ref(true);
-const hasMoreMessages = ref(false);
 
 const scrollRef = ref<QScrollArea | null>(null);
-const allLoaded = computed(() => hasMoreMessages.value === false);
+const nextPage = ref<number | null>(null);
 
 // watch(
 //   () => channelStore.sendMessageIndex,
@@ -63,10 +60,18 @@ watch(
   async (newId, oldId) => {
     if (newId != oldId) {
       await pageChange();
-      scrollRef.value?.setScrollPercentage('vertical', 1, 0);
     }
   },
 );
+
+watch(
+  () => messageStore.messages?.length,
+  (newVal, oldVal) => {
+    if (newVal > oldVal && scrollRef.value?.getScrollPercentage().top >= 0.96) {  // At bottom when message added
+      setTimeout(() => scrollToBottom(), 100);
+    }
+  }
+)
 
 onMounted(async () => {
   await pageChange();
@@ -77,6 +82,10 @@ onMounted(async () => {
 onUnmounted(() => {
   wsStore.socket.off('channel:removed', handleChannelRemoved);
 })
+
+function scrollToBottom(duration = 250) {
+  scrollRef.value?.setScrollPercentage('vertical', 1, duration)
+}
 
 async function handleChannelRemoved(data) {
   if (data.channel.id == route.params.id) {
@@ -89,11 +98,15 @@ async function pageChange() {
   loading.value = true;
   try {
     wsStore.connect();
+    scrollToBottom(1);
+
     await channelStore.setCurrentChannel(route.params.id as string) // Load/switch channel first!
-    await Promise.all([
-      memberStore.loadMembers(route.params.id as string),
-      messageStore.loadMessages(route.params.id as string),
-    ])
+    await memberStore.loadMembers(route.params.id as string)
+
+    await messageStore.loadMessages(null)
+    nextPage.value = 1
+
+    // await messageStore.loadMessages(route.params.id as string)
   }
   catch (err) {
     error(err);
@@ -105,21 +118,12 @@ async function pageChange() {
 }
 
 function loadMoreMessages(index: number, done: () => void) {
-  // TODO: Be...
-  setTimeout(() => {
-    // fetchMessages();
-
+  messageStore.loadMessages(route.params.id as string, nextPage.value).then(data => {
+    nextPage.value = data.meta.nextPage;
     done();
-  }, 2000);
+  }).catch(error);
 }
 </script>
 
 <style scoped lang="scss">
-.chat-scroll {
-  height: 100%; // take full height of its flex parent
-  display: flex;
-  flex-direction: column;
-}
-
-
 </style>

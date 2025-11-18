@@ -4,6 +4,7 @@ import ws from '#services/ws'
 import { createMessageValidator } from '#validators/message'
 import type { HttpContext } from '@adonisjs/core/http'
 import db from '@adonisjs/lucid/services/db'
+import ChannelMembersController from './channel_members_controller.js'
 
 export default class MessagesController {
   // Create message in the channel
@@ -12,13 +13,8 @@ export default class MessagesController {
     const user = auth.user!
     const message = await request.validateUsing(createMessageValidator)
 
-    const isMember = await db
-      .from('channel_members')
-      .where('channel_id', channelId)
-      .andWhere('user_id', user.id)
-      .first()
-
-    if (!isMember) {
+    const membership = ChannelMembersController.getMembership(channelId, user.id)
+    if (!membership) {
       return response.forbidden({ message: 'You are not a member of this channel' })
     }
 
@@ -40,21 +36,19 @@ export default class MessagesController {
   }
 
   // Get messages
-  public async list({ response, auth, params }: HttpContext) {
+  public async list({ request, response, auth, params }: HttpContext) {
     const channelId = params.id as string
     const user = auth.user!
 
-    const isMember = await db
-      .from('channel_members')
-      .where('channel_id', channelId)
-      .andWhere('user_id', user.id)
-      .first()
-
-    if (!isMember) {
+    const membership = ChannelMembersController.getMembership(channelId, user.id)
+    if (!membership) {
       return response.forbidden({ message: 'You are not a member of this channel' })
     }
 
-    var messages = await Message.query()
+    const page = request.input('page', 1)
+    const limit = request.input('limit', 15)
+
+    var messagePages = await Message.query()
       .where('channel_id', channelId)
       .preload('sender', (senderQuery) => {
         senderQuery
@@ -73,17 +67,27 @@ export default class MessagesController {
               .as('is_member')
           })
       })
-      .orderBy('created_at', 'asc')
+      .orderBy('created_at', 'desc')
+      .paginate(page, limit)
 
-    const serialized = messages.map((m) => {
+    const messagePage = messagePages.all()
+    const messages = []
+
+    for (let i = messagePage.length - 1; i >= 0; i--) {
+      const m = messagePage[i]
       const msg = m.serialize()
       msg.sender.status ??= UserStatus.OFFLINE
 
       if (m.sender.$extras.is_member == 0) {
         msg.sender.status = null
       }
-      return msg
-    })
-    return response.ok({ messages: serialized })
+      messages.push(msg)
+    }
+
+    const meta = {
+      currentPage: messagePages.currentPage,
+      nextPage: messagePages.hasMorePages ? messagePages.currentPage + 1 : null,
+    }
+    return response.ok({ messages, meta })
   }
 }

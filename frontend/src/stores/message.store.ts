@@ -29,17 +29,17 @@ export const useMessageStore = defineStore('message', () => {
   }
 
   // Load messages
-  async function loadMessages(channelId: string) {
+  async function loadMessages(channelId: string | null, page = 1) {
     if (!channelId) {
       messages.value = [];
       return;
     }
 
-    const data = await (loading.value = api.get(`/channels/${channelId}/messages`))
+    const data = await (loading.value = api.get(`/channels/${channelId}/messages?page=${page}`))
       .finally(() => (loading.value = null));
 
     console.log(data);
-    messages.value = data.messages;
+    messages.value.unshift(...data.messages);
     return data;
   }
 
