@@ -11,7 +11,14 @@
       <CreateChannelDialog />
     </div>
     <q-list class="list">
-      <div v-if="inviteStore.invites?.length" class="q-mb-md">
+      <q-expansion-item v-if="inviteStore.invites?.length"
+        class="overflow-hidden q-mb-md"
+        style="border-radius: 0.7rem"
+        label="Invites"
+        default-opened
+        dense
+      >
+        <div class="q-mb-sm"></div>
         <ChannelInviteCard
           v-for="invite in inviteStore.invites"
           :key="invite.channelId"
@@ -20,7 +27,7 @@
           @reject="rejectInvite"
           class="q-mb-sm"
         />
-      </div>
+      </q-expansion-item>
       <ChannelCard
         v-for="channel in channelStore.channels"
         :key="channel.id"
