@@ -46,7 +46,7 @@ export default class MessagesController {
     }
 
     const page = request.input('page', 1)
-    const limit = request.input('limit', 15)
+    const limit = request.input('limit', 20)
 
     var messagePages = await Message.query()
       .where('channel_id', channelId)

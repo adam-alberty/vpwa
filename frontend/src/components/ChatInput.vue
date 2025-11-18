@@ -27,7 +27,9 @@ const emit = defineEmits<{
 
 const value = ref(props.modelValue);
 
-watch(value, (val) => emit('update:modelValue', val));
+watch(() => props.modelValue, val => value.value = val);
+watch(value, val => emit('update:modelValue', val));
+
 const command = computed(() => {
   if (!value.value?.startsWith('/')) return undefined;
   return value.value.substring(1).split(' ')[0];

@@ -25,13 +25,11 @@
 <script setup lang="ts">
 import ChannelMessage from '@/components/ChannelMessage.vue';
 import { QScrollArea } from 'quasar'
-import { useChannelStore } from 'src/stores/channel.store';
-import { useMemberStore } from 'src/stores/member.store';
-import { useMessageStore } from 'src/stores/message.store';
-import { useWsStore } from 'src/stores/ws.store';
+import { useAuthStore, useChannelStore, useMemberStore, useMessageStore, useWsStore } from 'src/stores';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { error, info } from '@/utils/toast'
+import { UserStatus } from 'src/types';
 
 const loading = ref(true);
 
@@ -48,12 +46,14 @@ const nextPage = ref<number | null>(null);
 //   },
 // );
 
-const route = useRoute();
-const router = useRouter();
+const auth = useAuthStore();
 const wsStore = useWsStore();
 const messageStore = useMessageStore();
 const channelStore = useChannelStore();
 const memberStore = useMemberStore();
+
+const route = useRoute();
+const router = useRouter();
 
 watch(
   () => route.params.id,
@@ -67,8 +67,23 @@ watch(
 watch(
   () => messageStore.messages?.length,
   (newVal, oldVal) => {
-    if (newVal > oldVal && scrollRef.value?.getScrollPercentage().top >= 0.96) {  // At bottom when message added
+    if (newVal > oldVal && scrollRef.value?.getScrollPercentage().top > 0.96) {  // At bottom when message added
       setTimeout(() => scrollToBottom(), 100);
+    }
+  }
+)
+
+watch(
+  () => auth.user?.status,
+  async (newVal, oldVal) => {
+    if (newVal == UserStatus.OFFLINE) { // Stop listening
+      messageStore.stopListeningForMessages();
+    }
+    else if (oldVal == UserStatus.OFFLINE) { // Start listening and reload
+      messageStore.startListeningForMessages();
+
+      await messageStore.loadMessages(null);
+      nextPage.value = 1
     }
   }
 )

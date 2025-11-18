@@ -29,11 +29,15 @@
     <q-menu
       anchor="top right"
       self="top left"
-      class="bg-highlight q-py-sm q-px-md"
+      class="bg-highlight"
       context-menu
     >
       <q-list dense style="min-width: 100px">
+        <q-item clickable v-close-popup @click="mention">
+          <q-item-section>@{{username}}</q-item-section>
+        </q-item>
         <template v-if="!isMe">
+          <q-separator />
           <q-item v-if="amIAdmin" clickable v-close-popup @click="kick">
             <q-item-section>Kick and Ban</q-item-section>
           </q-item>
@@ -50,7 +54,7 @@
 import UserAvatar from './UserAvatar.vue';
 import type { Channel} from '@/types';
 import { ChannelMemberRole } from '@/types';
-import { useAuthStore, useMemberStore } from '@/stores';
+import { useAuthStore, useMemberStore, useMessageStore } from '@/stores';
 
 import type { UserMember } from 'src/types';
 import { computed } from 'vue';
@@ -79,6 +83,11 @@ const color = computed(() => {
     return 'primary';
   return 'grey-8';
 });
+
+function mention() {
+  const messageStore = useMessageStore();
+  messageStore.currentMessage += `@${props.username} `;
+}
 
 async function kick() {
   return memberStore.kickMember(route.params.id as string, props.id).then(success).catch(error);

@@ -74,7 +74,7 @@ const formatTimestamp = (timestamp: Date) => {
     {
       hour: 'numeric',
       minute: '2-digit',
-      hour12: true,
+      hour12: false,
     },
   )}`;
 };

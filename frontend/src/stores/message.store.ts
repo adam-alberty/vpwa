@@ -15,13 +15,21 @@ export const useMessageStore = defineStore('message', () => {
   const loading = ref(null);
 
   watch(() => wsStore.connected, (connected) => {
-    wsStore.socket?.off('message:new', handleMessageReceived);
+    stopListeningForMessages()
     if (connected) {
       // Start listening for new messages
-      wsStore.socket.on('message:new', handleMessageReceived);
-      console.log('[WS]: listening for new messages');
+      startListeningForMessages()
     }
   });
+
+  function startListeningForMessages() {
+    wsStore.socket.on('message:new', handleMessageReceived);
+    console.log('[WS]: listening for new messages');
+  }
+
+  function stopListeningForMessages() {
+    wsStore.socket?.off('message:new', handleMessageReceived);
+  }
 
   function handleMessageReceived(msg: Message) {
     console.log(`[WS]: received message`, msg);
@@ -48,7 +56,7 @@ export const useMessageStore = defineStore('message', () => {
     await api.post(`/channels/${channelId}/messages`, { content });
   }
 
-  return { messages, currentMessage, loading, loadMessages, sendMessage };
+  return { messages, currentMessage, loading, loadMessages, sendMessage, startListeningForMessages, stopListeningForMessages };
 });
 
 if (import.meta.hot) {
