@@ -37,7 +37,7 @@ app.ready(() => {
 
     // Forward is typing...
     socket.on(`@${socket.data.userId}:typing`, (data) => {
-      io.to(`channel/${data.channelId}`).emit(`@${socket.data.userId}:typing`, data?.typing.trim())
+      io.to(`channel/${data.channelId}`).emit(`@${socket.data.userId}:typing`, data?.typing?.trim())
     })
 
     console.log(`[WS] ${socket.id} connected`)
