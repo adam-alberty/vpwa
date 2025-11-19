@@ -73,22 +73,22 @@ const auth = useAuthStore();
 
 const notifyOnMentionsOnly = ref(false);
 
-let timeout
+let debounceTimeout
 
 function onHide() {
-  if (timeout) {
-    clearTimeout(timeout);
-    timeout = null;
+  if (debounceTimeout) {
+    clearTimeout(debounceTimeout);
+    debounceTimeout = null;
 
     auth.changeStatus().catch(error);
   }
 }
 
 watch(() => auth.user?.status, () => {
-  clearTimeout(timeout);
-  timeout = setTimeout(() => {
+  clearTimeout(debounceTimeout);
+  debounceTimeout = setTimeout(() => {
     auth.changeStatus().catch(error);
-    timeout = null;
+    debounceTimeout = null;
   }, 1000);
 });
 

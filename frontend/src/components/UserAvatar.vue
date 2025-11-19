@@ -1,7 +1,13 @@
 <template>
-   <q-avatar
-    >{{ username.charAt(0).toUpperCase() }}
-    <span v-if="status" class="status-dot absolute" :class="status"></span>
+  <q-avatar>
+    {{ username.charAt(0).toUpperCase() }}
+    <span v-if="status" class="status-dot absolute" :class="[status, { 'is-typing': isTyping }]">
+      <q-spinner-dots
+        v-if="isTyping"
+        color="secondary"
+        class="typing full-width full-height"
+      />
+    </span>
   </q-avatar>
 </template>
 
@@ -9,7 +15,7 @@
 import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useWsStore } from "@/stores/ws.store";
 
-const props = defineProps<{ username: string; status?: string, id?: string, updateStatus?: boolean }>()
+const props = defineProps<{ username: string; status?: string, id?: string, updateStatus?: boolean, isTyping?: boolean }>()
 const { id, updateStatus } = props;
 
 const wsStore = useWsStore();
@@ -57,10 +63,19 @@ onUnmounted(() => {
 
 <style scoped lang="sass">
 .status-dot
-  bottom: 0
-  right: 0
-  width: 15px
-  height: 15px
+  bottom: -2px
+  right: -2px
+  width: 1rem
+  height: 1rem
   border-radius: 50%
   border: 2px solid #2f3136 // matches Discord background
+  transition: all 0.2s
+
+  &.is-typing
+    right: -8px
+    border-radius: 10px
+    width: 2rem
+
+.typing
+  padding: 2px
 </style>

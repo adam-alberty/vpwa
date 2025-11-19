@@ -110,7 +110,7 @@ import { success, error } from '@/utils/toast';
 import { confirmDanger, confirm } from '@/utils/popups';
 
 import { useChannelStore, useMemberStore, useAuthStore, useUiStore, useInviteStore, useMessageStore, useWsStore } from '@/stores';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 const auth = useAuthStore();
 const channelStore = useChannelStore();
@@ -135,6 +135,19 @@ if (!channelStore.channels.length)
   channelStore.loadChannels().catch(error);
 if (!inviteStore.invites.length)
   inviteStore.loadInvites().catch(error);
+
+let typingDebounce // Anti congestation/spam debounce
+watch(() => messageStore?.currentMessage?.trim(), () => {
+  if (!auth?.user)
+    return
+  if (typingDebounce)
+    return
+
+  typingDebounce = setTimeout(() => {
+    wsStore.socket?.emit(`@${auth.user.id}:typing`, { channelId: route.params.id, typing: messageStore?.currentMessage.trim() })
+    typingDebounce = null
+  }, 200);
+})
 
 async function leaveChannel(channel: string, doConfirm = false) {
   if (doConfirm) {

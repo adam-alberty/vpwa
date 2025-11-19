@@ -1,10 +1,8 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import api from 'src/services/api';
 import { ref, watch } from 'vue';
-import { useWsStore } from './ws.store';
-import { useChannelStore } from './channel.store';
+import { useWsStore } from './';
 import type { Message } from 'src/types';
-
 
 export const useMessageStore = defineStore('message', () => {
   const wsStore = useWsStore();
