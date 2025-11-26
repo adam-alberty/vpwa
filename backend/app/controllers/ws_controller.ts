@@ -1,15 +1,6 @@
-import { Socket, Server } from 'socket.io'
 import ws from '#services/ws'
 import User, { UserStatus } from '#models/user'
-
-export interface WsContext {
-  socket: Socket
-  data?: any
-}
-
-export function userSockets(id: string, otherIo?: typeof Server) {
-  return (ws.io ?? otherIo).fetchSockets().then(sockets => sockets.filter(s => s.id == id || s.data.userId == id)) // userId = uuid
-}
+import { WsContext } from '#services/ws'
 
 class WsController {
   public connected({ socket }: WsContext) {
@@ -17,7 +8,7 @@ class WsController {
 
     const userId = socket.data.userId
     if (userId) {
-      userSockets(userId).then(async sockets => {
+      ws.userSockets(userId).then(async sockets => {
         if (sockets.length == 1) { // Send status on first connection
           const user = await User.find(userId).catch(() => null)
           if (user && user.status != UserStatus.OFFLINE)
@@ -51,7 +42,7 @@ class WsController {
 
     const disconnectUserId = socket.data.userId
     if (disconnectUserId) {
-      userSockets(disconnectUserId).then(async sockets => {
+      ws.userSockets(disconnectUserId).then(async sockets => {
         if (!sockets.length) { // Handle offline on last disconnect
           const user = await User.find(disconnectUserId).catch(() => null)
           if (user && user.status != UserStatus.OFFLINE)

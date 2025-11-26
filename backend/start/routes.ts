@@ -10,7 +10,6 @@
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
 import ChannelsController from '#controllers/channels_controller'
-import SessionController from '#controllers/session_controller'
 import UsersController from '#controllers/users_controller'
 import MessagesController from '#controllers/messages_controller'
 import ChannelMembersController from '#controllers/channel_members_controller'
@@ -21,7 +20,7 @@ import ChannelInvitesController from '#controllers/channel_invites_controller'
 router.where('id', router.matchers.uuid())
 
 router.post('/users', [UsersController, 'register'])
-router.post('/session', [SessionController, 'login'])
+router.post('/session', [UsersController, 'login'])
 
 // Protected routes
 router
@@ -49,11 +48,11 @@ router
     router.delete('/channels/:id/invite/reject', [ChannelInvitesController, 'rejectInvite'])
 
     // User management
-    router.put('/users', [UsersController, 'update'])
+    // router.put('/users', [UsersController, 'update'])
     router.put('/user/status', [UsersController, 'changeStatus'])
     router.delete('/users', [UsersController, 'delete'])
 
-    router.delete('/session', [SessionController, 'delete'])
-    router.get('/session', [SessionController, 'me'])
+    router.delete('/session', [UsersController, 'logout'])
+    router.get('/session', [UsersController, 'me'])
   })
   .use(middleware.auth())

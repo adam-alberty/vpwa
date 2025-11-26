@@ -1,9 +1,32 @@
 import User, { UserStatus } from '#models/user'
 import ws from '#services/ws'
-import { registerUserValidator, updateUserValidator, changeStatus } from '#validators/user'
+import { registerUserValidator, loginUserValidator, changeStatus } from '#validators/user'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class UsersController {
+  // Create session
+  public async login({ request }: HttpContext) {
+    const data = await request.validateUsing(loginUserValidator)
+    const user = await User.verifyCredentials(data.email, data.password)
+    if (!user.status) {
+      user.status = UserStatus.ONLINE
+      await user.save()
+    }
+
+    const token = await User.accessTokens.create(user)
+    return {
+      user: user,
+      token: token.value?.release(),
+    }
+  }
+
+  // Get user from the session token
+  public async me({ auth }: HttpContext) {
+    return {
+      user: auth.user!,
+    }
+  }
+
   /**
    * Registers new user
    */
@@ -46,20 +69,11 @@ export default class UsersController {
     })
   }
 
-  /**
-   * Update user
-   */
-  public async update({ auth, request, response }: HttpContext) {
-    // Validate data
-    const data = await request.validateUsing(updateUserValidator)
+  // Destroy session
+  public async logout({ auth, response }: HttpContext) {
+    await auth.use('api').invalidateToken()
 
-    auth.user?.merge(data)
-    await auth.user?.save()
-
-    return response.ok({
-      message: 'Profile updated successfully',
-      user: auth.user,
-    })
+    return response.ok({ message: 'Logged out' })
   }
 
   /**

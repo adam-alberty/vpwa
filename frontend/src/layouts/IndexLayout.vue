@@ -43,14 +43,11 @@ const wsStore = useWsStore();
 wsStore.connect()
 
 // Load channels and invites
-if (!channelStore.channels.length)
-  channelStore.loadChannels().then(async data => {
-    if (!channelStore.currentChannel && data.channels?.length)
-      await router.push({ name: 'Channels', params: { id: data.channels[0].id } });
-  }).catch(error);
-
-if (!inviteStore.invites.length)
-  inviteStore.loadInvites().catch(error);
+channelStore.loadChannels().then(async data => {
+  if (!channelStore.currentChannel && data.channels?.length)
+    await router.push({ name: 'Channels', params: { id: data.channels[0].id } });
+}).catch(error);
+inviteStore.loadInvites().catch(error);
 
 if (!channelStore.currentChannel && channelStore.channels.length)
   router.replace({ name: 'Channels', params: { id: channelStore.channels[0].id } }).catch(console.error);

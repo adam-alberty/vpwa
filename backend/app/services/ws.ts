@@ -1,5 +1,10 @@
 import server from '@adonisjs/core/services/server'
-import { Server } from 'socket.io'
+import { Server, Socket } from 'socket.io'
+
+export interface WsContext {
+  socket: Socket
+  data?: any
+}
 
 class Ws {
   public io!: Server
@@ -16,6 +21,10 @@ class Ws {
 
   public to(room: string | string[]) {
     return this.io.to(room)
+  }
+
+  public userSockets(id: string, otherIo?: typeof Server) {
+    return (this.io ?? otherIo).fetchSockets().then(sockets => sockets.filter(s => s.id == id || s.data.userId == id)) // userId = uuid
   }
 }
 
