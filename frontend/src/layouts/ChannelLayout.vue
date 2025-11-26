@@ -137,7 +137,7 @@ if (!inviteStore.invites.length)
   inviteStore.loadInvites().catch(error);
 
 let typingDebounce // Anti congestation/spam debounce
-watch(() => messageStore?.currentMessage?.trim(), () => {
+watch(() => messageStore?.currentMessage?.trim(), val => {
   if (!auth?.user)
     return
   if (typingDebounce)
@@ -146,7 +146,7 @@ watch(() => messageStore?.currentMessage?.trim(), () => {
   typingDebounce = setTimeout(() => {
     wsStore.socket?.emit(`@${auth.user.id}:typing`, { channelId: route.params.id, typing: messageStore?.currentMessage.trim() })
     typingDebounce = null
-  }, 200);
+  }, val?.length > 1 ? 300 : 1);
 })
 
 async function leaveChannel(channel: string, doConfirm = false) {

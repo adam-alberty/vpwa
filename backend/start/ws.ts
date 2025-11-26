@@ -1,7 +1,8 @@
 import app from '@adonisjs/core/services/app'
 import ws from '#services/ws'
-import User, { UserStatus } from '#models/user'
+import User from '#models/user'
 import { Secret } from '@adonisjs/core/helpers'
+import WsController from '#controllers/ws_controller'
 
 app.ready(() => {
   const io = ws.boot()
@@ -21,55 +22,17 @@ app.ready(() => {
     }
 
     // Join channel room
-    socket.on('channel:join', (id) => {
-      if (!socket.data.userId)
-        return console.error(`[WS] Invalid token for room`)
-
-      socket.join(`channel/${id}`)
-      console.log(`[WS] ${socket.id} joined channel/${id}`)
-    })
+    socket.on('channel:join', data => WsController.joinChannelRoom({ socket, data }))
 
     // Leave channel room
-    socket.on('channel:leave', (id) => {
-      socket.leave(`channel/${id}`)
-      console.log(`[WS] ${socket.id} left channel/${id}`)
-    })
+    socket.on('channel:leave', data => WsController.leaveChannelRoom({ socket, data }))
 
     // Forward is typing...
-    socket.on(`@${socket.data.userId}:typing`, (data) => {
-      io.to(`channel/${data.channelId}`).emit(`@${socket.data.userId}:typing`, data?.typing?.trim())
-    })
+    socket.on(`@${socket.data.userId}:typing`, data => WsController.userIsTyping({ socket, data }))
 
-    console.log(`[WS] ${socket.id} connected`)
-    socket.join(`@${socket.data.userId}`)
+    socket.on('disconnect', data => WsController.disconnect({ socket, data }))
+
+    WsController.connected({ socket })
     socket.emit('connected', { id: socket.id })
-
-    const userId = socket.data.userId
-    if (userId) {
-      ws.userSockets(userId).then(async sockets => {
-        if (sockets.length == 1) { // Send status on first connection
-          const user = await User.find(userId).catch(() => null)
-          if (user && user.status != UserStatus.OFFLINE)
-            io.emit(`user:${user.id}:status`, { status: user.status })
-        }
-      })
-    }
-
-    socket.on('disconnect', () => {
-      socket.leave(`@${socket.data.userId}`)
-
-      const disconnectUserId = socket.data.userId
-      if (disconnectUserId) {
-        ws.userSockets(disconnectUserId).then(async sockets => {
-          if (!sockets.length) { // Handle offline on last disconnect
-            const user = await User.find(disconnectUserId).catch(() => null)
-            if (user && user.status != UserStatus.OFFLINE)
-              io.emit(`user:${user.id}:status`, { status: UserStatus.OFFLINE })
-          }
-        })
-      }
-
-      console.log(`[WS] ${socket.id} disconnected`)
-    })
   })
 })
