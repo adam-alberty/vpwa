@@ -62,7 +62,7 @@ import { useQuasar } from 'quasar';
 import { useAuthStore } from '@/stores/auth-user.store';
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { error } from '@/utils/toast';
+import { success, error } from '@/utils/toast';
 
 const $q = useQuasar();
 const router = useRouter();
@@ -85,6 +85,7 @@ async function onSubmit() {
     loading.value = true;
     await auth.register(formData);
     await router.push('/');
+    success("Account successfully created! You can log in now");
   } catch (err) {
     error(err);
   }

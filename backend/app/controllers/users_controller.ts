@@ -7,21 +7,25 @@ export default class UsersController {
   /**
    * Registers new user
    */
-  public async register({ request, response, auth }: HttpContext) {
+  public async register({ request, response }: HttpContext) {
     // Validate data
-    const data = await request.validateUsing(registerUserValidator)
+    try {
+      const data = await request.validateUsing(registerUserValidator)
 
-    // Create user
-    const user = await User.create(data)
+      const user = await User.create(data)
 
-    // Create session token
-    const token = await auth.use('api').createToken(user)
+      // const token = await auth.use('api').createToken(user)
 
-    // Return user & token
-    return response.created({
-      user: user,
-      token: token.value?.release(),
-    })
+      return response.created({
+        user: user,
+        // token: token.value?.release()
+      })
+    }
+    catch (err) {
+      if (err?.code == 23505)
+        return response.conflict({ message: 'This user already exists' })
+      return response.badRequest({ message: 'Something went wrong, request was likely invalid' })
+    }
   }
 
   public async changeStatus({ auth, request, response }: HttpContext) {
