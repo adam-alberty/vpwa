@@ -65,6 +65,7 @@ export default defineConfigWithVueTs(
     rules: {
       'prefer-promise-reject-errors': 'off',
       '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-unsafe-function-type': 'off',
       'no-empty-pattern': 'off',
       'no-var': 'off',
 

@@ -5,10 +5,8 @@ import { Secret } from '@adonisjs/core/helpers'
 import WsController from '#controllers/ws_controller'
 
 app.ready(() => {
-  const io = ws.boot()
-
   // Client connects to websocket
-  io.on('connection', async (socket) => {
+  ws.boot().on('connection', async (socket) => {
     try { // Auth
       const token = await User.accessTokens.verify(new Secret(socket.handshake.auth.token))
       if (!token)

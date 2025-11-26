@@ -51,7 +51,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  if (updateStatus && id) {
+  if (updateStatus && id && wsStore.socket) {
     wsStore.socket.off(`user:${id}:status`, updateStatusListener);
     if (props.status) {
       wsStore.socket.off('member:joined', handleJoined);

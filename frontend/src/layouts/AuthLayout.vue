@@ -21,8 +21,5 @@ import { useWsStore } from '@/stores/ws.store';
 import { onMounted } from 'vue';
 
 const wsStore = useWsStore();
-
-onMounted(() => {
-  wsStore.disconnect();
-});
+wsStore.disconnect();
 </script>

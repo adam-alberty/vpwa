@@ -33,6 +33,11 @@ export default class BanVotesController {
         return response.badRequest({ message: 'Cant kick the user that is not in the channel' })
       }
 
+      if (targetMembership.role == ChannelMemberRole.ADMIN) {
+        await tx.rollback()
+        return response.forbidden({ message: 'You are forbidden to kick this user' })
+      }
+
       const channel = await Channel.find(channelId, { client: tx })
       if (!channel) {
         await tx.rollback()

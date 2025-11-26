@@ -95,7 +95,7 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
-  wsStore.socket.off('channel:removed', handleChannelRemoved);
+  wsStore.socket?.off('channel:removed', handleChannelRemoved);
 })
 
 function scrollToBottom(duration = 250) {
@@ -115,8 +115,10 @@ async function pageChange() {
     wsStore.connect();
     scrollToBottom(1);
 
-    await channelStore.setCurrentChannel(route.params.id as string) // Load/switch channel first!
-    await memberStore.loadMembers(route.params.id as string)
+    await Promise.all([
+      channelStore.setCurrentChannel(route.params.id as string),
+      memberStore.loadMembers(route.params.id as string)
+    ])
 
     await messageStore.loadMessages(null)
     nextPage.value = 1

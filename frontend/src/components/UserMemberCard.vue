@@ -96,7 +96,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  wsStore.socket.off(`@${props.id}:typing`, handleIsTyping);
+  wsStore.socket?.off(`@${props.id}:typing`, handleIsTyping);
 });
 
 function handleIsTyping(typingStr: string) {
