@@ -77,8 +77,7 @@ export default class ChannelInvitesController {
       }
 
       const existingInvite = await ChannelInvite.query({ client: tx })
-        .where('channelId', channelId)
-        .andWhere('userId', userId)
+        .where({ channelId, userId })
         .first()
 
       if (existingInvite) {
@@ -157,8 +156,7 @@ export default class ChannelInvitesController {
     const tx = await db.transaction()
 
     const invite = await ChannelInvite.query({ client: tx })
-      .where('channelId', channelId)
-      .andWhere('userId', user.id)
+      .where({ channelId, userId: user.id })
       .first()
 
     if (!invite) {
@@ -168,8 +166,7 @@ export default class ChannelInvitesController {
 
     // Remove all bans of this user
     await BanVote.query({ client: tx })
-      .where('channelId', channelId)
-      .andWhere('bannedId', user.id)
+      .where({ channelId, bannedId: user.id })
       .delete()
 
     const channel = await Channel.find(channelId, { client: tx })
@@ -207,8 +204,7 @@ export default class ChannelInvitesController {
     const channelId = params.id as string
 
     const invite = await ChannelInvite.query()
-      .where('channelId', channelId)
-      .andWhere('userId', user.id)
+      .where({ channelId, userId: user.id })
       .first()
 
     if (!invite) {

@@ -56,15 +56,16 @@ export default class BanVotesController {
         return response.forbidden({ message: 'You are not allowed to kick users in private channel' })
       }
 
+      const existingVote = await BanVote.query({ client: tx })
+        .where({ channelId, voterId: currentUser.id, bannedId: userId })
+        .first()
+      if (existingVote) {
+        await tx.rollback()
+        return response.conflict({ message: 'You have already voted to kick this user' })
+      }
+
       // Add the vote
-      await BanVote.create(
-        {
-          channelId,
-          voterId: currentUser.id,
-          bannedId: userId,
-        },
-        { client: tx }
-      )
+      await BanVote.create({ channelId, voterId: currentUser.id, bannedId: userId }, { client: tx })
 
       // If admin, do instant ban
       if (isAdmin) {
