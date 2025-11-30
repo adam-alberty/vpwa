@@ -14,14 +14,11 @@ export default class extends BaseSchema {
         .references('id')
         .inTable('channels')
         .onDelete('CASCADE')
-
       table.unique(['channel_id', 'user_id'])
-
       table
         .enum('role', Object.values(ChannelMemberRole) as [string, ...string[]])
         .notNullable()
         .defaultTo(ChannelMemberRole.MEMBER)
-
       table.timestamp('joined_at').notNullable()
     })
   }

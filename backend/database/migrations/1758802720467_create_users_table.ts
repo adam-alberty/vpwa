@@ -7,11 +7,11 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.uuid('id').notNullable().primary().defaultTo(this.raw('gen_random_uuid()'))
-      table.string('username').notNullable().unique()
+      table.string('username', 32).notNullable().unique()
       table.string('email', 254).notNullable().unique()
-      table.string('password').notNullable()
-      table.string('first_name').notNullable()
-      table.string('last_name').notNullable()
+      table.string('password', 256).notNullable()
+      table.string('first_name', 128).notNullable()
+      table.string('last_name', 128).notNullable()
       table.enum('status', Object.values(UserStatus)).nullable()
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at')
