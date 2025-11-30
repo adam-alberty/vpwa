@@ -1,15 +1,13 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import db from '@adonisjs/lucid/services/db'
 import Channel, { ChannelMemberRole, ChannelType } from '#models/channel'
-import User from '#models/user'
 import BanVote from '#models/ban_vote'
 import ws from '#services/ws'
 import ChannelMembersController from './channel_members_controller.js'
-import is from '@adonisjs/core/helpers/is'
 
 export default class BanVotesController {
   // Apply kick/ban to a userId in channelId
-  public async kickMember({ request, response, params, auth }: HttpContext) {
+  public async kickMember({ response, params, auth }: HttpContext) {
     const currentUser = auth.user! // Kicker...
     const userId = params.userId as string // The one to kick
     const channelId = params.id as string
@@ -21,7 +19,11 @@ export default class BanVotesController {
     const tx = await db.transaction()
     try {
       // Validation checks...
-      const myMembership = await ChannelMembersController.getMembership(channelId, currentUser.id, tx)
+      const myMembership = await ChannelMembersController.getMembership(
+        channelId,
+        currentUser.id,
+        tx
+      )
       if (!myMembership) {
         await tx.rollback()
         return response.forbidden({ message: 'You are not in this channel' })
@@ -51,14 +53,19 @@ export default class BanVotesController {
           await ChannelMembersController.deleteMembership(channelId, userId, tx)
 
           ws.to(`channel/${channelId}`).emit('member:left', { id: userId })
-          ws.to(`@${userId}`).emit('channel:removed', { message: 'You have been kicked by admin', channel: { id: channelId } })
+          ws.to(`@${userId}`).emit('channel:removed', {
+            message: 'You have been kicked by admin',
+            channel: { id: channelId },
+          })
 
           await tx.commit()
           return response.ok({ message: 'User removed from private channel (admin action)' })
         }
 
         await tx.rollback()
-        return response.forbidden({ message: 'You are not allowed to kick users in private channel' })
+        return response.forbidden({
+          message: 'You are not allowed to kick users in private channel',
+        })
       }
 
       const existingVote = await BanVote.query({ client: tx })
@@ -77,7 +84,10 @@ export default class BanVotesController {
         await ChannelMembersController.deleteMembership(channelId, userId, tx)
 
         ws.to(`channel/${channelId}`).emit('member:left', { id: userId })
-        ws.to(`@${userId}`).emit('channel:removed', { message: 'You have been kicked by admin', channel: { id: channelId } })
+        ws.to(`@${userId}`).emit('channel:removed', {
+          message: 'You have been kicked by admin',
+          channel: { id: channelId },
+        })
 
         await tx.commit()
         return response.ok({ message: 'User kicked by admin', user: { id: userId } })
@@ -89,21 +99,24 @@ export default class BanVotesController {
         await ChannelMembersController.deleteMembership(channelId, userId, tx)
 
         ws.to(`channel/${channelId}`).emit('member:left', { id: userId })
-        ws.to(`@${userId}`).emit('channel:removed', { message: 'You have been voted to be kicked', channel: { id: channelId } })
+        ws.to(`@${userId}`).emit('channel:removed', {
+          message: 'You have been voted to be kicked',
+          channel: { id: channelId },
+        })
 
         await tx.commit()
-        return response.ok({ message: 'User kicked by majority',
+        return response.ok({
+          message: 'User kicked by majority',
           user: {
             id: userId,
-            voteCount: +banned || 0
-          }
+            voteCount: +banned || 0,
+          },
         })
       }
 
       await tx.commit()
       return response.ok({ message: 'Ban vote recorded' })
-    }
-    catch (err) {
+    } catch (err) {
       console.error(err)
       await tx.rollback()
       return response.internalServerError({ message: 'Failed to process kick action' })

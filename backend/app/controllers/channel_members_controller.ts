@@ -1,7 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import db from '@adonisjs/lucid/services/db'
 import Channel, { ChannelMemberRole, ChannelType } from '#models/channel'
-import { createChannelValidator, joinChannelValidator } from '#validators/channel'
+import { joinChannelValidator } from '#validators/channel'
 import ws from '#services/ws'
 import { TransactionClientContract } from '@adonisjs/lucid/types/database'
 import BanVote from '#models/ban_vote'
@@ -49,7 +49,8 @@ export default class ChannelMembersController {
     }
 
     const membership = await ChannelMembersController.getMembership(channel.id, user.id, tx)
-    if (membership) { // Check if user is already a member
+    if (membership) {
+      // Check if user is already a member
       await tx.rollback()
       return response.conflict({ message: 'You are already a member of this channel' })
     }
@@ -70,7 +71,7 @@ export default class ChannelMembersController {
     }
     await channel.related('members').attach(
       {
-        [user.id]: role
+        [user.id]: role,
       },
       tx
     )
@@ -107,8 +108,7 @@ export default class ChannelMembersController {
       await tx.from('channels').where('id', channelId).delete()
 
       const otherIds = others?.map((m) => `@${m.userId}`)
-      if (otherIds?.length)
-        ws.to(otherIds).emit('channel:removed', { channel: { id: channelId } })
+      if (otherIds?.length) ws.to(otherIds).emit('channel:removed', { channel: { id: channelId } })
     } else {
       await ChannelMembersController.deleteMembership(channelId, user.id, tx)
     }
@@ -124,14 +124,20 @@ export default class ChannelMembersController {
 
   // Returns membership if the user is a member of channel
   public static getMembership(channelId: string, userId: string, tx?: TransactionClientContract) {
-    return (tx ?? db).from('channel_members')
+    return (tx ?? db)
+      .from('channel_members')
       .where('channel_id', channelId)
       .andWhere('user_id', userId)
       .first()
   }
 
-  public static deleteMembership(channelId: string, userId: string, tx?: TransactionClientContract) {
-    return (tx ?? db).from('channel_members')
+  public static deleteMembership(
+    channelId: string,
+    userId: string,
+    tx?: TransactionClientContract
+  ) {
+    return (tx ?? db)
+      .from('channel_members')
       .where('channel_id', channelId)
       .andWhere('user_id', userId)
       .delete()

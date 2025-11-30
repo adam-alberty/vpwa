@@ -3,7 +3,6 @@ import { UserStatus } from '#models/user'
 import ws from '#services/ws'
 import { createMessageValidator } from '#validators/message'
 import type { HttpContext } from '@adonisjs/core/http'
-import db from '@adonisjs/lucid/services/db'
 import ChannelMembersController from './channel_members_controller.js'
 
 export default class MessagesController {
@@ -32,7 +31,7 @@ export default class MessagesController {
     // console.log('Emitting to channel/' + channelId)
     ws.to(`channel/${channelId}`).emit('message:new', newMessage)
 
-    return response.created({ message: "Sent successfully" })
+    return response.created({ message: 'Sent successfully' })
   }
 
   // Get messages
@@ -52,19 +51,9 @@ export default class MessagesController {
       .where('channel_id', channelId)
       .preload('sender', (senderQuery) => {
         senderQuery
-          .select([
-            'id',
-            'username',
-            'first_name',
-            'last_name',
-            'status',
-            'email',
-          ])
+          .select(['id', 'username', 'first_name', 'last_name', 'status', 'email'])
           .withAggregate('channels', (memberQuery) => {
-            memberQuery
-              .where('channel_members.channel_id', channelId)
-              .count('*')
-              .as('is_member')
+            memberQuery.where('channel_members.channel_id', channelId).count('*').as('is_member')
           })
       })
       .orderBy('created_at', 'desc')

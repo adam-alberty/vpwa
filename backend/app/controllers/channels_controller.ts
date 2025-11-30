@@ -1,5 +1,5 @@
-import Channel, { ChannelMemberRole, ChannelType } from '#models/channel'
-import { createChannelValidator, joinChannelValidator } from '#validators/channel'
+import Channel, { ChannelMemberRole } from '#models/channel'
+import { createChannelValidator } from '#validators/channel'
 import type { HttpContext } from '@adonisjs/core/http'
 import db from '@adonisjs/lucid/services/db'
 
@@ -57,9 +57,7 @@ export default class ChannelsController {
     const channel = await Channel.query()
       .where('id', channelId)
       .preload('members', (membersQuery) => {
-        membersQuery
-          .where('users.id', user.id)
-          .pivotColumns(['role', 'joined_at'])
+        membersQuery.where('users.id', user.id).pivotColumns(['role', 'joined_at'])
       })
       .first()
 
@@ -79,7 +77,7 @@ export default class ChannelsController {
         userId: user.id,
         role: membership.role,
         joinedAt: membership.joined_at,
-      }
+      },
     })
   }
 }

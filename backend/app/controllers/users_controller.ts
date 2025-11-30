@@ -4,7 +4,9 @@ import { registerUserValidator, loginUserValidator, changeStatus } from '#valida
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class UsersController {
-  // Create session
+  /**
+   * Creates user session
+   */
   public async login({ request }: HttpContext) {
     const data = await request.validateUsing(loginUserValidator)
     const user = await User.verifyCredentials(data.email, data.password)
@@ -20,7 +22,9 @@ export default class UsersController {
     }
   }
 
-  // Get user from the session token
+  /**
+   * Gets user from the session token
+   */
   public async me({ auth }: HttpContext) {
     return {
       user: auth.user!,
@@ -31,22 +35,12 @@ export default class UsersController {
    * Registers new user
    */
   public async register({ request, response }: HttpContext) {
-    // Validate data
     try {
       const data = await request.validateUsing(registerUserValidator)
-
-      const user = await User.create(data)
-
-      // const token = await auth.use('api').createToken(user)
-
-      return response.created({
-        user: user,
-        // token: token.value?.release()
-      })
-    }
-    catch (err) {
-      if (err?.code == 23505)
-        return response.conflict({ message: 'This user already exists' })
+      await User.create(data)
+      return response.created()
+    } catch (err) {
+      if (err?.code == 23505) return response.conflict({ message: 'This user already exists' })
       return response.badRequest({ message: 'Something went wrong, request was likely invalid' })
     }
   }

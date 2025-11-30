@@ -23,8 +23,9 @@ class Ws {
     return this.io.to(room)
   }
 
-  public userSockets(id: string, otherIo?: typeof Server) {
-    return (this.io ?? otherIo).fetchSockets().then(sockets => sockets.filter(s => s.id == id || s.data.userId == id)) // userId = uuid
+  public async userSockets(id: string, otherIo?: typeof Server) {
+    const sockets = await (this.io ?? otherIo).fetchSockets()
+    return sockets.filter((s) => s.id == id || s.data.userId == id) // userId = uuid
   }
 }
 

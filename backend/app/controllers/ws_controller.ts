@@ -8,8 +8,9 @@ class WsController {
 
     const userId = socket.data.userId
     if (userId) {
-      ws.userSockets(userId).then(async sockets => {
-        if (sockets.length == 1) { // Send status on first connection
+      ws.userSockets(userId).then(async (sockets) => {
+        if (sockets.length == 1) {
+          // Send status on first connection
           const user = await User.find(userId).catch(() => null)
           if (user && user.status != UserStatus.OFFLINE)
             ws.io.emit(`user:${user.id}:status`, { status: user.status })
@@ -21,8 +22,7 @@ class WsController {
   }
 
   public joinChannelRoom({ socket, data /*channelId*/ }: WsContext) {
-    if (!socket.data.userId)
-      return console.error(`[WS] Invalid token for room`)
+    if (!socket.data.userId) return console.error(`[WS] Invalid token for room`)
 
     socket.join(`channel/${data}`)
     console.log(`[WS] ${socket.id} joined channel/${data}`)
@@ -42,8 +42,9 @@ class WsController {
 
     const disconnectUserId = socket.data.userId
     if (disconnectUserId) {
-      ws.userSockets(disconnectUserId).then(async sockets => {
-        if (!sockets.length) { // Handle offline on last disconnect
+      ws.userSockets(disconnectUserId).then(async (sockets) => {
+        if (!sockets.length) {
+          // Handle offline on last disconnect
           const user = await User.find(disconnectUserId).catch(() => null)
           if (user && user.status != UserStatus.OFFLINE)
             ws.io.emit(`user:${user.id}:status`, { status: UserStatus.OFFLINE })
