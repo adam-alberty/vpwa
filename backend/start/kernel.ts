@@ -44,3 +44,6 @@ router.use([
 export const middleware = router.named({
   auth: () => import('#middleware/auth_middleware'),
 })
+
+// For inactive channel cleanup
+import './cleanup.js'
