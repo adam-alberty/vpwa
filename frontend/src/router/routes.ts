@@ -24,12 +24,6 @@ const routes: RouteRecordRaw[] = [
     ],
   },
 
-  // {
-  //   path: '/settings',
-  //   component: () => import('layouts/SettingsLayout.vue'),
-  //   children: [route('Settings', '', () => import('pages/SettingsPage.vue'), true)],
-  // },
-
   // Always leave this as last one,
   // but you can also remove it
   {

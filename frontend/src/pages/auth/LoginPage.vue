@@ -18,7 +18,16 @@
       :rules="[(val) => (val && val.length > 0) || 'Please type password']"
     />
 
-    <q-btn push size="lg" label="Log in" type="submit" color="primary" class="full-width" :loading="loading" :disabled="loading" />
+    <q-btn
+      push
+      size="lg"
+      label="Log in"
+      type="submit"
+      color="primary"
+      class="full-width"
+      :loading="loading"
+      :disabled="loading"
+    />
 
     <div class="text-center q-mt-md">
       <router-link to="/auth/register" class="text-primary">
@@ -29,7 +38,6 @@
 </template>
 
 <script setup lang="ts">
-import { useQuasar } from 'quasar';
 import { useAuthStore } from '@/stores/auth-user.store';
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -42,7 +50,6 @@ const formData = reactive({
   email: '',
   password: '',
 });
-const $q = useQuasar();
 
 const loading = ref(false);
 
@@ -53,9 +60,8 @@ async function onSubmit() {
     await router.replace('/').catch(console.error);
   } catch (err) {
     error(err);
-  }
-  finally {
-    setTimeout(() =>  loading.value = false, 250);
+  } finally {
+    setTimeout(() => (loading.value = false), 250);
   }
 }
 </script>

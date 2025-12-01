@@ -31,11 +31,10 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function changeStatus(status?: string) {
-    status ??= user.value?.status
-    if (!status)
-      return;
+    status ??= user.value?.status;
+    if (!status) return;
 
-    const data = await api.put('/user/status', { status })
+    const data = await api.put('/user/status', { status });
     user.value.status = data.user.status;
     return data;
   }

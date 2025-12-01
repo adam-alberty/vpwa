@@ -38,7 +38,7 @@ export default class UsersController {
     try {
       const data = await request.validateUsing(registerUserValidator)
       await User.create(data)
-      return response.created()
+      return response.created({ success: true })
     } catch (err) {
       if (err?.code == 23505) return response.conflict({ message: 'This user already exists' })
       return response.badRequest({ message: 'Something went wrong, request was likely invalid' })

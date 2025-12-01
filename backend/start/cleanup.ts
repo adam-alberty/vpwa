@@ -1,6 +1,10 @@
 import db from '@adonisjs/lucid/services/db'
 
+/**
+ * Cleans up channels without activity last 30 days
+ */
 async function deleteInactiveChannels() {
+  // TODO: does not clean up channels without any messages
   try {
     await db.rawQuery(
       `
