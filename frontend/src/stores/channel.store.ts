@@ -9,37 +9,36 @@ export const useChannelStore = defineStore('channel', () => {
 
   const channels = ref<Channel[]>([]);
   const currentChannel = ref<Channel | null>(null);
-
   const loading = ref(null);
 
-  watch(() => wsStore.connected, (connected) => {
-    if (!currentChannel.value?.id)
-      return;
+  watch(
+    () => wsStore.connected,
+    (connected) => {
+      if (!currentChannel.value?.id) return;
 
-    wsStore.socket?.off('channel:removed', handleChannelRemoved);
-    wsStore.socket?.emit('channel:leave', currentChannel.value.id) // Just in case
-    if (connected) {
-      wsStore.socket.on('channel:removed', handleChannelRemoved);
-      wsStore.socket.emit('channel:join', currentChannel.value.id); // Reconnect...
-      console.log(`[WS] rejoined channel ${currentChannel.value.id}`);
-    }
-  });
+      wsStore.socket?.off('channel:removed', handleChannelRemoved);
+      wsStore.socket?.emit('channel:leave', currentChannel.value.id); // Just in case
+      if (connected) {
+        wsStore.socket.on('channel:removed', handleChannelRemoved);
+        wsStore.socket.emit('channel:join', currentChannel.value.id); // Reconnect...
+        console.log(`[WS] rejoined channel ${currentChannel.value.id}`);
+      }
+    },
+  );
 
   function handleChannelRemoved(data) {
     channels.value = channels.value.filter((c) => c.id != data.channel.id);
-    if (currentChannel.value?.id == data.channel.id)
-      setCurrentChannel(null).catch(console.error);
+    if (currentChannel.value?.id == data.channel.id) setCurrentChannel(null).catch(console.error);
     console.log(`[WS]: Channel removed`, data.channel, data.message);
   }
 
   async function setCurrentChannel(id?: string | number) {
-    if (typeof id == 'number')
-      id = channels.value?.[id]?.id || null;
+    if (typeof id == 'number') id = channels.value?.[id]?.id || null;
 
     if (currentChannel.value?.id) {
       wsStore.socket.off('channel:removed', handleChannelRemoved);
-      wsStore.socket.emit('channel:leave', currentChannel.value.id) // Leave the prev channel room
-      console.log(`[WS] left channel ${currentChannel.value.id}`)
+      wsStore.socket.emit('channel:leave', currentChannel.value.id); // Leave the prev channel room
+      console.log(`[WS] left channel ${currentChannel.value.id}`);
     }
 
     if (!id) {
@@ -59,8 +58,7 @@ export const useChannelStore = defineStore('channel', () => {
 
   // Load the channels from API
   async function loadChannels() {
-    const data = await (loading.value = api.get('/channels'))
-      .finally(() => (loading.value = null));
+    const data = await (loading.value = api.get('/channels')).finally(() => (loading.value = null));
 
     channels.value = data.channels;
     return data;
@@ -84,12 +82,20 @@ export const useChannelStore = defineStore('channel', () => {
   async function leaveChannel(id: string, set = true) {
     const data = await api.delete(`/channels/${id}`);
     channels.value = channels.value.filter((c) => c.id != data.channel.id);
-    if (set)
-      await setCurrentChannel(null);
+    if (set) await setCurrentChannel(null);
     return data;
   }
 
-  return { channels, currentChannel, loading, loadChannels, createChannel, leaveChannel, setCurrentChannel, joinChannel };
+  return {
+    channels,
+    currentChannel,
+    loading,
+    loadChannels,
+    createChannel,
+    leaveChannel,
+    setCurrentChannel,
+    joinChannel,
+  };
 });
 
 if (import.meta.hot) {

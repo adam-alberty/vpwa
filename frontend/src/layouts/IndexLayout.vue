@@ -15,10 +15,7 @@
       <q-page>
         <router-view />
         <div class="chat-input">
-          <ChatInput
-            @command="handleCommand"
-            :commands="['join']"
-          />
+          <ChatInput @command="handleCommand" :commands="['join']" />
         </div>
       </q-page>
     </q-page-container>
@@ -32,7 +29,6 @@ import ChatInput from '@/components/ChatInput.vue';
 import { useChannelStore, useUiStore, useWsStore, useInviteStore } from '@/stores';
 import { error } from '@/utils/toast';
 import { useRouter } from 'vue-router';
-import { ref } from 'vue';
 
 const channelStore = useChannelStore();
 const inviteStore = useInviteStore();
@@ -40,26 +36,31 @@ const uiStore = useUiStore();
 const router = useRouter();
 
 const wsStore = useWsStore();
-wsStore.connect()
+wsStore.connect();
 
 // Load channels and invites
-channelStore.loadChannels().then(async data => {
-  if (!channelStore.currentChannel && data.channels?.length)
-    await router.push({ name: 'Channels', params: { id: data.channels[0].id } });
-}).catch(error);
+channelStore
+  .loadChannels()
+  .then(async (data) => {
+    if (!channelStore.currentChannel && data.channels?.length)
+      await router.push({ name: 'Channels', params: { id: data.channels[0].id } });
+  })
+  .catch(error);
 inviteStore.loadInvites().catch(error);
 
 if (!channelStore.currentChannel && channelStore.channels.length)
-  router.replace({ name: 'Channels', params: { id: channelStore.channels[0].id } }).catch(console.error);
+  router
+    .replace({ name: 'Channels', params: { id: channelStore.channels[0].id } })
+    .catch(console.error);
 
 function handleCommand(command: string, args: string[]) {
   if (command == 'join') {
-    if (!args.length)
-      return uiStore.addChannelDialogOpen = true;
+    if (!args.length) return (uiStore.addChannelDialogOpen = true);
 
-    channelStore.joinChannel(args.join('-')).then(data =>
-      router.push({ name: 'Channels', params: { id: data.channel.id } })
-    ).catch(error);
+    channelStore
+      .joinChannel(args.join('-'))
+      .then((data) => router.push({ name: 'Channels', params: { id: data.channel.id } }))
+      .catch(error);
   }
 }
 </script>

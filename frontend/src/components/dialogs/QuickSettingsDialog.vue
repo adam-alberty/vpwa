@@ -1,19 +1,15 @@
 <template>
   <div v-if="auth?.user" style="position: relative">
     <button class="settings-dialog">
-      <UserAvatar
-        v-bind="auth.user"
-        size="40px"
-        color="primary"
-        text-color="white"
-      />
+      <UserAvatar v-bind="auth.user" size="40px" color="primary" text-color="white" />
       <div class="settings-dialog__user">
         <div>{{ auth.user.firstName }} {{ auth.user.lastName }}</div>
         <div class="text-left text-grey-5">@{{ auth.user.username }}</div>
       </div>
     </button>
 
-    <q-menu @hide="onHide"
+    <q-menu
+      @hide="onHide"
       anchor="top middle"
       self="bottom middle"
       class="no-shadow"
@@ -38,10 +34,7 @@
           class="full-width"
           align="left"
         /> -->
-        <q-toggle
-          v-model="notifyOnMentionsOnly"
-          label="Notify only on mentions"
-        />
+        <q-toggle v-model="notifyOnMentionsOnly" label="Notify only on mentions" />
         <q-btn
           align="left"
           label="Logout"
@@ -61,6 +54,14 @@ import { useAuthStore } from '@/stores/auth-user.store';
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { error } from '@/utils/toast';
+import {
+  useChannelStore,
+  useInviteStore,
+  useMemberStore,
+  useMessageStore,
+  useUiStore,
+  useWsStore,
+} from 'src/stores';
 
 const statusColors = {
   online: 'positive',
@@ -70,10 +71,9 @@ const statusColors = {
 
 const router = useRouter();
 const auth = useAuthStore();
-
 const notifyOnMentionsOnly = ref(false);
 
-let debounceTimeout
+let debounceTimeout;
 
 function onHide() {
   if (debounceTimeout) {
@@ -84,17 +84,25 @@ function onHide() {
   }
 }
 
-watch(() => auth.user?.status, () => {
-  clearTimeout(debounceTimeout);
-  debounceTimeout = setTimeout(() => {
-    auth.changeStatus().catch(error);
-    debounceTimeout = null;
-  }, 1000);
-});
+watch(
+  () => auth.user?.status,
+  () => {
+    clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(() => {
+      auth.changeStatus().catch(error);
+      debounceTimeout = null;
+    }, 1000);
+  },
+);
 
 async function logout() {
   await auth.logout();
-  router.push({ name: 'Login' }).catch(console.error);
+  router
+    .replace({ name: 'Login' })
+    .then(() => {
+      window.location.reload();
+    })
+    .catch(console.error);
 }
 </script>
 

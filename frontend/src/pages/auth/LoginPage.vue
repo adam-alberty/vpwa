@@ -57,7 +57,7 @@ async function onSubmit() {
   try {
     loading.value = true;
     await auth.login(formData);
-    await router.replace('/').catch(console.error);
+    await router.replace({ name: 'Index' }).catch(console.error);
   } catch (err) {
     error(err);
   } finally {
