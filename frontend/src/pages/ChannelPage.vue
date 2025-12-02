@@ -1,7 +1,7 @@
 <template>
   <q-scroll-area style="height: calc(100vh - 160px)" class="scroll" ref="scrollRef">
     <q-infinite-scroll @load="loadMoreMessages" :disable="!nextPage" :offset="100" reverse>
-      <template v-if="loading" v-for="_ in 20">
+      <template v-if="isSkeletonShown" v-for="_ in 20">
         <div class="q-pa-sm row no-wrap items-start">
           <q-skeleton type="QAvatar" style="flex-shrink: 0" />
           <div class="full-width q-pl-md">
@@ -37,6 +37,7 @@ import { error, info } from '@/utils/toast';
 import { UserStatus } from 'src/types';
 
 const loading = ref(true);
+const isSkeletonShown = ref(false);
 
 const scrollRef = ref<QScrollArea | null>(null);
 const nextPage = ref<number | null>(null);
@@ -107,6 +108,10 @@ async function handleChannelRemoved(data) {
 
 async function pageChange() {
   loading.value = true;
+  const skeletonTimeout = setTimeout(() => {
+    isSkeletonShown.value = true;
+  }, 500);
+
   try {
     wsStore.connect();
     scrollToBottom(1);
@@ -115,14 +120,16 @@ async function pageChange() {
       channelStore.setCurrentChannel(route.params.id as string),
       memberStore.loadMembers(route.params.id as string),
     ]);
-
     await messageStore.loadMessages(null);
+
     nextPage.value = 1;
   } catch (err) {
     error(err);
     router.replace('/').catch(console.error);
   } finally {
     loading.value = false;
+    clearTimeout(skeletonTimeout);
+    isSkeletonShown.value = false;
   }
 }
 
