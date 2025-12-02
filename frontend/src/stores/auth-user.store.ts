@@ -11,11 +11,10 @@ export const useAuthStore = defineStore('auth', () => {
     await api.post('/users', payload);
   }
 
-  async function login(payload) {
+  async function login(payload: { email: string; password: string }) {
     const result = await api.post('/session', payload);
     localStorage.setItem('token', result.token);
     token.value = result.token;
-    user.value = result.user;
   }
 
   async function logout() {
