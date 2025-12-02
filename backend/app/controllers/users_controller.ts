@@ -44,6 +44,9 @@ export default class UsersController {
     }
   }
 
+  /**
+   * Changes user's status
+   */
   public async changeStatus({ auth, request, response }: HttpContext) {
     const { status } = await request.validateUsing(changeStatus)
 
@@ -56,21 +59,21 @@ export default class UsersController {
     return response.ok({
       message: 'Status updated successfully',
       user: {
-        // id: user.id,
         status: user.status,
       },
     })
   }
 
-  // Destroy session
+  /**
+   * Destroys session
+   */
   public async logout({ auth, response }: HttpContext) {
     await auth.use('api').invalidateToken()
-
-    return response.ok({ message: 'Logged out' })
+    return response.ok({ success: true })
   }
 
   /**
-   * Delete user
+   * Deletes user
    */
   public async delete({ auth, response }: HttpContext) {
     await auth.user?.delete()

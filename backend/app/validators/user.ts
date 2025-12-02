@@ -6,8 +6,8 @@ import { UserStatus } from '#models/user'
  */
 export const loginUserValidator = vine.compile(
   vine.object({
-    email: vine.string().trim(),
-    password: vine.string().minLength(8),
+    email: vine.string().trim().minLength(1).maxLength(254),
+    password: vine.string().minLength(8).maxLength(256),
   })
 )
 
@@ -17,10 +17,10 @@ export const loginUserValidator = vine.compile(
 export const registerUserValidator = vine.compile(
   vine.object({
     username: vine.string().trim().minLength(3),
-    email: vine.string().trim(),
-    firstName: vine.string().trim(),
-    lastName: vine.string().trim(),
-    password: vine.string().minLength(8),
+    email: vine.string().trim().minLength(1).maxLength(254),
+    firstName: vine.string().trim().minLength(1).maxLength(128),
+    lastName: vine.string().trim().minLength(1).maxLength(128),
+    password: vine.string().minLength(8).maxLength(256),
   })
 )
 
