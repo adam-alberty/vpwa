@@ -3,22 +3,28 @@ import api from 'src/services/api';
 import { ref, watch } from 'vue';
 import { useWsStore } from './';
 import type { Message } from 'src/types';
+import { AppVisibility, useQuasar } from 'quasar';
+import { createNotification } from 'src/services/notifications';
 
 export const useMessageStore = defineStore('message', () => {
   const wsStore = useWsStore();
+  const $q = useQuasar();
 
   const messages = ref<Message[]>([]);
   const currentMessage = ref('');
 
   const loading = ref(null);
 
-  watch(() => wsStore.connected, (connected) => {
-    stopListeningForMessages()
-    if (connected) {
-      // Start listening for new messages
-      startListeningForMessages()
-    }
-  });
+  watch(
+    () => wsStore.connected,
+    (connected) => {
+      stopListeningForMessages();
+      if (connected) {
+        // Start listening for new messages
+        startListeningForMessages();
+      }
+    },
+  );
 
   function startListeningForMessages() {
     wsStore.socket.on('message:new', handleMessageReceived);
@@ -31,6 +37,10 @@ export const useMessageStore = defineStore('message', () => {
 
   function handleMessageReceived(msg: Message) {
     console.log(`[WS]: received message`, msg);
+
+    if (!$q.appVisible) {
+      createNotification(`${msg.sender.username}`, { body: msg.content });
+    }
     messages.value.push(msg);
   }
 
@@ -41,8 +51,9 @@ export const useMessageStore = defineStore('message', () => {
       return;
     }
 
-    const data = await (loading.value = api.get(`/channels/${channelId}/messages?page=${page}`))
-      .finally(() => (loading.value = null));
+    const data = await (loading.value = api.get(
+      `/channels/${channelId}/messages?page=${page}`,
+    )).finally(() => (loading.value = null));
 
     console.log(data);
     messages.value.unshift(...data.messages);
@@ -54,7 +65,15 @@ export const useMessageStore = defineStore('message', () => {
     await api.post(`/channels/${channelId}/messages`, { content });
   }
 
-  return { messages, currentMessage, loading, loadMessages, sendMessage, startListeningForMessages, stopListeningForMessages };
+  return {
+    messages,
+    currentMessage,
+    loading,
+    loadMessages,
+    sendMessage,
+    startListeningForMessages,
+    stopListeningForMessages,
+  };
 });
 
 if (import.meta.hot) {

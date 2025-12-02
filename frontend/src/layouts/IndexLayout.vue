@@ -29,14 +29,26 @@ import ChatInput from '@/components/ChatInput.vue';
 import { useChannelStore, useUiStore, useWsStore, useInviteStore } from '@/stores';
 import { error } from '@/utils/toast';
 import { useRouter } from 'vue-router';
+import { onMounted } from 'vue';
 
 const channelStore = useChannelStore();
 const inviteStore = useInviteStore();
 const uiStore = useUiStore();
 const router = useRouter();
-
 const wsStore = useWsStore();
+
+// Connect to websocket
 wsStore.connect();
+
+// Request notification permission
+onMounted(async () => {
+  if (window.Notification && Notification.permission !== 'granted') {
+    const state = await Notification.requestPermission();
+    if (state === 'default') {
+      error('Please allow notifications for this website to be notified');
+    }
+  }
+});
 
 // Load channels and invites
 channelStore
