@@ -3,7 +3,7 @@ import api from 'src/services/api';
 import { ref, watch } from 'vue';
 import { useWsStore } from './';
 import type { Message } from 'src/types';
-import { AppVisibility, useQuasar } from 'quasar';
+import { useQuasar } from 'quasar';
 import { createNotification } from 'src/services/notifications';
 
 export const useMessageStore = defineStore('message', () => {
@@ -12,7 +12,6 @@ export const useMessageStore = defineStore('message', () => {
 
   const messages = ref<Message[]>([]);
   const currentMessage = ref('');
-
   const loading = ref(null);
 
   watch(
@@ -28,11 +27,12 @@ export const useMessageStore = defineStore('message', () => {
 
   function startListeningForMessages() {
     wsStore.socket.on('message:new', handleMessageReceived);
-    console.log('[WS]: listening for new messages');
+    console.log('[WS]: start listening for new messages');
   }
 
   function stopListeningForMessages() {
     wsStore.socket?.off('message:new', handleMessageReceived);
+    console.log('[WS]: stop listening for new messages');
   }
 
   function handleMessageReceived(msg: Message) {
