@@ -6,7 +6,9 @@ import type { HttpContext } from '@adonisjs/core/http'
 import ChannelMembersController from './channel_members_controller.js'
 
 export default class MessagesController {
-  // Create message in the channel
+  /**
+   * Creates message in the channel
+   */
   public async create({ request, response, auth, params }: HttpContext) {
     const channelId = params.id as string
     const user = auth.user!
@@ -28,13 +30,14 @@ export default class MessagesController {
       .firstOrFail()
 
     // send the message to clients in the channel
-    // console.log('Emitting to channel/' + channelId)
     ws.to(`channel/${channelId}`).emit('message:new', newMessage)
 
     return response.created({ message: 'Sent successfully' })
   }
 
-  // Get messages
+  /**
+   * Gets messages in the channel
+   */
   public async list({ request, response, auth, params }: HttpContext) {
     const channelId = params.id as string
     const user = auth.user!

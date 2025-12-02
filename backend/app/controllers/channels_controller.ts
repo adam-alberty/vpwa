@@ -4,20 +4,20 @@ import type { HttpContext } from '@adonisjs/core/http'
 import db from '@adonisjs/lucid/services/db'
 
 export default class ChannelsController {
+  /**
+   * Creates channel
+   */
   public async create({ request, response, auth }: HttpContext) {
     const user = auth.user!
     const data = await request.validateUsing(createChannelValidator)
-    data.name = data.name.replace(/\s+/g, '-')
 
-    // Check if already exists
+    // Check if channel already exists
     const tx = await db.transaction()
-
     let channel = await Channel.findBy('name', data.name, { client: tx })
     if (channel) {
       await tx.rollback()
       return response.conflict({
         message: 'Channel with this name already exists!',
-
         channel: {
           id: channel.id,
           type: channel.type,
@@ -41,6 +41,9 @@ export default class ChannelsController {
     })
   }
 
+  /**
+   * Gets channels
+   */
   public async list({ response, auth }: HttpContext) {
     const user = auth.user!
     const channels = await user.related('channels').query().orderBy('name', 'asc')
@@ -49,6 +52,9 @@ export default class ChannelsController {
     })
   }
 
+  /**
+   * Gets single channel detail
+   */
   public async get({ response, params, auth }: HttpContext) {
     const user = auth.user!
     const channelId = params.id as string

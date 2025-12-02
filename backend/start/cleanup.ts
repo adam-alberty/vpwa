@@ -4,22 +4,33 @@ import db from '@adonisjs/lucid/services/db'
  * Cleans up channels without activity last 30 days
  */
 async function deleteInactiveChannels() {
-  // TODO: does not clean up channels without any messages
   try {
     await db.rawQuery(
       `
-      DELETE FROM channels
-      WHERE id IN (
-        SELECT channel_id
-        FROM (
-          SELECT 
-            channel_id,
-            MAX(GREATEST(created_at, updated_at)) AS latest_message
-          FROM messages
-          GROUP BY channel_id
-        ) AS t
-        WHERE t.latest_message < NOW() - INTERVAL '30 days'
-      )`
+    DELETE FROM channels
+    WHERE id IN (
+      SELECT id
+      FROM (
+        SELECT 
+          c.id,
+          MAX(GREATEST(m.created_at, m.updated_at)) AS latest_message,
+          GREATEST(c.created_at, c.updated_at) AS channel_activity
+        FROM channels c
+        LEFT JOIN messages m ON m.channel_id = c.id
+        GROUP BY c.id
+      )
+      WHERE 
+        (
+          latest_message IS NOT NULL 
+          AND latest_message < NOW() - INTERVAL '30 days'
+        )
+        OR
+        (
+          latest_message IS NULL 
+          AND channel_activity < NOW() - INTERVAL '30 days'
+        )
+    )
+    `
     )
     console.log('[CRON] Deleted inactive channels')
   } catch (err) {
