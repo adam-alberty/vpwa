@@ -1,40 +1,9 @@
 import Message from '#models/message'
 import { UserStatus } from '#models/user'
-import ws from '#services/ws'
-import { createMessageValidator } from '#validators/message'
 import type { HttpContext } from '@adonisjs/core/http'
 import ChannelMembersController from './channel_members_controller.js'
 
 export default class MessagesController {
-  /**
-   * Creates message in the channel
-   */
-  public async create({ request, response, auth, params }: HttpContext) {
-    const channelId = params.id as string
-    const user = auth.user!
-    const message = await request.validateUsing(createMessageValidator)
-
-    const membership = ChannelMembersController.getMembership(channelId, user.id)
-    if (!membership) {
-      return response.forbidden({ message: 'You are not a member of this channel' })
-    }
-
-    const createdMessage = await Message.create({
-      channelId,
-      senderId: user.id,
-      content: message.content,
-    })
-    const newMessage = await Message.query()
-      .where('id', createdMessage.id)
-      .preload('sender')
-      .firstOrFail()
-
-    // send the message to clients in the channel
-    ws.to(`channel/${channelId}`).emit('message:new', newMessage)
-
-    return response.created({ message: 'Sent successfully' })
-  }
-
   /**
    * Gets messages in the channel
    */

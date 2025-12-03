@@ -1,6 +1,9 @@
 import ws from '#services/ws'
 import User, { UserStatus } from '#models/user'
 import { WsContext } from '#services/ws'
+import ChannelMembersController from './channel_members_controller.js'
+import { createMessageValidator } from '#validators/message'
+import Message from '#models/message'
 
 class WsController {
   public connected({ socket }: WsContext) {
@@ -53,6 +56,35 @@ class WsController {
     }
 
     console.log(`[WS] ${socket.id} disconnected`)
+  }
+
+  /**
+   * Creates message in the channel
+   */
+  public async createMessage({ socket, data }: WsContext) {
+    const channelId = data.channelId as string
+    const userId = socket.data.userId
+
+    const message = await createMessageValidator.validate(data)
+    const membership = ChannelMembersController.getMembership(channelId, userId)
+    if (!membership) {
+      return { error: true, message: 'You are not a member of this channel' }
+    }
+
+    const createdMessage = await Message.create({
+      channelId,
+      senderId: userId,
+      content: message.content,
+    })
+    const newMessage = await Message.query()
+      .where('id', createdMessage.id)
+      .preload('sender')
+      .firstOrFail()
+
+    // send the message to clients in the channel
+    ws.to(`channel/${channelId}`).emit('message:new', newMessage)
+
+    return { success: true, message: 'Sent successfully' }
   }
 }
 

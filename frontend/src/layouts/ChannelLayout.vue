@@ -23,17 +23,15 @@
         <div class="row q-gutter-sm">
           <div v-if="amIAdmin || channelStore.currentChannel?.type == 'public'">
             <q-btn flat round dense icon="add" />
-            <q-menu
-              v-model="inviteOpen"
-              class="no-shadow"
-              :offset="[5, 5]"
-            >
+            <q-menu v-model="inviteOpen" class="no-shadow" :offset="[5, 5]">
               <q-form @submit="onInvite" class="dropdown" style="min-width: 280px">
                 <q-input
                   v-model="inviteUsername"
                   label="Username to invite *"
                   lazy-rules
-                  :rules="[(val) => (val && val.length >= 3) || 'Please type at least 3 characters']"
+                  :rules="[
+                    (val) => (val && val.length >= 3) || 'Please type at least 3 characters',
+                  ]"
                   autofocus
                 />
                 <q-btn push label="Invite" type="submit" color="primary" class="full-width" />
@@ -43,7 +41,10 @@
           </div>
 
           <div>
-            <q-btn flat round dense
+            <q-btn
+              flat
+              round
+              dense
               color="red-4"
               icon="group_remove"
               @click="leaveChannel(route.params.id as string, true)"
@@ -52,7 +53,10 @@
           </div>
 
           <div>
-            <q-btn flat round dense
+            <q-btn
+              flat
+              round
+              dense
               icon="group"
               :color="uiStore.rightDrawerOpen ? 'white' : 'grey-5'"
               @click="uiStore.toggleRightDrawer()"
@@ -109,7 +113,15 @@ import { useRoute, useRouter } from 'vue-router';
 import { success, error } from '@/utils/toast';
 import { confirmDanger, confirm } from '@/utils/popups';
 
-import { useChannelStore, useMemberStore, useAuthStore, useUiStore, useInviteStore, useMessageStore, useWsStore } from '@/stores';
+import {
+  useChannelStore,
+  useMemberStore,
+  useAuthStore,
+  useUiStore,
+  useInviteStore,
+  useMessageStore,
+  useWsStore,
+} from '@/stores';
 import { computed, ref, watch } from 'vue';
 
 const auth = useAuthStore();
@@ -123,7 +135,7 @@ const route = useRoute();
 const router = useRouter();
 
 const wsStore = useWsStore();
-wsStore.connect()
+wsStore.connect();
 
 const inviteUsername = ref('');
 const inviteOpen = ref(false);
@@ -131,34 +143,40 @@ const inviteOpen = ref(false);
 const amIAdmin = computed(() => memberStore.getAdmin(auth.user.id)?.id == auth.user?.id);
 
 // Load channels and invites
-if (!channelStore.channels.length)
-  channelStore.loadChannels().catch(error);
-if (!inviteStore.invites.length)
-  inviteStore.loadInvites().catch(error);
+if (!channelStore.channels.length) channelStore.loadChannels().catch(error);
+if (!inviteStore.invites.length) inviteStore.loadInvites().catch(error);
 
-let typingDebounce // Anti congestation/spam debounce
-watch(() => messageStore?.currentMessage?.trim(), val => {
-  if (!auth?.user)
-    return
-  if (typingDebounce)
-    return
+let typingDebounce; // Anti congestation/spam debounce
+watch(
+  () => messageStore?.currentMessage?.trim(),
+  (val) => {
+    if (!auth?.user) return;
+    if (typingDebounce) return;
 
-  typingDebounce = setTimeout(() => {
-    wsStore.socket?.emit(`@${auth.user.id}:typing`, { channelId: route.params.id, typing: messageStore?.currentMessage.trim() })
-    typingDebounce = null
-  }, val?.length > 1 ? 300 : 1);
-})
+    typingDebounce = setTimeout(
+      () => {
+        wsStore.socket?.emit(`@${auth.user.id}:typing`, {
+          channelId: route.params.id,
+          typing: messageStore?.currentMessage.trim(),
+        });
+        typingDebounce = null;
+      },
+      val?.length > 1 ? 300 : 1,
+    );
+  },
+);
 
 async function leaveChannel(channel: string, doConfirm = false) {
   if (doConfirm) {
-    return confirmDanger('Are you sure you want to leave this channel?').onOk(() => this.leaveChannel(channel))
+    return confirmDanger('Are you sure you want to leave this channel?').onOk(() =>
+      this.leaveChannel(channel),
+    );
   }
 
   try {
     await channelStore.leaveChannel(channel);
     await router.replace('/');
-  }
-  catch (err) {
+  } catch (err) {
     error(err);
   }
 }
@@ -170,8 +188,7 @@ async function onInvite() {
     inviteOpen.value = false;
 
     success(data.message);
-  }
-  catch (err) {
+  } catch (err) {
     error(err);
   }
 }
@@ -182,20 +199,19 @@ async function onSubmit() {
 
 function handleCommand(command: string, args: string[]) {
   if (command == 'join') {
-    if (!args.length)
-      return uiStore.addChannelDialogOpen = true;
+    if (!args.length) return (uiStore.addChannelDialogOpen = true);
 
-    return channelStore.joinChannel(args.join('-')).then(data =>
-      router.push({ name: 'Channels', params: { id: data.channel.id } })
-    ).catch(error);
+    return channelStore
+      .joinChannel(args.join('-'))
+      .then((data) => router.push({ name: 'Channels', params: { id: data.channel.id } }))
+      .catch(error);
   }
   if (command == 'invite') {
     return inviteStore.invite(route.params.id as string, args.join('-')).catch(error);
   }
   if (command == 'kick') {
     const member = memberStore.getMember(args.join('-'));
-    if (!member)
-      return error('User not found');
+    if (!member) return error('User not found');
     return memberStore.kickMember(route.params.id as string, member.id).catch(error);
   }
   if (command == 'cancel') {

@@ -62,7 +62,9 @@ export const useMessageStore = defineStore('message', () => {
 
   async function sendMessage(channelId: string, content?: string) {
     content ??= currentMessage.value.trim();
-    await api.post(`/channels/${channelId}/messages`, { content });
+    wsStore.socket.emit('message:create', { channelId, content }, (val: any) => {
+      console.log(`[WS] ${JSON.stringify(val)}`);
+    });
   }
 
   return {
