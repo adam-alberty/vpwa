@@ -1,4 +1,4 @@
-import { defineStore, acceptHMRUpdate } from 'pinia';
+import { defineStore, acceptHMRUpdate, storeToRefs } from 'pinia';
 import api from 'src/services/api';
 import { ref, watch } from 'vue';
 import { useWsStore } from './';
@@ -23,6 +23,7 @@ export const useMessageStore = defineStore('message', () => {
         startListeningForMessages();
       }
     },
+    { immediate: true },
   );
 
   function startListeningForMessages() {

@@ -15,10 +15,10 @@ export const useWsStore = defineStore('websocket', () => {
       withCredentials: true,
       auth: {
         token: localStorage.getItem('token'),
-      }
+      },
     });
 
-    socket.value.on('connected', () => {
+    socket.value.on('connect', () => {
       connected.value = true;
       console.log('[WS] connected');
     });
