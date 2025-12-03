@@ -40,7 +40,7 @@ export const useMessageStore = defineStore('message', () => {
   function handleMessageReceived(msg: Message) {
     console.log(`[WS]: received message`, msg);
 
-    if (!$q.appVisible) {
+    if (!$q.appVisible && authStore.user.status !== 'dnd') {
       const isMentioned = [...msg.content.matchAll(/@([a-zA-Z0-9._-]+)/g)].some(
         (m) => m[1] === authStore.user.username,
       );
