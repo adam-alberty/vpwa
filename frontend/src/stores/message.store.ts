@@ -1,13 +1,14 @@
 import { defineStore, acceptHMRUpdate, storeToRefs } from 'pinia';
 import api from 'src/services/api';
 import { ref, watch } from 'vue';
-import { useWsStore } from './';
+import { useAuthStore, useWsStore } from './';
 import type { Message } from 'src/types';
 import { useQuasar } from 'quasar';
 import { createNotification } from 'src/services/notifications';
 
 export const useMessageStore = defineStore('message', () => {
   const wsStore = useWsStore();
+  const authStore = useAuthStore();
   const $q = useQuasar();
 
   const messages = ref<Message[]>([]);
@@ -40,7 +41,13 @@ export const useMessageStore = defineStore('message', () => {
     console.log(`[WS]: received message`, msg);
 
     if (!$q.appVisible) {
-      createNotification(`${msg.sender.username}`, { body: msg.content });
+      const isMentioned = [...msg.content.matchAll(/@([a-zA-Z0-9._-]+)/g)].some(
+        (m) => m[1] === authStore.user.username,
+      );
+      if (!isMentioned && JSON.parse(localStorage.getItem('notify_mentions_only')) === true) {
+      } else {
+        createNotification(`${msg.sender.username}`, { body: msg.content });
+      }
     }
     messages.value.push(msg);
   }

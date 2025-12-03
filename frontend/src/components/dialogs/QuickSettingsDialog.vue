@@ -54,14 +54,6 @@ import { useAuthStore } from '@/stores/auth-user.store';
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { error } from '@/utils/toast';
-import {
-  useChannelStore,
-  useInviteStore,
-  useMemberStore,
-  useMessageStore,
-  useUiStore,
-  useWsStore,
-} from 'src/stores';
 
 const statusColors = {
   online: 'positive',
@@ -71,7 +63,7 @@ const statusColors = {
 
 const router = useRouter();
 const auth = useAuthStore();
-const notifyOnMentionsOnly = ref(false);
+const notifyOnMentionsOnly = ref(JSON.parse(localStorage.getItem('notify_mentions_only')) === true);
 
 let debounceTimeout;
 
@@ -94,6 +86,10 @@ watch(
     }, 1000);
   },
 );
+
+watch(notifyOnMentionsOnly, (val) => {
+  localStorage.setItem('notify_mentions_only', JSON.stringify(val));
+});
 
 async function logout() {
   await auth.logout();
