@@ -29,9 +29,7 @@
                   v-model="inviteUsername"
                   label="Username to invite *"
                   lazy-rules
-                  :rules="[
-                    (val) => (val && val.length >= 3) || 'Please type at least 3 characters',
-                  ]"
+                  :rules="[minLen(3)]"
                   autofocus
                 />
                 <q-btn push label="Invite" type="submit" color="primary" class="full-width" />
@@ -72,7 +70,7 @@
     <q-drawer show-if-above v-model="uiStore.leftDrawerOpen" side="left" :breakpoint="850">
       <div class="left-menu">
         <ChannelsMenu />
-        <div class="settings-dialog">
+        <div class="settings-wrapper">
           <QuickSettingsDialog />
         </div>
       </div>
@@ -113,6 +111,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { success, error, info } from '@/utils/toast';
 import { confirmDanger, confirm } from '@/utils/popups';
 import { requestNotificationPermission } from 'src/utils/notifications';
+import { minLen } from '@/utils/validators';
 
 import {
   useChannelStore,
@@ -201,12 +200,13 @@ async function onInvite() {
 }
 
 async function onSubmit() {
-  await messageStore.sendMessage(route.params.id as string).catch(err => { error(err); console.error(err) });
+  await messageStore.sendMessage(route.params.id as string).catch(error);
 }
 
 function handleCommand(command: string, args: string[]) {
   if (command == 'join') {
-    if (!args.length) return (uiStore.addChannelDialogOpen = true);
+    if (!args.length)
+      return (uiStore.addChannelDialogOpen = true);
 
     return channelStore
       .joinChannel(args.join('-'))
@@ -231,19 +231,6 @@ function handleCommand(command: string, args: string[]) {
 </script>
 
 <style scoped lang="scss">
-.left-menu {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
-
-.settings-dialog {
-  margin-top: auto;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 1rem;
-}
-
 .members-drawer {
   background-color: $dark-page !important;
   border-left: 1px solid;
@@ -261,12 +248,5 @@ function handleCommand(command: string, args: string[]) {
   display: flex;
   flex-direction: column;
   height: 100%;
-}
-
-.chat-input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 1rem;
-  margin-top: auto;
 }
 </style>

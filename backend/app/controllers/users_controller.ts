@@ -34,8 +34,8 @@ export default class UsersController {
    * Registers new user
    */
   public async register({ request, response }: HttpContext) {
+    const data = await request.validateUsing(registerUserValidator)
     try {
-      const data = await request.validateUsing(registerUserValidator)
       await User.create(data)
       return response.created({ success: true })
     } catch (err) {

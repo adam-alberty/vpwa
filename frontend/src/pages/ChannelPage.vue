@@ -1,12 +1,15 @@
 <template>
   <q-scroll-area style="height: calc(100vh - 160px)" class="scroll" ref="scrollRef">
-    <q-infinite-scroll @load="loadMoreMessages" :disable="!nextPage" :offset="100" reverse>
-      <template v-if="isSkeletonShown" v-for="_ in 20">
-        <div class="q-pa-sm row no-wrap items-start">
-          <q-skeleton type="QAvatar" style="flex-shrink: 0" />
-          <div class="full-width q-pl-md">
-            <q-skeleton type="rect" style="width: 50%" />
-            <q-skeleton type="rect" class="q-mt-sm" style="width: 30%" />
+    <q-infinite-scroll @load="loadMoreMessages" :disable="!nextPage" :offset="500" reverse>
+      <!-- Note: Do not try to "from scratch" this as Quasar will not like it... -->
+      <template v-slot:loading>
+        <div class="q-pa-sm">
+          <div class="q-pa-sm row no-wrap items-start" v-for="i in 5" :key="i">
+            <q-skeleton type="QAvatar" style="flex-shrink: 0" />
+            <div class="full-width q-pl-md">
+              <q-skeleton type="rect" style="width: 50%" />
+              <q-skeleton type="rect" class="q-mt-sm" style="width: 30%" />
+            </div>
           </div>
         </div>
       </template>
@@ -37,7 +40,6 @@ import { error, info } from '@/utils/toast';
 import { UserStatus } from 'src/types';
 
 const loading = ref(true);
-const isSkeletonShown = ref(false);
 
 const scrollRef = ref<QScrollArea | null>(null);
 const nextPage = ref<number | null>(null);
@@ -77,7 +79,7 @@ watch(
       // Stop listening
       messageStore.stopListeningForMessages();
     } else if (oldVal == UserStatus.OFFLINE) {
-      // Reload messages
+      // Reload messages (and start listening)
       await messageStore.loadMessages(null);
       nextPage.value = 1;
     }
@@ -106,28 +108,26 @@ async function handleChannelRemoved(data) {
 
 async function pageChange() {
   loading.value = true;
-  const skeletonTimeout = setTimeout(() => {
-    isSkeletonShown.value = true;
-  }, 500);
-
   try {
     wsStore.connect();
     scrollToBottom(1);
 
     await Promise.all([
       channelStore.setCurrentChannel(route.params.id as string),
-      memberStore.loadMembers(route.params.id as string),
-    ]);
-    await messageStore.loadMessages(null);
+      memberStore.loadMembers(route.params.id as string)
+    ])
 
-    nextPage.value = 1;
-  } catch (err) {
+    await messageStore.loadMessages(null)
+    nextPage.value = 1
+
+    // await messageStore.loadMessages(route.params.id as string)
+  }
+  catch (err) {
     error(err);
     router.replace('/').catch(console.error);
-  } finally {
+  }
+  finally {
     loading.value = false;
-    clearTimeout(skeletonTimeout);
-    isSkeletonShown.value = false;
   }
 }
 

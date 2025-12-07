@@ -5,7 +5,7 @@
     <q-drawer show-if-above v-model="uiStore.leftDrawerOpen" side="left" :breakpoint="850">
       <div class="left-menu">
         <ChannelsMenu />
-        <div class="settings-dialog">
+        <div class="settings-wrapper">
           <QuickSettingsDialog />
         </div>
       </div>
@@ -15,7 +15,11 @@
       <q-page>
         <router-view />
         <div class="chat-input">
-          <ChatInput @command="handleCommand" :commands="['join']" />
+          <ChatInput
+            @command="handleCommand"
+            @submit="info('Please select or create a channel to start chatting...')"
+            :commands="['join']"
+          />
         </div>
       </q-page>
     </q-page-container>
@@ -29,7 +33,7 @@ import ChatInput from '@/components/ChatInput.vue';
 import { useChannelStore, useUiStore, useWsStore, useInviteStore } from '@/stores';
 import { error, info } from '@/utils/toast';
 import { useRouter } from 'vue-router';
-import { requestNotificationPermission } from 'src/utils/notifications';
+import { onMounted } from 'vue';
 
 const channelStore = useChannelStore();
 const inviteStore = useInviteStore();
@@ -37,13 +41,6 @@ const uiStore = useUiStore();
 const router = useRouter();
 const wsStore = useWsStore();
 wsStore.connect();
-
-// Request notification permission
-requestNotificationPermission().then(state => {
-  if (state == 'default') {
-    info('Please allow notifications for this website to be notified');
-  }
-}).catch(error);
 
 // Load channels and invites
 channelStore
@@ -55,10 +52,12 @@ channelStore
   .catch(error);
 inviteStore.loadInvites().catch(error);
 
-if (!channelStore.currentChannel && channelStore.channels.length)
-  router
-    .replace({ name: 'Channels', params: { id: channelStore.channels[0].id } })
-    .catch(console.error);
+onMounted(() => {
+  if (channelStore.channels.length)
+    router
+      .replace({ name: 'Channels', params: { id: channelStore.channels[0].id } })
+      .catch(console.error);
+})
 
 function handleCommand(command: string, args: string[]) {
   if (command == 'join') {
@@ -73,24 +72,8 @@ function handleCommand(command: string, args: string[]) {
 </script>
 
 <style scoped lang="scss">
-.left-menu {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
-
 .chat-input {
   position: absolute;
   bottom: 0;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 1rem;
-}
-
-.settings-dialog {
-  margin-top: auto;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 1rem;
 }
 </style>

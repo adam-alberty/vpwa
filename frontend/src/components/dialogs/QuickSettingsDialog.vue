@@ -112,7 +112,7 @@ async function logout() {
   border-radius: 0.7rem;
   width: 100%;
   padding: 1rem;
-  height: 70px;
+  height: 76px;
   border: 1px solid #26272b;
 
   display: flex;

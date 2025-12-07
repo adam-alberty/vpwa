@@ -7,28 +7,28 @@
       v-model="formData.username"
       label="Username *"
       lazy-rules
-      :rules="[(val) => (val && val.length > 2) || 'Username must at least 3 characters long']"
+      :rules="[minLen(3), maxLen(16)]"
     />
     <q-input
       filled
       v-model="formData.email"
       label="Email *"
       lazy-rules
-      :rules="[(val) => (val && val.length > 0) || 'Please type something']"
+      :rules="[minLen(1), maxLen(254)]"
     />
     <q-input
       filled
       v-model="formData.firstName"
       label="First name *"
       lazy-rules
-      :rules="[(val) => (val && val.length > 0) || 'Please type something']"
+      :rules="[minLen(1), maxLen(16)]"
     />
     <q-input
       filled
       v-model="formData.lastName"
       label="Last name *"
       lazy-rules
-      :rules="[(val) => (val && val.length > 0) || 'Please type something']"
+      :rules="[minLen(1), maxLen(16)]"
     />
     <q-input
       filled
@@ -36,7 +36,7 @@
       label="Password *"
       type="password"
       lazy-rules
-      :rules="[(val) => (val && val.length > 7) || 'Password must be at least 8 characters long']"
+      :rules="[minLen(8), maxLen(256)]"
     />
     <q-input
       filled
@@ -44,7 +44,7 @@
       label="Password Repeated *"
       type="password"
       lazy-rules
-      :rules="[(val) => val === formData.password || 'Passwords do not match']"
+      :rules="[(val) => val == formData.password || 'Passwords do not match']"
     />
 
     <q-btn
@@ -71,6 +71,7 @@ import { useAuthStore } from '@/stores/auth-user.store';
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { success, error } from '@/utils/toast';
+import { minLen, maxLen } from '@/utils/validators';
 
 const router = useRouter();
 const formData = reactive({

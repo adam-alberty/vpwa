@@ -20,11 +20,11 @@ export const registerUserValidator = vine.compile(
       .string()
       .trim()
       .minLength(3)
-      .maxLength(32)
+      .maxLength(16)
       .regex(/^[a-zA-Z0-9._-]+$/),
     email: vine.string().trim().minLength(1).maxLength(254),
-    firstName: vine.string().trim().minLength(1).maxLength(128),
-    lastName: vine.string().trim().minLength(1).maxLength(128),
+    firstName: vine.string().trim().minLength(1).maxLength(16),
+    lastName: vine.string().trim().minLength(1).maxLength(16),
     password: vine.string().minLength(8).maxLength(256),
   })
 )

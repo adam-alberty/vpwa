@@ -1,7 +1,7 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import { ChannelType, type ChannelInvite } from 'src/types';
 import { useWsStore } from './ws.store';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import api from '@/services/api';
 
 export const useInviteStore = defineStore('invite', () => {

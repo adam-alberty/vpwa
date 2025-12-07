@@ -9,6 +9,8 @@ export const createChannelValidator = vine.compile(
     name: vine
       .string()
       .trim()
+      .minLength(1)
+      .maxLength(20)
       .transform((v) => v.replace(/\s+/g, '-')),
     type: vine.enum(Object.values(ChannelType)),
   })

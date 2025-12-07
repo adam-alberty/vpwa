@@ -17,12 +17,7 @@
             v-model="formData.name"
             label="Channel name *"
             lazy-rules
-            :rules="[
-              (val) => (val && val.length > 0) || 'Please type something',
-              (val) =>
-                (val && val.length <= 30) ||
-                `Channel name is ${val.length - 30} characters over the limit`,
-            ]"
+            :rules="[minLen(1), maxLen(20)]"
           />
 
           <q-btn-toggle
@@ -50,6 +45,7 @@ import { useChannelStore, useUiStore } from 'src/stores';
 import { error } from '@/utils/toast';
 import { confirm } from '@/utils/popups';
 import { useRouter } from 'vue-router';
+import { minLen, maxLen } from '@/utils/validators';
 
 const uiStore = useUiStore();
 const router = useRouter();

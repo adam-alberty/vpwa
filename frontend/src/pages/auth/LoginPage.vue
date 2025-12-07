@@ -7,7 +7,7 @@
       v-model="formData.email"
       label="E-mail *"
       lazy-rules
-      :rules="[(val) => (val && val.length > 0) || 'Please type username or e-mail']"
+      :rules="[minLen(1)]"
     />
     <q-input
       filled
@@ -15,7 +15,7 @@
       label="Password *"
       type="password"
       lazy-rules
-      :rules="[(val) => (val && val.length > 0) || 'Please type password']"
+      :rules="[minLen(1)]"
     />
 
     <q-btn
@@ -42,6 +42,7 @@ import { useAuthStore } from '@/stores/auth-user.store';
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { error } from '@/utils/toast';
+import { minLen } from '@/utils/validators';
 
 const router = useRouter();
 const auth = useAuthStore();

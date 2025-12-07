@@ -1,10 +1,8 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import api from 'src/services/api';
 import { ChannelMemberRole, type UserMember } from '@/types';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { useWsStore } from './ws.store';
-
-import { useChannelStore } from './channel.store';
 
 export const useMemberStore = defineStore('member', () => {
   const wsStore = useWsStore();

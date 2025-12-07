@@ -10,7 +10,11 @@
       </div>
       <CreateChannelDialog />
     </div>
-    <q-list class="list">
+
+    <div v-if="channelStore.loading" class="q-pa-sm">
+      <q-skeleton type="rect" class="full-width" />
+    </div>
+    <q-list v-else class="list">
       <q-expansion-item v-if="inviteStore.invites?.length"
         class="overflow-hidden q-mb-md"
         style="border-radius: 0.7rem"
