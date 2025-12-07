@@ -13,15 +13,19 @@ export const useMemberStore = defineStore('member', () => {
 
   const loading = ref(null);
 
-  watch(() => wsStore.connected, (connected) => {
-    wsStore.socket?.off('member:joined', handleMemberJoined);
-    wsStore.socket?.off('member:left', handleMemberLeft);
-    if (connected) {
-      // Listen for joining users...
-      wsStore.socket.on('member:joined', handleMemberJoined);
-      wsStore.socket.on('member:left', handleMemberLeft);
-    }
-  });
+  function startListeningForMembers() {
+    wsStore.on('member:joined', handleMemberJoined);
+    wsStore.on('member:left', handleMemberLeft);
+
+    console.log('[WS]: start listening for new members');
+  }
+
+  function stopListeningForMembers() {
+    wsStore.off('member:joined', handleMemberJoined);
+    wsStore.off('member:left', handleMemberLeft);
+
+    console.log('[WS]: stop listening for new members');
+  }
 
   function handleMemberJoined(member: UserMember) {
     console.log(`[WS]: Member joined`, member);
@@ -35,11 +39,15 @@ export const useMemberStore = defineStore('member', () => {
 
   async function loadMembers(channelId: string | null) {
     if (!channelId) {
+      stopListeningForMembers();
+
       members.value = [];
       return;
     }
     const data = await (loading.value = api.get(`/channels/${channelId}/members`))
       .finally(() => (loading.value = null));
+
+    startListeningForMembers();
 
     console.log(data);
     members.value = data.members;
@@ -62,7 +70,7 @@ export const useMemberStore = defineStore('member', () => {
     return await api.delete(`/channels/${channelId}/kick/${userId}`);
   }
 
-  return { members, loading, loadMembers, getAdmin, getMember, kickMember };
+  return { members, loading, loadMembers, getAdmin, getMember, kickMember, startListeningForMembers, stopListeningForMembers };
 });
 
 if (import.meta.hot) {

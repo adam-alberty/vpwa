@@ -42,20 +42,21 @@ function handleLeft(data) {
 
 onMounted(() => {
   if (updateStatus && id) {
-    wsStore.socket.on(`user:${id}:status`, updateStatusListener);
+    wsStore.on(`user:${id}:status`, updateStatusListener);
     if (props.status) {
-      wsStore.socket.on('member:joined', handleJoined);
-      wsStore.socket.on('member:left', handleLeft);
+      wsStore.on('member:joined', handleJoined);
+      wsStore.on('member:left', handleLeft);
+      wsStore.on('member:left', handleLeft);
     }
   }
 })
 
 onUnmounted(() => {
-  if (updateStatus && id && wsStore.socket) {
-    wsStore.socket.off(`user:${id}:status`, updateStatusListener);
+  if (updateStatus && id) {
+    wsStore.off(`user:${id}:status`, updateStatusListener);
     if (props.status) {
-      wsStore.socket.off('member:joined', handleJoined);
-      wsStore.socket.off('member:left', handleLeft);
+      wsStore.off('member:joined', handleJoined);
+      wsStore.off('member:left', handleLeft);
     }
   }
 })

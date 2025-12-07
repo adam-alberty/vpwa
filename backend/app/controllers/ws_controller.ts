@@ -68,7 +68,7 @@ class WsController {
     const message = await createMessageValidator.validate(data)
     const membership = ChannelMembersController.getMembership(channelId, userId)
     if (!membership) {
-      return { error: true, message: 'You are not a member of this channel' }
+      throw { message: 'You are not a member of this channel' }
     }
 
     const createdMessage = await Message.create({
@@ -84,7 +84,7 @@ class WsController {
     // send the message to clients in the channel
     ws.to(`channel/${channelId}`).emit('message:new', newMessage)
 
-    return { success: true, message: 'Sent successfully' }
+    return { message: 'Sent successfully' }
   }
 }
 

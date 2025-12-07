@@ -9,14 +9,15 @@ export const useInviteStore = defineStore('invite', () => {
 
   const invites = ref<ChannelInvite[]>([]);
 
-  watch(() => wsStore.connected, (connected) => {
-    wsStore.socket?.off('invite:new', handleInviteReceived);
-    if (connected) {
-      // Start listening for new invites
-      wsStore.socket.on('invite:new', handleInviteReceived);
-      console.log('[WS]: listening for new invites');
-    }
-  });
+  function startListeningForInvites() {
+    wsStore.on('invite:new', handleInviteReceived);
+    console.log('[WS]: listening for new invites');
+  }
+
+  function stopListeningForInvites() {
+    wsStore.off('invite:new', handleInviteReceived);
+    console.log('[WS]: stop listening for new invites');
+  }
 
   function handleInviteReceived(invite: ChannelInvite) {
     invites.value.unshift(invite);
@@ -26,6 +27,8 @@ export const useInviteStore = defineStore('invite', () => {
   async function loadInvites() {
     const data = await api.get(`/invites`);
     console.log(data);
+
+    startListeningForInvites();
 
     invites.value = data.invites;
     return data;
@@ -48,7 +51,7 @@ export const useInviteStore = defineStore('invite', () => {
     return data;
   }
 
-  return { invites, loadInvites, invite, acceptInvite, rejectInvite };
+  return { invites, loadInvites, invite, acceptInvite, rejectInvite, startListeningForInvites, stopListeningForInvites };
 });
 
 if (import.meta.hot) {

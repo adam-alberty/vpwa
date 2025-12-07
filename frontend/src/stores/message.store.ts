@@ -1,10 +1,10 @@
-import { defineStore, acceptHMRUpdate, storeToRefs } from 'pinia';
+import { defineStore, acceptHMRUpdate } from 'pinia';
 import api from 'src/services/api';
 import { ref, watch } from 'vue';
 import { useAuthStore, useWsStore } from './';
-import type { Message } from 'src/types';
+import { UserStatus, type Message } from 'src/types';
 import { useQuasar } from 'quasar';
-import { createNotification } from 'src/services/notifications';
+import { createNotification } from 'src/utils/notifications';
 
 export const useMessageStore = defineStore('message', () => {
   const wsStore = useWsStore();
@@ -15,38 +15,27 @@ export const useMessageStore = defineStore('message', () => {
   const currentMessage = ref('');
   const loading = ref(null);
 
-  watch(
-    () => wsStore.connected,
-    (connected) => {
-      stopListeningForMessages();
-      if (connected) {
-        // Start listening for new messages
-        startListeningForMessages();
-      }
-    },
-    { immediate: true },
-  );
-
   function startListeningForMessages() {
-    wsStore.socket.on('message:new', handleMessageReceived);
+    wsStore.on('message:new', handleMessageReceived);
     console.log('[WS]: start listening for new messages');
   }
 
   function stopListeningForMessages() {
-    wsStore.socket?.off('message:new', handleMessageReceived);
+    wsStore.off('message:new', handleMessageReceived);
     console.log('[WS]: stop listening for new messages');
   }
 
   function handleMessageReceived(msg: Message) {
     console.log(`[WS]: received message`, msg);
 
-    if (!$q.appVisible && authStore.user.status !== 'dnd') {
+    if (!$q.appVisible && authStore.user.status != UserStatus.DND) {
       const isMentioned = [...msg.content.matchAll(/@([a-zA-Z0-9._-]+)/g)].some(
         (m) => m[1] === authStore.user.username,
       );
-      if (!isMentioned && JSON.parse(localStorage.getItem('notify_mentions_only')) === true) {
-      } else {
-        createNotification(`${msg.sender.username}`, { body: msg.content });
+      if (!isMentioned && JSON.parse(localStorage.getItem('notify_mentions_only'))) {
+        console.log('[WS]: Notification omitted...')
+      } else if (!createNotification(`${msg.sender.username}`, { body: msg.content })) {
+        console.log('[WS]: Notification not allowed...');
       }
     }
     messages.value.push(msg);
@@ -55,6 +44,8 @@ export const useMessageStore = defineStore('message', () => {
   // Load messages
   async function loadMessages(channelId: string | null, page = 1) {
     if (!channelId) {
+      stopListeningForMessages();
+
       messages.value = [];
       return;
     }
@@ -63,6 +54,9 @@ export const useMessageStore = defineStore('message', () => {
       `/channels/${channelId}/messages?page=${page}`,
     )).finally(() => (loading.value = null));
 
+    if (page == 1)
+      startListeningForMessages();
+
     console.log(data);
     messages.value.unshift(...data.messages);
     return data;
@@ -70,9 +64,7 @@ export const useMessageStore = defineStore('message', () => {
 
   async function sendMessage(channelId: string, content?: string) {
     content ??= currentMessage.value.trim();
-    wsStore.socket.emit('message:create', { channelId, content }, (val: any) => {
-      console.log(`[WS] ${JSON.stringify(val)}`);
-    });
+    await wsStore.emitAsync('message:create', { channelId, content });
   }
 
   return {

@@ -77,9 +77,7 @@ watch(
       // Stop listening
       messageStore.stopListeningForMessages();
     } else if (oldVal == UserStatus.OFFLINE) {
-      // Start listening and reload
-      messageStore.startListeningForMessages();
-
+      // Reload messages
       await messageStore.loadMessages(null);
       nextPage.value = 1;
     }
@@ -88,11 +86,11 @@ watch(
 
 onMounted(async () => {
   await pageChange();
-  wsStore.socket.on('channel:removed', handleChannelRemoved);
+  wsStore.on('channel:removed', handleChannelRemoved);
 });
 
 onUnmounted(() => {
-  wsStore.socket?.off('channel:removed', handleChannelRemoved);
+  wsStore.off('channel:removed', handleChannelRemoved);
 });
 
 function scrollToBottom(duration = 250) {

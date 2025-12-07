@@ -27,28 +27,23 @@ import ChannelsMenu from '@/components/menus/ChannelsMenu.vue';
 import QuickSettingsDialog from '@/components/dialogs/QuickSettingsDialog.vue';
 import ChatInput from '@/components/ChatInput.vue';
 import { useChannelStore, useUiStore, useWsStore, useInviteStore } from '@/stores';
-import { error } from '@/utils/toast';
+import { error, info } from '@/utils/toast';
 import { useRouter } from 'vue-router';
-import { onMounted } from 'vue';
+import { requestNotificationPermission } from 'src/utils/notifications';
 
 const channelStore = useChannelStore();
 const inviteStore = useInviteStore();
 const uiStore = useUiStore();
 const router = useRouter();
 const wsStore = useWsStore();
-
-// Connect to websocket
 wsStore.connect();
 
 // Request notification permission
-onMounted(async () => {
-  if (window.Notification && Notification.permission !== 'granted') {
-    const state = await Notification.requestPermission();
-    if (state === 'default') {
-      error('Please allow notifications for this website to be notified');
-    }
+requestNotificationPermission().then(state => {
+  if (state == 'default') {
+    info('Please allow notifications for this website to be notified');
   }
-});
+}).catch(error);
 
 // Load channels and invites
 channelStore

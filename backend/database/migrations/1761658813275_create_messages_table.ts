@@ -6,7 +6,7 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.uuid('id').notNullable().primary().defaultTo(this.raw('gen_random_uuid()'))
-      table.string('content', 65_536).notNullable()
+      table.string('content', 16_384).notNullable()
       table
         .uuid('channel_id')
         .notNullable()

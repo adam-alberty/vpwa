@@ -58,7 +58,6 @@ const txtParts = computed(() => {
         isHighlight.value = true;
       }
     }
-    // TODO: Mby check if the user / mention exists...
     return { value: token, isMention, highlight };
   });
 });

@@ -17,7 +17,6 @@
       <!-- <div class="text-caption text-grey-5">{{ status }}</div> -->
     </div>
 
-    <!-- Todo -->
     <q-menu
       anchor="center start"
       self="center right"
@@ -92,11 +91,11 @@ const isTyping = ref(false);
 let typingTimeout
 
 onMounted(() => {
-  wsStore.socket.on(`@${props.id}:typing`, handleIsTyping);
+  wsStore.on(`@${props.id}:typing`, handleIsTyping);
 });
 
 onUnmounted(() => {
-  wsStore.socket?.off(`@${props.id}:typing`, handleIsTyping);
+  wsStore.off(`@${props.id}:typing`, handleIsTyping);
 });
 
 function handleIsTyping(typingStr: string) {

@@ -22,12 +22,10 @@ app.ready(() => {
     /**
      * Create message
      */
-    socket.on('message:create', async (data, ack) => {
-      try {
-        ack(await WsController.createMessage({ socket, data }))
-      } catch (err) {
-        ack({ error: true, message: err?.message })
-      }
+    socket.on('message:create', (data, ack) => {
+      WsController.createMessage({ socket, data })
+        .then(ack)
+        .catch(err => ack({ error: true, ...err }))
     })
 
     // Join channel room

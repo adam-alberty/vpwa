@@ -1,24 +1,22 @@
-import { Notify } from 'quasar'
+export function createNotification(title: string, options?: NotificationOptions) {
+  if (!('Notification' in window)) {
+    console.warn('This browser does not support notifications.');
+    return;
+  }
+  if (Notification.permission == 'granted') {
+    return new Notification(title, options);
+  }
+}
 
-// export function showMentionNotification(notification, timeout = 5000) {
-//   const notif = Notify.create({
-//     message: `<b>${notification.username}</b>: ${notification.text}`,
-//     color: 'gray',
-//     textColor: 'white',
-//     position: 'bottom-right',
-//     timeout,
-
-//     multiLine: true,
-//     html: true,
-
-//     classes: 'mention-notify',
-//     icon: 'alternate_email',
-
-//     actions: [
-//       { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } },
-//       // { label: 'Reply', color: 'yellow', handler: () => { /* ... */ } },
-//     ]
-//   })
-
-//   return notif
-// }
+export async function requestNotificationPermission() {
+  if (!('Notification' in window)) {
+    console.warn('This browser does not support notifications.');
+    return;
+  }
+  if (Notification.permission != 'granted') {
+    console.log('Requesting notification permission...');
+    const permission = await Notification.requestPermission();
+    return permission;
+  }
+  return Notification.permission;
+}

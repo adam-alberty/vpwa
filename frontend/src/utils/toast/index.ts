@@ -11,7 +11,7 @@ type Position =
   | 'right'
   | 'center';
 
-export function success(msg: any, timeout = 5000, position: Position = 'top') {
+export function success(msg, timeout = 5000, position: Position = 'top') {
   const message = msg?.message ?? msg ?? 'Success';
   Notify.create({
     message,
@@ -24,9 +24,12 @@ export function success(msg: any, timeout = 5000, position: Position = 'top') {
 
 export function error(msg, timeout = 5000, position: Position = 'top') {
   var message = '';
-  if (msg?.errors) {
-    for (const err of msg.errors) message += `${err.message}<br>`;
-  } else message = msg?.message ?? msg?.error ?? msg ?? 'Error';
+  if (msg?.errors ?? msg.messages) {
+    for (const err of (msg?.errors ?? msg.messages))
+      message += `${err.message}<br>`;
+  }
+  else
+    message = msg?.message ?? msg?.error ?? msg ?? 'Error';
 
   Notify.create({
     message,

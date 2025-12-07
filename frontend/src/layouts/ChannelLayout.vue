@@ -110,8 +110,9 @@ import MembersMenu from '@/components/menus/MembersMenu.vue';
 import QuickSettingsDialog from '@/components/dialogs/QuickSettingsDialog.vue';
 import ChatInput from '@/components/ChatInput.vue';
 import { useRoute, useRouter } from 'vue-router';
-import { success, error } from '@/utils/toast';
+import { success, error, info } from '@/utils/toast';
 import { confirmDanger, confirm } from '@/utils/popups';
+import { requestNotificationPermission } from 'src/utils/notifications';
 
 import {
   useChannelStore,
@@ -142,6 +143,12 @@ const inviteOpen = ref(false);
 
 const amIAdmin = computed(() => memberStore.getAdmin(auth.user.id)?.id == auth.user?.id);
 
+requestNotificationPermission().then(state => {
+  if (state == 'default') {
+    info('Please allow notifications for this website to be notified');
+  }
+}).catch(error);
+
 // Load channels and invites
 if (!channelStore.channels.length) channelStore.loadChannels().catch(error);
 if (!inviteStore.invites.length) inviteStore.loadInvites().catch(error);
@@ -155,7 +162,7 @@ watch(
 
     typingDebounce = setTimeout(
       () => {
-        wsStore.socket?.emit(`@${auth.user.id}:typing`, {
+        wsStore.emit(`@${auth.user.id}:typing`, {
           channelId: route.params.id,
           typing: messageStore?.currentMessage.trim(),
         });
@@ -194,7 +201,7 @@ async function onInvite() {
 }
 
 async function onSubmit() {
-  await messageStore.sendMessage(route.params.id as string).catch(error);
+  await messageStore.sendMessage(route.params.id as string).catch(err => { error(err); console.error(err) });
 }
 
 function handleCommand(command: string, args: string[]) {

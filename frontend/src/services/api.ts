@@ -45,9 +45,9 @@ async function request(endpoint: string, options: RequestInit = {}) {
 export default {
   get: (endpoint: string, options?: RequestInit) =>
     request(endpoint, { ...options, method: 'GET' }),
-  post: (endpoint: string, data: any, options?: RequestInit) =>
+  post: (endpoint: string, data, options?: RequestInit) =>
     request(endpoint, { ...options, method: 'POST', body: JSON.stringify(data) }),
-  put: (endpoint: string, data: any, options?: RequestInit) =>
+  put: (endpoint: string, data, options?: RequestInit) =>
     request(endpoint, { ...options, method: 'PUT', body: JSON.stringify(data) }),
   delete: (endpoint: string, options?: RequestInit) =>
     request(endpoint, { ...options, method: 'DELETE' }),
