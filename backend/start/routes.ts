@@ -31,7 +31,7 @@ router
     router.get('/channels/:id', [ChannelsController, 'get'])
 
     // Messages
-    router.post('/channels/:id/messages', [MessagesController, 'create'])
+    // router.post('/channels/:id/messages', [MessagesController, 'create'])
     router.get('/channels/:id/messages', [MessagesController, 'list'])
 
     // Channel members

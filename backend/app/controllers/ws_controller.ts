@@ -4,6 +4,7 @@ import { WsContext } from '#services/ws'
 import ChannelMembersController from './channel_members_controller.js'
 import { createMessageValidator } from '#validators/message'
 import Message from '#models/message'
+import db from '@adonisjs/lucid/services/db'
 
 class WsController {
   public connected({ socket }: WsContext) {
@@ -25,7 +26,10 @@ class WsController {
   }
 
   public joinChannelRoom({ socket, data /*channelId*/ }: WsContext) {
-    if (!socket.data.userId) return console.error(`[WS] Invalid token for room`)
+    const membership = ChannelMembersController.getMembership(data, socket.data.userId)
+    if (!membership) {
+      return console.error(`[WS] Invalid token for this channel room`)
+    }
 
     socket.join(`channel/${data}`)
     console.log(`[WS] ${socket.id} joined channel/${data}`)
@@ -34,6 +38,21 @@ class WsController {
   public leaveChannelRoom({ socket, data /*channelId*/ }: WsContext) {
     socket.leave(`channel/${data}`)
     console.log(`[WS] ${socket.id} left channel/${data}`)
+  }
+
+  public joinChannelNotifRooms({ socket, data /*channelId*/ }: WsContext) {
+    const membership = ChannelMembersController.getMembership(data, socket.data.userId)
+    if (!membership) {
+      return console.error(`[WS] Invalid token for this channel notification room`)
+    }
+
+    socket.join(`channel/${data}/notification`)
+    // console.log(`[WS] ${socket.id} joined channel/${data}/notification`)
+  }
+
+  public leaveChannelNotifRooms({ socket, data /*channelId*/ }: WsContext) {
+    socket.leave(`channel/${data}/notification`)
+    // console.log(`[WS] ${socket.id} left channel/${data}/notification`)
   }
 
   public userIsTyping({ socket, data }: WsContext) {
@@ -83,6 +102,13 @@ class WsController {
 
     // send the message to clients in the channel
     ws.to(`channel/${channelId}`).emit('message:new', newMessage)
+
+    const msgContent = newMessage.content
+    ws.to(`channel/${channelId}/notification`).emit('message:notification:new', {
+      content: msgContent.length > 64 ? msgContent.substring(0, 64) + '...' : msgContent,
+      sender: { username: newMessage.sender.username },
+      mentions: [...message.content.matchAll(/@([a-zA-Z0-9._-]+)/g)]
+    })
 
     return { message: 'Sent successfully' }
   }

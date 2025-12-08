@@ -28,6 +28,12 @@ app.ready(() => {
         .catch(err => ack({ error: true, ...err }))
     })
 
+    // Join channel notification rooms
+    socket.on('notification:join', (data) => WsController.joinChannelNotifRooms({ socket, data }))
+
+    // Leave channel notification rooms
+    socket.on('notification:leave', (data) => WsController.leaveChannelNotifRooms({ socket, data }))
+
     // Join channel room
     socket.on('channel:join', (data) => WsController.joinChannelRoom({ socket, data }))
 

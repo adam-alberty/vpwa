@@ -34,7 +34,7 @@ import {
   useMessageStore,
   useWsStore,
 } from 'src/stores';
-import { onMounted, onUnmounted, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { error, info } from '@/utils/toast';
 import { UserStatus } from 'src/types';
@@ -88,22 +88,10 @@ watch(
 
 onMounted(async () => {
   await pageChange();
-  wsStore.on('channel:removed', handleChannelRemoved);
-});
-
-onUnmounted(() => {
-  wsStore.off('channel:removed', handleChannelRemoved);
 });
 
 function scrollToBottom(duration = 250) {
   scrollRef.value?.setScrollPercentage('vertical', 1, duration);
-}
-
-async function handleChannelRemoved(data) {
-  if (data.channel.id == route.params.id) {
-    info(data.message ? `Channel removed: ${data.message}` : 'Channel removed');
-    await router.replace('/');
-  }
 }
 
 async function pageChange() {

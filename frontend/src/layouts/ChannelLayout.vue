@@ -112,6 +112,10 @@ import { success, error, info } from '@/utils/toast';
 import { confirmDanger, confirm } from '@/utils/popups';
 import { requestNotificationPermission } from 'src/utils/notifications';
 import { minLen } from '@/utils/validators';
+import { UserStatus } from '@/types';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { useQuasar } from 'quasar';
+import { createNotification } from 'src/utils/notifications';
 
 import {
   useChannelStore,
@@ -122,7 +126,6 @@ import {
   useMessageStore,
   useWsStore,
 } from '@/stores';
-import { computed, ref, watch } from 'vue';
 
 const auth = useAuthStore();
 const channelStore = useChannelStore();
@@ -130,6 +133,7 @@ const inviteStore = useInviteStore();
 const memberStore = useMemberStore();
 const uiStore = useUiStore();
 const messageStore = useMessageStore();
+const $q = useQuasar();
 
 const route = useRoute();
 const router = useRouter();
@@ -142,15 +146,19 @@ const inviteOpen = ref(false);
 
 const amIAdmin = computed(() => memberStore.getAdmin(auth.user.id)?.id == auth.user?.id);
 
-requestNotificationPermission().then(state => {
-  if (state == 'default') {
-    info('Please allow notifications for this website to be notified');
-  }
-}).catch(error);
-
 // Load channels and invites
 if (!channelStore.channels.length) channelStore.loadChannels().catch(error);
 if (!inviteStore.invites.length) inviteStore.loadInvites().catch(error);
+
+onMounted(() => {
+  wsStore.on('message:notification:new', handleNotification);
+  wsStore.on('channel:removed', handleChannelRemoved);
+});
+
+onUnmounted(() => {
+  wsStore.off('message:notification:new', handleNotification);
+  wsStore.off('channel:removed', handleChannelRemoved);
+});
 
 let typingDebounce; // Anti congestation/spam debounce
 watch(
@@ -171,6 +179,41 @@ watch(
     );
   },
 );
+
+watch(() => $q.appVisible, (newVal) => {
+  if (auth.user.status != UserStatus.ONLINE)
+    return
+
+  if (!newVal) {
+    channelStore.channels.forEach(ch => wsStore.emit('notification:join', ch.id))
+  }
+  else {
+    channelStore.channels.forEach(ch => wsStore.emit('notification:leave', ch.id))
+  }
+})
+
+requestNotificationPermission().then(state => {
+  if (state == 'default') {
+    info('Please allow notifications for this website to be notified');
+  }
+}).catch(error);
+
+function handleNotification(msg) {
+  const isMentioned = msg.mentions.some((m) => m[1] === auth.user.username);
+  if (!isMentioned && JSON.parse(localStorage.getItem('notify_mentions_only'))) {
+    console.log('[WS]: Notification omitted...')
+  } else if (!createNotification(`@${msg.sender.username}`, { body: msg.content })) {
+    console.log('[WS]: Notification not allowed...');
+  }
+}
+
+async function handleChannelRemoved(data) {
+  wsStore.emit('notification:leave', data.channel.id);
+  if (data.channel.id == route.params.id) {
+    info(data.message ? `Channel removed: ${data.message}` : 'Channel removed');
+    await router.replace('/');
+  }
+}
 
 async function leaveChannel(channel: string, doConfirm = false) {
   if (doConfirm) {

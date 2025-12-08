@@ -35,7 +35,7 @@ async function deleteInactiveChannels() {
   }
 }
 
-const DAY = 24 * 60 * 60 * 1000
+const DAY = 8 * 60 * 60 * 1000
 deleteInactiveChannels()
 setInterval(deleteInactiveChannels, DAY)
 

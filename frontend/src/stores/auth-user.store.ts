@@ -21,7 +21,7 @@ export const useAuthStore = defineStore('auth', () => {
     await api.delete('/session');
     token.value = null;
     user.value = null;
-    localStorage.removeItem('token');
+    localStorage.clear();
   }
 
   async function me() {
