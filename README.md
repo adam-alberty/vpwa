@@ -16,15 +16,12 @@ Full assignment link: https://github.com/kurice/vpwa26/tree/main/semestralny-pro
 
 ## Development setup
 
-`./frontend` - Quasar SPA
-`./backend` - AdonisJS server
-
 ### Requirements
 
 - **Node.js 24.11.0** for both frontend and backend
 - (optional) **Docker** to create Postgres database
 
-### To set up backend
+### To set up backend (AdonisJS)
 
 ```sh
 cd ./backend
@@ -45,7 +42,7 @@ node ace migration:refresh --seed
 npm run dev
 ```
 
-### To set up frontend
+### To set up frontend (Quasar SPA)
 
 ```sh
 cd ./frontend
