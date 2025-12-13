@@ -1,6 +1,6 @@
 <template>
   <div class="channel-message q-py-md q-px-lg row no-wrap" :class="{ highlight: isHighlight }">
-    <q-item-section :key="sender.status" avatar :id="`message-avatar-${id}`">
+    <q-item-section :key="sender.status" top avatar :id="`message-avatar-${id}`">
       <UserAvatar v-bind="sender" size="40px" color="secondary" text-color="white" updateStatus />
 
       <UserContextDialogs v-bind="sender" :showIsTyping="sender.id != auth.user?.id" :target="`#message-avatar-${id}`" />
@@ -32,7 +32,7 @@
 <script lang="ts" setup>
 import UserAvatar from './UserAvatar.vue';
 import UserContextDialogs from '@/components/dialogs/UserContextDialogs.vue';
-import type { Message} from 'src/types';
+import type { Message } from 'src/types';
 import { UserStatus } from 'src/types';
 import { computed, ref, watch } from 'vue';
 import { useAuthStore, useMemberStore } from '@/stores';

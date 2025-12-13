@@ -10,10 +10,10 @@ export default class UserSeeder extends BaseSeeder {
       return
     }
 
-    var firstName = faker.person.firstName()
-    var lastName = faker.person.lastName()
+    var firstName = faker.person.firstName().slice(0, 15)
+    var lastName = faker.person.lastName().slice(0, 15)
     await User.create({
-      username: faker.internet.username({ firstName, lastName }),
+      username: faker.internet.username({ firstName, lastName }).slice(0, 15),
       email: `test@own.co`,
       firstName,
       lastName,
@@ -22,8 +22,8 @@ export default class UserSeeder extends BaseSeeder {
 
     const users = await Promise.all(
       Array.from({ length: 14 }).map(async (_, i) => {
-        firstName = faker.person.firstName()
-        lastName = faker.person.lastName()
+        firstName = faker.person.firstName().slice(0, 15)
+        lastName = faker.person.lastName().slice(0, 15)
 
         // 20% chance
         const isAdmin = Math.random() < 0.2

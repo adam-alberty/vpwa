@@ -1,3 +1,4 @@
+import app from '@adonisjs/core/services/app'
 import db from '@adonisjs/lucid/services/db'
 
 /**
@@ -35,8 +36,10 @@ async function deleteInactiveChannels() {
   }
 }
 
-const DAY = 8 * 60 * 60 * 1000
-deleteInactiveChannels()
-setInterval(deleteInactiveChannels, DAY)
+app.ready(() => {
+  const DAY = 8 * 60 * 60 * 1000
+  setTimeout(deleteInactiveChannels, 1000)
+  setInterval(deleteInactiveChannels, DAY)
 
-console.log('[CRON] Cron for deleting inactive channels initialized')
+  console.log('[CRON] Cron for deleting inactive channels initialized')
+})
