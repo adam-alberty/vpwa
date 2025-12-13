@@ -29,7 +29,7 @@ export default class UserSeeder extends BaseSeeder {
         const isAdmin = Math.random() < 0.2
 
         return User.create({
-          username: faker.internet.username({ firstName, lastName }),
+          username: faker.internet.username({ firstName, lastName }).slice(0, 15),
           email: `${firstName.toLowerCase()}${i}@${isAdmin ? 'own' : 'tst'}.co`,
           firstName,
           lastName,
