@@ -2,8 +2,11 @@ import { defineStore, acceptHMRUpdate } from 'pinia';
 import api from 'src/services/api';
 import type { User } from 'src/types';
 import { ref } from 'vue';
+import { useWsStore } from './ws.store';
 
 export const useAuthStore = defineStore('auth', () => {
+  const wsStore = useWsStore();
+
   const user = ref<User | null>(null);
   const token = ref(localStorage.getItem('token'));
 
@@ -34,7 +37,7 @@ export const useAuthStore = defineStore('auth', () => {
     status ??= user.value?.status;
     if (!status) return;
 
-    const data = await api.put('/user/status', { status });
+    const data = await wsStore.emitAsync('status:change', { status });
     user.value.status = data.user.status;
     return data;
   }

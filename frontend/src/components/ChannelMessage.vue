@@ -1,7 +1,9 @@
 <template>
   <div class="channel-message q-py-md q-px-lg row no-wrap" :class="{ highlight: isHighlight }">
-    <q-item-section :key="sender.status" avatar>
+    <q-item-section :key="sender.status" avatar :id="`message-avatar-${id}`">
       <UserAvatar v-bind="sender" size="40px" color="secondary" text-color="white" updateStatus />
+
+      <UserContextDialogs v-bind="sender" :showIsTyping="sender.id != auth.user?.id" :target="`#message-avatar-${id}`" />
     </q-item-section>
     <div>
       <div class="row items-center q-gutter-sm q-mb-xs">
@@ -29,18 +31,21 @@
 
 <script lang="ts" setup>
 import UserAvatar from './UserAvatar.vue';
+import UserContextDialogs from '@/components/dialogs/UserContextDialogs.vue';
 import type { Message} from 'src/types';
 import { UserStatus } from 'src/types';
 import { computed, ref, watch } from 'vue';
 import { useAuthStore, useMemberStore } from '@/stores';
 
-const props = withDefaults(defineProps<Message>(), {});
-const { sender, content, createdAt } = props;
-
-const datetime = computed(() => new Date(createdAt));
-
 const auth = useAuthStore();
 const memberStore = useMemberStore();
+
+const props = withDefaults(defineProps<Message>(), {});
+const { content, createdAt } = props;
+
+const sender = computed(() => props.sender.id == auth.user?.id ? auth.user : props.sender);
+
+const datetime = computed(() => new Date(createdAt));
 
 const isHighlight = ref(false);
 
@@ -81,6 +86,8 @@ const formatTimestamp = (timestamp: Date) => {
 
 <style lang="sass" scoped>
 .channel-message
+  padding: 0.75rem 1.2rem
+
   &:hover
     background: #373b42 !important
 
@@ -90,6 +97,9 @@ const formatTimestamp = (timestamp: Date) => {
   &__timestamp
     line-height: 1
     font-size: 0.85rem
+
+  @media (max-width: $breakpoint-sm-max)
+    padding: 0.75rem 0.6rem !important
 
 .mention
   color: #00bcff

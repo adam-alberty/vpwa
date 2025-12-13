@@ -50,7 +50,10 @@ export const useMessageStore = defineStore('message', () => {
 
   async function sendMessage(channelId: string, content?: string) {
     content ??= currentMessage.value.trim();
-    await wsStore.emitAsync('message:create', { channelId, content });
+
+    const data = await wsStore.emitAsync('message:create', { channelId, content });
+    messages.value.push(data.newMessage);
+    return data;
   }
 
   return {

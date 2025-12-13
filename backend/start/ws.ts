@@ -28,6 +28,12 @@ app.ready(() => {
         .catch(err => ack({ error: true, ...err }))
     })
 
+    socket.on('status:change', (data, ack) => {
+      WsController.changeStatus({ socket, data })
+        .then(ack)
+        .catch(err => ack({ error: true, ...err }))
+    })
+
     // Join channel notification rooms
     socket.on('notification:join', (data) => WsController.joinChannelNotifRooms({ socket, data }))
 

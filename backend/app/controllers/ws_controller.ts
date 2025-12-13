@@ -3,8 +3,10 @@ import User, { UserStatus } from '#models/user'
 import { WsContext } from '#services/ws'
 import ChannelMembersController from './channel_members_controller.js'
 import { createMessageValidator } from '#validators/message'
+import { changeStatus } from '#validators/user'
 import Message from '#models/message'
 import db from '@adonisjs/lucid/services/db'
+import { messages } from '@vinejs/vine/defaults'
 
 class WsController {
   public connected({ socket }: WsContext) {
@@ -56,7 +58,7 @@ class WsController {
   }
 
   public userIsTyping({ socket, data }: WsContext) {
-    ws.to(`channel/${data.channelId}`).emit(`@${socket.data.userId}:typing`, data?.typing?.trim())
+    socket.broadcast.to(`channel/${data.channelId}`).emit(`@${socket.data.userId}:typing`, data?.typing?.trim())
   }
 
   public disconnect({ socket }: WsContext) {
@@ -100,17 +102,32 @@ class WsController {
       .preload('sender')
       .firstOrFail()
 
-    // send the message to clients in the channel
-    ws.to(`channel/${channelId}`).emit('message:new', newMessage)
+    // send other to clients in the channel
+    socket.broadcast.to(`channel/${channelId}`).emit('message:new', newMessage)
 
     const msgContent = newMessage.content
-    ws.to(`channel/${channelId}/notification`).emit('message:notification:new', {
+    socket.broadcast.to(`channel/${channelId}/notification`).emit('message:notification:new', {
       content: msgContent.length > 64 ? msgContent.substring(0, 64) + '...' : msgContent,
       sender: { username: newMessage.sender.username },
       mentions: [...message.content.matchAll(/@([a-zA-Z0-9._-]+)/g)]
     })
 
-    return { message: 'Sent successfully' }
+    return { message: 'Sent successfully', newMessage }
+  }
+
+  /**
+   * Changes user's status
+   */
+  public async changeStatus({ socket, data }: WsContext) {
+    const { status } = await changeStatus.validate(data)
+
+    const user = await User.findOrFail(socket.data.userId)
+    user.status = status
+    await user.save()
+
+    socket.broadcast.emit(`user:${socket.data.userId}:status`, { status })
+
+    return { message: 'Status updated', user: { status } }
   }
 }
 

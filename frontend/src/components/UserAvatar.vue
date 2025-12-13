@@ -1,6 +1,6 @@
 <template>
   <q-avatar>
-    {{ username.charAt(0).toUpperCase() }}
+    <slot>{{ username.charAt(0).toUpperCase() }}</slot>
     <span v-if="status" class="status-dot absolute" :class="[status, { 'is-typing': isTyping }]">
       <q-spinner-dots
         v-if="isTyping"

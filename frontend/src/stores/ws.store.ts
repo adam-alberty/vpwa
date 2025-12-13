@@ -1,6 +1,6 @@
 import { acceptHMRUpdate, defineStore } from 'pinia';
-import { io } from 'socket.io-client';
 import type { Socket } from 'socket.io-client';
+import newAppIo from '@/services/ws';
 import { ref } from 'vue';
 
 export const useWsStore = defineStore('websocket', () => {
@@ -10,13 +10,7 @@ export const useWsStore = defineStore('websocket', () => {
   function connect() {
     if (socket.value) return;
 
-    socket.value = io(import.meta.env.VITE_API_URL, {
-      transports: ['websocket'],
-      withCredentials: true,
-      auth: {
-        token: localStorage.getItem('token'),
-      },
-    });
+    socket.value = newAppIo();
 
     socket.value.on('connect', () => {
       connected.value = true;
@@ -45,7 +39,7 @@ export const useWsStore = defineStore('websocket', () => {
     return socket.value?.emit(event, ...args);
   }
 
-  async function emitAsync<T>(event: string, ...args) {
+  async function emitAsync<T = any>(event: string, ...args) {
     if (!connected.value)
       throw new Error('Session not connected, try refreshing');
 

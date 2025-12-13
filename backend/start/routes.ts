@@ -31,7 +31,6 @@ router
     router.get('/channels/:id', [ChannelsController, 'get'])
 
     // Messages
-    // router.post('/channels/:id/messages', [MessagesController, 'create'])
     router.get('/channels/:id/messages', [MessagesController, 'list'])
 
     // Channel members
@@ -49,7 +48,6 @@ router
 
     // User management
     // router.put('/users', [UsersController, 'update'])
-    router.put('/user/status', [UsersController, 'changeStatus'])
     router.delete('/users', [UsersController, 'delete'])
 
     router.delete('/session', [UsersController, 'logout'])
