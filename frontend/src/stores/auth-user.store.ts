@@ -13,6 +13,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function login(payload: { email: string; password: string }) {
     const result = await api.post('/session', payload);
+    localStorage.clear();
     localStorage.setItem('token', result.token);
     token.value = result.token;
   }
@@ -21,7 +22,7 @@ export const useAuthStore = defineStore('auth', () => {
     await api.delete('/session');
     token.value = null;
     user.value = null;
-    localStorage.clear();
+    localStorage.removeItem('token');
   }
 
   async function me() {

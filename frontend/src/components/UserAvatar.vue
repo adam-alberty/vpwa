@@ -46,7 +46,6 @@ onMounted(() => {
     if (props.status) {
       wsStore.on('member:joined', handleJoined);
       wsStore.on('member:left', handleLeft);
-      wsStore.on('member:left', handleLeft);
     }
   }
 })

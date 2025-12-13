@@ -68,8 +68,12 @@ export default class UsersController {
    * Destroys session
    */
   public async logout({ auth, response }: HttpContext) {
-    await auth.use('api').invalidateToken()
-    return response.ok({ success: true })
+    const invalidated = await auth.use('api').invalidateToken()
+    if (!invalidated)
+      return response.badRequest({ message: 'Cannot invalidate token' })
+
+    ws.userSockets(auth.user!.id).then((sockets) => sockets.forEach(s => s.disconnect())) // Disconnect all sockets
+    return response.ok({ message: 'You have been logged out successfully' })
   }
 
   /**

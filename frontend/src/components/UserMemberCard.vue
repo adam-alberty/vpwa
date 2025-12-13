@@ -20,10 +20,10 @@
     <q-menu
       anchor="center start"
       self="center right"
-      class="bg-highlight q-py-sm q-px-md"
+      class="bg-highlight q-py-sm q-px-md typing-menu"
       :offset="[10, 5]"
     >
-      <div class="typing-menu" :class="{'text-secondary': !typing}">{{typing || 'User is not typing...'}}</div>
+      <div class="typing-content" :class="{'text-secondary': !typing}">{{typing || 'User is not typing...'}}</div>
     </q-menu>
 
     <q-menu
@@ -120,14 +120,20 @@ async function kick() {
 
 <style lang="sass" scoped>
 .typing-menu
-  width: 620px
-  height: 100px
-  overflow-x: hidden
-  word-wrap: break-word
+  .typing-content
+    width: 620px
+    height: 100px
+    overflow-x: hidden
+    word-wrap: break-word
 
-.user-member-card
-  border-radius: 0.7rem
+  @media (max-width: $breakpoint-sm-max)
+    .typing-content
+      width: 410px
+      height: 160px
 
-  &:hover
-    background-color: $dark-page
+  .user-member-card
+    border-radius: 0.7rem
+
+    &:hover
+      background-color: $dark-page
 </style>

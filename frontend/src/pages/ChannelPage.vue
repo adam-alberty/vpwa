@@ -1,5 +1,5 @@
 <template>
-  <q-scroll-area style="height: calc(100vh - 160px)" class="scroll" ref="scrollRef">
+  <q-scroll-area style="height: calc(100vh - 160px)" class="scroll hide-scrollbar" ref="scrollRef">
     <q-infinite-scroll @load="loadMoreMessages" :disable="!nextPage" :offset="500" reverse>
       <!-- Note: Do not try to "from scratch" this as Quasar will not like it... -->
       <template v-slot:loading>
@@ -112,7 +112,6 @@ async function pageChange() {
   }
   catch (err) {
     error(err);
-    router.replace('/').catch(console.error);
   }
   finally {
     loading.value = false;

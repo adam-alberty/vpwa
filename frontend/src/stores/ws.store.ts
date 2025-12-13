@@ -46,6 +46,9 @@ export const useWsStore = defineStore('websocket', () => {
   }
 
   async function emitAsync<T>(event: string, ...args) {
+    if (!connected.value)
+      throw new Error('Session not connected, try refreshing');
+
     try {
       const res = await socket.value?.timeout(2500).emitWithAck(event, ...args)
       if (res?.error) {

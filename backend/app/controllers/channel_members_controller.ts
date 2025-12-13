@@ -4,6 +4,7 @@ import Channel, { ChannelMemberRole, ChannelType } from '#models/channel'
 import { joinChannelValidator } from '#validators/channel'
 import ws from '#services/ws'
 import { TransactionClientContract } from '@adonisjs/lucid/types/database'
+import { UserStatus } from '#models/user'
 import BanVote from '#models/ban_vote'
 
 export default class ChannelMembersController {
@@ -20,15 +21,25 @@ export default class ChannelMembersController {
       .from('channel_members')
       .where('channel_id', channelId)
       .join('users', 'channel_members.user_id', '=', 'users.id')
-      .orderBy('created_at', 'asc')
+      .orderBy('username', 'asc')
       .select(
         'users.id as id',
         'users.username as username',
         'users.first_name as firstName',
         'users.last_name as lastName',
         'users.email as email',
-        'users.status as status',
-        'channel_members.role as role'
+        'channel_members.role as role',
+        db.raw(`
+          CASE WHEN EXISTS (
+              SELECT 1
+              FROM auth_access_tokens
+              WHERE tokenable_id = users.id
+                AND expires_at > NOW()
+            )
+            THEN status
+            ELSE '${UserStatus.OFFLINE}'
+          END as status
+        `)
       )
 
     return response.ok({ members })

@@ -2,6 +2,7 @@ import Message from '#models/message'
 import { UserStatus } from '#models/user'
 import type { HttpContext } from '@adonisjs/core/http'
 import ChannelMembersController from './channel_members_controller.js'
+import db from '@adonisjs/lucid/services/db'
 
 export default class MessagesController {
   /**
@@ -23,7 +24,24 @@ export default class MessagesController {
       .where('channel_id', channelId)
       .preload('sender', (senderQuery) => {
         senderQuery
-          .select(['id', 'username', 'first_name', 'last_name', 'status', 'email'])
+          .select(
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+            db.raw(`
+              CASE WHEN EXISTS (
+                  SELECT 1
+                  FROM auth_access_tokens
+                  WHERE tokenable_id = users.id
+                    AND expires_at > NOW()
+                )
+                THEN status
+                ELSE '${UserStatus.OFFLINE}'
+              END as status
+            `)
+          )
           .withAggregate('channels', (memberQuery) => {
             memberQuery.where('channel_members.channel_id', channelId).count('*').as('is_member')
           })
