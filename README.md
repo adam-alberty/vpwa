@@ -8,9 +8,16 @@ Full assignment link: https://github.com/kurice/vpwa26/tree/main/semestralny-pro
 
 ## Physical data model diagram
 
+![Physical data model diagram](docs/db-diagram.png)
+
 ## Application architecture diagram
 
+![Architecture diagram](docs/architecture-diagram.png)
+
 ## Design decisions
+
+- Almost all client side state is manipulated through Pinia stores
+- Messages and user status are handled with web sockets.
 
 ## Screenshots
 
