@@ -15,6 +15,9 @@ Full assignment link: https://github.com/kurice/vpwa26/tree/main/semestralny-pro
 ## Screenshots
 
 ![Chat screen](docs/screenshots/chat.png)
+![Add channel screen](docs/screenshots/add-channel.png)
+![Settings](docs/screenshots/settings.png)
+![Invite](docs/screenshots/invite.png)
 ![Register screen](docs/screenshots/register.png)
 ![Login screen](docs/screenshots/login.png)
 
