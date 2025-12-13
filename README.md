@@ -14,6 +14,10 @@ Full assignment link: https://github.com/kurice/vpwa26/tree/main/semestralny-pro
 
 ## Screenshots
 
+![Chat screen](docs/screenshots/chat.png)
+![Register screen](docs/screenshots/register.png)
+![Login screen](docs/screenshots/login.png)
+
 ## Development setup
 
 ### Requirements
