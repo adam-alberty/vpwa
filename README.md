@@ -16,8 +16,15 @@ Full assignment link: https://github.com/kurice/vpwa26/tree/main/semestralny-pro
 
 ## Design decisions
 
-- Almost all client side state is manipulated through Pinia stores
+We tried to keep the number of dependencies to a minimum. In frontend, only `pinia` and `socket.io-client` were additionally installed. In backend, only `socket.io` was additinally installed.
+
+- Almost all client side state is manipulated through Pinia stores to centralize state management
 - Messages and user status are handled with web sockets.
+
+## Database changes from previous checkpoint
+
+- Constraints were added on many fields
+- Adonis specific tables were created for migrations (`adonis_schema`, `adonis_schema_version`)
 
 ## Screenshots
 
