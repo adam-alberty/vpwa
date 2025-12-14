@@ -17,26 +17,29 @@ Full assignment link: https://github.com/kurice/vpwa26/tree/main/semestralny-pro
 
 ## Design decisions
 
-We tried to keep the number of dependencies to a minimum. In frontend, only `pinia` and `socket.io-client` were additionally installed. In backend, only `socket.io` was additinally installed.
+We tried to keep the number of dependencies minimal. On frontend, only `pinia` and `socket.io-client` were additionally installed. On backend, only `socket.io` was installed for web sockets.
 
 - Almost all client side state is manipulated through Pinia stores to centralize state management
-- Messages and user status are handled with web sockets.
+- Communication with BE is also (almost) exclusively handled by the stores
+- Messages and user status are handled with web sockets
 
 ## Database changes from previous checkpoint
 
 - Constraints were added on many fields
-- Adonis specific tables were created for migrations (`adonis_schema`, `adonis_schema_version`)
+- Adonis specific tables were created for migrations (`adonis_schema`, `adonis_schema_version`, ...)
+- Besides this, no significant changes were performed
 
 ## Screenshots
 
 ![Chat screen](docs/screenshots/chat.png)
+![Chat screen fullscreen, no menus](docs/screenshots/chat-full.png)
 ![Add channel screen](docs/screenshots/add-channel.png)
 ![Settings](docs/screenshots/settings.png)
 ![Invite](docs/screenshots/invite.png)
 ![Register screen](docs/screenshots/register.png)
 ![Login screen](docs/screenshots/login.png)
 
-## Backend routes
+## Backend endpoints overview
 
 ```sh
 METHOD ROUTE ................................................................... HANDLER MIDDLEWARE
@@ -76,6 +79,9 @@ npm install
 
 # Configure environment variables as described in the example .env
 cp .env.example .env
+
+# Generate app key (optional if custom one is used)
+node ace generate:key
 
 # Start the database
 docker compose up -d

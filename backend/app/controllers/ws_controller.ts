@@ -8,6 +8,9 @@ import Message from '#models/message'
 import db from '@adonisjs/lucid/services/db'
 import { messages } from '@vinejs/vine/defaults'
 
+/**
+ * Handlers for all the websocket traffic events
+ */
 class WsController {
   public connected({ socket }: WsContext) {
     socket.join(`@${socket.data.userId}`)

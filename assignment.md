@@ -1,7 +1,30 @@
+<!-- Source https://github.com/kurice/vpwa26/tree/main/semestralny-projekt  -->
+
+# Semestrálny projekt - aplikácia na textovú komunikáciu v štýle IRC (Slack)
+
+## Zadanie
+
+Vytvorte progresívnu webovú aplikáciu na textovú komunikáciu v štýle IRC (Slack), ktorá komplexne rieši nižšie definované prípady použitia.
+
+## Tím
+
+Projekt vypracovávate vo dvojici. Každý z dvojice sa musí podieľať na
+projekte významným dielom (rovnomerné rozdelenie práce). Vypracovanie (takmer) celého projektu len jedným z dvojice autorov je neprípustné. Je potrebné, aby bol každý z autorov oboznámený s celým projektom, vrátane častí, na ktorých sám nepracoval. Autori sú hodnotení rovnakým získaným počtom bodov.
+
+## Autorstvo
+
+Je zakázané používať programy alebo časti projektov od iných študentov z minulých rokov (automaticky hodnotenie FX).
+Všetky použité materiály z odbornej literatúry alebo z internetu musia byť citované (použite komentáre v zdrojovom kóde s odkazom na zdroj). Ak použijete cudzí materiál a neuvediete zdroj, práca môže byť považovaná za plagiát. Ak študent použije LLM (GPT-like služby) na generovanie kódu, každú jednú časť študent musí vedieť vysvetliť. Ak študent nebude vedieť kód vysvetliť (riadne mu rozumieť), nebude projekt akceptovaný.
+
 ## Termíny odovzdania
 
 - **Odovzdanie 1. fázy projektu: koniec 5. týždňa semestra - 26. 10. do 23:59 v AIS, 12 bodov,** vytvorenie responzívneho klikateľného prototypu používateľského rozhrania aplikácie na textovú komunikáciu vo forme Single Page Aplikácie (SPA) pre všetky prípady použitia s použitím rámca Quasar (framework), návrh dátového logického modelu v UML notácii
 - **Odovzdanie 2. fázy projektu: koniec 12. týždňa semestra - 14. 12., do 23:59 v AIS, 30 bodov** vytvorenie progresívnej webovej aplikácie (PWA) na textovú komunikáciu v štýle IRC (Slack) podľa požiadaviek v zadaní projektu, dokumentácia
+
+## Termíny konzultácií k projektu
+
+- **Konzultácie k 1. fáze projektu, na cvičení: 2. - 5. týždeň semestra**
+- **Konzultácie k 2. fáze projektu, na cvičení: 7. - 12. týždeň semestra**
 
 ## Termíny prezentovania
 
@@ -67,15 +90,25 @@ Vytvorte subor "repo.txt", v ktorom bud link na vas verejný GITHUB repo (po sko
 
 Odovzdáva sa ZIP alebo RAR archív, "repo.txt" pripojte do archivu.
 
+## Oneskorenie odovzdania
+
+V kontrolnom termíne sa môže odovzdanie oneskoriť maximálne o 3 dni.
+Za každý deň oneskoreného odovzdania je tímu odobratých 25% bodov z pôvodného maxima (deň po termíne tím získa 3/4 bodov, dva dni po termíne 1/2, atď.)
+Neskoršie odovzdanie nie je možné. Neodovzdanie niektorej časti projektu znamená nesplnenie podmienok absolvovania predmetu.ß
+
 ## Kontrolná fáza progresu implementácie
 
 V kontrolnej fáze - v 10. týždni semestra - sa očakávajú implementované všetky prípady použitia. Fáza je hodnotená 5 bodmi, a to binárne. Tím letmo predvedie cvičiacemu funkčnosť aplikácie s ohľadom na požadované prípady použitia. Ak aplikácia umožňuje realizovať prvých 8 (z 11) prípadov použitia, každý člen tímu získa 5 bodov. Cvičiaci nebude v tejto fáze podrobne hodnotiť kvalitu kódu a robustnosť riešenia.
 
 ## Implementačné prostredie
 
+Odporúčané technológie:
+
 - Tučný klient (SPA/PWA) - rámec Quasar
 - Služby biznis logiky (backend) - rámec AdonisJS
 - relačný databázový systém (napr. PostgreSQL, MySQL)
+
+Použitie iných základných technológií nie je dovolené (netýka sa iných podporných knižníc).
 
 ## Dokumentácia v 2. (finálnej) fáze
 
@@ -86,3 +119,5 @@ Dokumentácia musí obsahovať minimálne tieto časti:
 - diagram/diagramy architektúry aplikácie
 - návrhové rozhodnutia (pridanie externej knižnice - zdôvodenie, ...)
 - snímky obrazoviek (angl. screenshot, snapshot), aspoň 5 kľúčových obrazoviek (tie, ktoré by ste dali napr. do storu, aby ste zaujali a prezentovali sa)
+
+**Každý študent musí vedieť vysvetliť ktorúkoľvek časť (kód) riešenia svojho tímu.**
