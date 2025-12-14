@@ -22,6 +22,7 @@ We tried to keep the number of dependencies minimal. On frontend, only `pinia` a
 - Almost all client side state is manipulated through Pinia stores to centralize state management
 - Communication with BE is also (almost) exclusively handled by the stores
 - Messages and user status are handled with web sockets
+- App supports PWA
 
 ## Database changes from previous checkpoint
 
