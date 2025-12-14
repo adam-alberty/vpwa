@@ -13,6 +13,7 @@ Full assignment link: https://github.com/kurice/vpwa26/tree/main/semestralny-pro
 ## Application architecture diagram
 
 ![Architecture diagram](docs/architecture-diagram.png)
+![Architecture diagram 2](docs/architecture-diagram2.png)
 
 ## Design decisions
 
@@ -34,6 +35,29 @@ We tried to keep the number of dependencies to a minimum. In frontend, only `pin
 ![Invite](docs/screenshots/invite.png)
 ![Register screen](docs/screenshots/register.png)
 ![Login screen](docs/screenshots/login.png)
+
+## Backend routes
+
+```sh
+METHOD ROUTE ................................................................... HANDLER MIDDLEWARE
+POST   /users ................................................. UsersController.register
+POST   /session .................................................. UsersController.login
+POST   /channels ............................................. ChannelsController.create       auth
+GET    /channels ............................................... ChannelsController.list       auth
+GET    /channels/:id ............................................ ChannelsController.get       auth
+GET    /channels/:id/messages .................................. MessagesController.list       auth
+POST   /channels/join .................................... ChannelMembersController.join       auth
+DELETE /channels/:id .................................... ChannelMembersController.leave       auth
+GET    /channels/:id/members ............................. ChannelMembersController.list       auth
+DELETE /channels/:id/kick/:userId ........................ BanVotesController.kickMember       auth
+GET    /invites .......................................... ChannelInvitesController.list       auth
+POST   /channels/:id/invite ............................ ChannelInvitesController.invite       auth
+DELETE /channels/:id/invite/accept ............... ChannelInvitesController.acceptInvite       auth
+DELETE /channels/:id/invite/reject ............... ChannelInvitesController.rejectInvite       auth
+DELETE /users ................................................... UsersController.delete       auth
+DELETE /session ................................................. UsersController.logout       auth
+GET    /session ..................................................... UsersController.me       auth
+```
 
 ## Development setup
 
